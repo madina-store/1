@@ -40,15 +40,23 @@
         .search-input { width: 100%; padding: 12px 40px 12px 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: #fff; font-size: 0.9rem; outline: none; }
         .games-grid { max-width: 600px; margin: 0 auto; padding: 0 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
         .game-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
-        .game-cover-container { width: 100%; aspect-ratio: 3/4; background: #060911; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .game-cover-container { width: 100%; aspect-ratio: 3/4; background: #060911; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
         .game-cover { width: 100%; height: 100%; object-fit: cover; }
         .platform-tag { position: absolute; top: 8px; left: 8px; background: rgba(0, 0, 0, 0.75); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); }
         .arabic-tag { position: absolute; top: 8px; right: 8px; background: rgba(16, 185, 129, 0.9); color: #fff; font-size: 0.62rem; font-weight: 700; padding: 3px 6px; border-radius: 6px; display: flex; align-items: center; gap: 3px; }
         .game-info { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-        .game-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; }
+        .game-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; cursor: pointer; }
         .game-meta { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px; }
         .whatsapp-btn { width: 100%; background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; border: none; padding: 8px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; margin-bottom: 5px; }
         .detail-trigger { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-muted); width: 100%; padding: 6px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; }
+        
+        /* Pagination Controls */
+        .pagination { max-width: 600px; margin: 20px auto; padding: 0 16px; display: flex; justify-content: center; align-items: center; gap: 10px; grid-column: span 2; }
+        .page-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer; font-weight: 700; font-size: 0.85rem; }
+        .page-btn.active { background: var(--accent-cyan); color: #000; border-color: transparent; }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Modal Styles */
         .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
         .modal.active { display: flex; }
         .modal-content { background: var(--bg-color); border-top: 1px solid var(--card-border); width: 100%; max-width: 600px; max-height: 90vh; border-radius: 24px 24px 0 0; overflow-y: auto; padding: 20px; position: relative; }
@@ -96,7 +104,7 @@
 
     <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن لعبتك المفضلة..." oninput="renderGames()">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن لعبتك المفضلة..." oninput="currentPage = 1; renderGames();">
     </div>
 
     <div class="hero" id="adminSection">
@@ -114,6 +122,7 @@
     </div>
 
     <main class="games-grid" id="gamesGrid"></main>
+    <div id="paginationContainer" style="max-width:600px; margin:0 auto; padding:0 16px; display:flex; justify-content:center; gap:8px; margin-top:20px;"></div>
 
     <footer>
         <p>للإستفسار والطلب المباشر: <a href="https://wa.me/9647858858844" target="_blank"><i class="fa-brands fa-whatsapp"></i> 07858858844</a></p>
@@ -136,30 +145,49 @@
 
     <script>
         const defaultGames = [
-            { id: 1, title: "Uncharted: The Nathan Drake Collection", platform: "ps4", size: "~45 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2320/skW7vJp1yW038xK4X4zXpG2u.png", video: "https://www.youtube.com/embed/fSJuI833EC0" },
-            { id: 2, title: "Crash Bandicoot 4: It's About Time", platform: "ps4", size: "~30 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202007/0816/yU1W47M1sVqY6mQ5L3sF12Qf.png", video: "https://www.youtube.com/embed/aOGgx3k9bQQ" },
-            { id: 3, title: "Cyberpunk 2077", platform: "ps4", size: "~55 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202311/2911/a60e0a5ff79421f1589c3bc88365851486d3d4b684c3ea8a.png", video: "https://www.youtube.com/embed/8X2kIfS6fb8" },
-            { id: 4, title: "Grand Theft Auto: San Andreas", platform: "ps4", size: "~20 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202110/2020/eYy0mU8p3C3rS4N5Z1hW6q8L.png", video: "https://www.youtube.com/embed/u_CbHrU4n6g" },
-            { id: 5, title: "EA SPORTS FC 24", platform: "ps4", size: "~50 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202307/1117/a380ce5c6f62bc178cdd8d95155f9a2b5368a6fcf74092cb.png", video: "https://www.youtube.com/embed/XhP3Xh4Lvf8" },
-            { id: 6, title: "Gran Turismo Sport", platform: "ps4", size: "~45 GB", arabic: false, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2223/R27N8PjYm7o3gT5wQ9rY3L8c.png", video: "https://www.youtube.com/embed/04a43N91T28" },
-            { id: 7, title: "Sonic Mania", platform: "ps4", size: "~400 MB", arabic: false, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2614/xT8W5wQ6K3p2mN9vL1sZ4f7h.png", video: "https://www.youtube.com/embed/KaqC5FnvAEc" },
-            { id: 8, title: "Crash Bandicoot N. Sane Trilogy", platform: "ps4", size: "~23 GB", arabic: false, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2216/wY8xQ4p2m3vN6L9sT1z5h7f8.png", video: "https://www.youtube.com/embed/F7G91RjVmvk" },
-            { id: 9, title: "CTR: Crash Team Racing Nitro-Fueled", platform: "ps4", size: "~18 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2321/mN8L9sT1z5h7f8wY8xQ4p2m3.png", video: "https://www.youtube.com/embed/5a2xWnFf2aU" },
-            { id: 10, title: "Lies of P", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202306/0205/3d3d0f042e6cb13c3a1b1b13550e50f3aa15277bb0b5a34f.png", video: "https://www.youtube.com/embed/kbTfQ93_nJ4" },
-            { id: 11, title: "Assassin's Creed Valhalla", platform: "ps4", size: "~50 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202009/1511/T112C8m5sQ8v5C2y9N7w6b4t.png", video: "https://www.youtube.com/embed/ssrNcwxALS4" },
-            { id: 12, title: "Assassin's Creed Origins", platform: "ps4", size: "~42 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2314/vQ4p2m3wY8xQ4p2m3vN6L9sT.png", video: "https://www.youtube.com/embed/cK4iAjZaooU" },
-            { id: 13, title: "Outlast Trinity", platform: "ps4", size: "~25 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2611/8xQ4p2m3vN6L9sT1z5h7f8wY.png", video: "https://www.youtube.com/embed/uKA-IA4vibM" },
-            { id: 14, title: "Biomutant", platform: "ps4", size: "~15 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202103/3015/h3W8w5wQ6K3p2mN9vL1sZ4f7.png", video: "https://www.youtube.com/embed/Q66fKjR_E94" },
-            { id: 15, title: "FIFA 22", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202107/1614/eY0mU8p3C3rS4N5Z1hW6q8L.png", video: "https://www.youtube.com/embed/vLj-27T-SEQ" },
-            { id: 16, title: "Battlefield V", platform: "ps4", size: "~80 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202006/1520/b3e9qZ3w8xQ4p2m3vN6L9sT1.png", video: "https://www.youtube.com/embed/a7ZpQisiyp4" },
-            { id: 17, title: "Spider-Man: Miles Morales", platform: "ps5", size: "~40 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202008/1020/Tj4Hn9K2zXpG2uSkW7vJp1yW.png", video: "https://www.youtube.com/embed/gHzUqOpkVMg" }
+            { id: 1, title: "Uncharted: The Nathan Drake Collection", platform: "ps4", size: "~45 GB", arabic: true, cover: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500", video: "https://www.youtube.com/embed/fSJuI833EC0" },
+            { id: 2, title: "Crash Bandicoot 4: It's About Time", platform: "ps4", size: "~30 GB", arabic: true, cover: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500", video: "https://www.youtube.com/embed/aOGgx3k9bQQ" },
+            { id: 3, title: "Cyberpunk 2077", platform: "ps4", size: "~55 GB", arabic: true, cover: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500", video: "https://www.youtube.com/embed/8X2kIfS6fb8" },
+            { id: 4, title: "Grand Theft Auto: San Andreas", platform: "ps4", size: "~20 GB", arabic: true, cover: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500", video: "https://www.youtube.com/embed/u_CbHrU4n6g" },
+            { id: 5, title: "PES 2019", platform: "ps4", size: "~30 GB", arabic: true, cover: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500", video: "https://www.youtube.com/embed/valU03F07_8" },
+            { id: 6, title: "EA SPORTS FC 27", platform: "ps4", size: "~50 GB", arabic: true, cover: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500", video: "https://www.youtube.com/embed/XhP3Xh4Lvf8" },
+            { id: 7, title: "Need for Speed Payback", platform: "ps4", size: "~28 GB", arabic: true, cover: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=500", video: "https://www.youtube.com/embed/kc-OU5mo6A0" },
+            { id: 8, title: "Shadow of the Colossus", platform: "ps4", size: "~14 GB", arabic: true, cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500", video: "https://www.youtube.com/embed/pdZQ98IZ3b0" },
+            { id: 9, title: "Need for Speed Heat", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=500", video: "https://www.youtube.com/embed/9ewiJJe_nto" },
+            { id: 10, title: "Gran Turismo 7", platform: "ps4", size: "~110 GB", arabic: true, cover: "https://images.unsplash.com/photo-1547394765-185e1e68f34e?w=500", video: "https://www.youtube.com/embed/1tBUsXlVPwU" },
+            { id: 11, title: "Elden Ring", platform: "ps4", size: "~45 GB", arabic: true, cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/E3Huy2cdih0" },
+            { id: 12, title: "Dark Souls Remastered", platform: "ps4", size: "~8 GB", arabic: true, cover: "https://images.unsplash.com/photo-1563089145-599997674d42?w=500", video: "https://www.youtube.com/embed/gS2G2N7N-S8" },
+            { id: 13, title: "Devil May Cry 4", platform: "ps4", size: "~12 GB", arabic: true, cover: "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?w=500", video: "https://www.youtube.com/embed/0CqWfHn5Z5E" },
+            { id: 14, title: "Sackboy: A Big Adventure", platform: "ps4", size: "~32 GB", arabic: true, cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/mU3nNT4nLfY" },
+            { id: 15, title: "Call of Duty: Modern Warfare 2", platform: "ps4", size: "~65 GB", arabic: true, cover: "https://images.unsplash.com/photo-1560253023-3ec5d502959f?w=500", video: "https://www.youtube.com/embed/r72GP1PIZa0" },
+            { id: 16, title: "Dark Souls II: Scholar of the First Sin", platform: "ps4", size: "~13 GB", arabic: true, cover: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=500", video: "https://www.youtube.com/embed/v0G08xZ_2xI" },
+            { id: 17, title: "Gran Turismo Sport", platform: "ps4", size: "~45 GB", arabic: false, cover: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500", video: "https://www.youtube.com/embed/04a43N91T28" },
+            { id: 18, title: "Sonic Mania", platform: "ps4", size: "~400 MB", arabic: false, cover: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500", video: "https://www.youtube.com/embed/KaqC5FnvAEc" },
+            { id: 19, title: "Crash Bandicoot N. Sane Trilogy", platform: "ps4", size: "~23 GB", arabic: false, cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/F7G91RjVmvk" },
+            { id: 20, title: "CTR: Crash Team Racing Nitro-Fueled", platform: "ps4", size: "~18 GB", arabic: true, cover: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=500", video: "https://www.youtube.com/embed/5a2xWnFf2aU" },
+            { id: 21, title: "Rumble Racing", platform: "ps4", size: "~1 GB", arabic: false, cover: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=500", video: "https://www.youtube.com/embed/L0-bZg4J2oI" },
+            { id: 22, title: "PES 2011", platform: "ps4", size: "~7 GB", arabic: true, cover: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500", video: "https://www.youtube.com/embed/fH9E8dE0E9I" },
+            { id: 23, title: "Lies of P", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://images.unsplash.com/photo-1563089145-599997674d42?w=500", video: "https://www.youtube.com/embed/kbTfQ93_nJ4" },
+            { id: 24, title: "PES 6", platform: "ps4", size: "~4 GB", arabic: true, cover: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500", video: "https://www.youtube.com/embed/3U0Xf_N97G4" },
+            { id: 25, title: "Need for Speed: Most Wanted", platform: "ps4", size: "~6 GB", arabic: false, cover: "https://images.unsplash.com/photo-1547394765-185e1e68f34e?w=500", video: "https://www.youtube.com/embed/0t-29kZg9M0" },
+            { id: 26, title: "Assassin's Creed Valhalla", platform: "ps4", size: "~50 GB", arabic: true, cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500", video: "https://www.youtube.com/embed/ssrNcwxALS4" },
+            { id: 27, title: "Assassin's Creed Origins", platform: "ps4", size: "~42 GB", arabic: true, cover: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500", video: "https://www.youtube.com/embed/cK4iAjZaooU" },
+            { id: 28, title: "Outlast Trinity", platform: "ps4", size: "~25 GB", arabic: true, cover: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=500", video: "https://www.youtube.com/embed/uKA-IA4vibM" },
+            { id: 29, title: "Biomutant", platform: "ps4", size: "~15 GB", arabic: true, cover: "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?w=500", video: "https://www.youtube.com/embed/Q66fKjR_E94" },
+            { id: 30, title: "FIFA 22", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500", video: "https://www.youtube.com/embed/vLj-27T-SEQ" },
+            { id: 31, title: "Assassin's Creed Rogue Remastered", platform: "ps4", size: "~12 GB", arabic: true, cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500", video: "https://www.youtube.com/embed/wE2wO5sRk10" },
+            { id: 32, title: "Battlefield V", platform: "ps4", size: "~80 GB", arabic: true, cover: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500", video: "https://www.youtube.com/embed/a7ZpQisiyp4" },
+            { id: 33, title: "Spider-Man: Miles Morales", platform: "ps5", size: "~40 GB", arabic: true, cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/gHzUqOpkVMg" }
         ];
 
         let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
         let activeTab = 'ps4';
+        let currentPage = 1;
+        const itemsPerPage = 8;
 
         function switchTab(tab) {
             activeTab = tab;
+            currentPage = 1;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             renderGames();
@@ -167,32 +195,60 @@
 
         function renderGames() {
             const grid = document.getElementById('gamesGrid');
+            const paginationContainer = document.getElementById('paginationContainer');
             const search = document.getElementById('searchInput').value.toLowerCase();
+            
             grid.innerHTML = '';
+            paginationContainer.innerHTML = '';
+
             const filtered = gamesList.filter(g => g.platform === activeTab && g.title.toLowerCase().includes(search));
             
             if(filtered.length === 0) {
-                grid.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:30px; color:var(--text-muted);">لا توجد ألعاب مطابقة للبحث حالياً.</div>`;
+                grid.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:30px; color:var(--text-muted);">لا توجد ألعاب مطابقة حالياً.</div>`;
                 return;
             }
 
-            filtered.forEach(game => {
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            if(currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const paginatedItems = filtered.slice(start, start + itemsPerPage);
+
+            paginatedItems.forEach(game => {
                 const waUrl = `https://wa.me/9647858858844?text=${encodeURIComponent(`السلام عليكم، أريد طلب لعبة ${game.title}`)}`;
                 grid.innerHTML += `
                     <div class="game-card">
-                        <div class="game-cover-container">
+                        <div class="game-cover-container" onclick="openModal(${game.id})">
                             <img src="${game.cover}" class="game-cover" alt="${game.title}" loading="lazy">
                             <span class="platform-tag">${game.platform.toUpperCase()}</span>
                             ${game.arabic ? '<span class="arabic-tag"><i class="fa-solid fa-check"></i> تدعم العربية</span>' : ''}
                         </div>
                         <div class="game-info">
-                            <div class="game-title">${game.title}</div>
+                            <div class="game-title" onclick="openModal(${game.id})">${game.title}</div>
                             <div class="game-meta"><i class="fa-solid fa-hard-drive"></i> ${game.size}</div>
                             <a href="${waUrl}" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> طلب عبر الواتساب</a>
                             <button class="detail-trigger" onclick="openModal(${game.id})"><i class="fa-solid fa-circle-info"></i> عرض التفاصيل بالفيديو</button>
                         </div>
                     </div>`;
             });
+
+            // Render Pagination Buttons if more than 1 page
+            if(totalPages > 1) {
+                let paginationHTML = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-right"></i> السابقة</button>`;
+                
+                for(let i = 1; i <= totalPages; i++) {
+                    paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+                
+                paginationHTML += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">التالية <i class="fa-solid fa-chevron-left"></i></button>`;
+                paginationContainer.innerHTML = paginationHTML;
+            }
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderGames();
+            window.scrollTo({ top: 300, behavior: 'smooth' });
         }
 
         function openModal(id) {
@@ -219,7 +275,7 @@
 
         function addGame() {
             const title = document.getElementById('newTitle').value;
-            const platform = document.getElementById('newPlatform').value;
+            const platform = document.getElementById('newPlatform.value') || document.getElementById('newPlatform').value;
             const size = document.getElementById('newSize').value || "~35 GB";
             const cover = document.getElementById('newCover').value || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
             const arabic = document.getElementById('newArabic').checked;
@@ -227,4 +283,15 @@
             if(!title) { alert("أدخل اسم اللعبة!"); return; }
             gamesList.unshift({ id: Date.now(), title, platform, size, arabic, cover, video: "https://www.youtube.com/embed/aOGgx3k9bQQ" });
             localStorage.setItem('madina_games', JSON.stringify(gamesList));
+            document.getElementById('newTitle').value = '';
+            toggleAdmin();
+            currentPage = 1;
+            renderGames();
+            alert("تمت إضافة اللعبة بنجاح!");
+        }
+
+        renderGames();
+    </script>
+</body>
+</html>
 
