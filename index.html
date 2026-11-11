@@ -181,15 +181,15 @@
         let currentPage = 1;
         const itemsPerPage = 8;
         
-        const configKey = "AhmedAli1200";
+        const configKey = "AFC24";
 
         function toggleAdmin() {
             const box = document.getElementById('adminPanelBox');
             if (box.style.display !== 'block') {
-                const enteredPass = prompt("أدخل رمز المرور السري لوحة التحكم:");
+                const enteredPass = prompt("مرحباً بك:");
                 if (!enteredPass) return;
                 if (enteredPass !== configKey) {
-                    alert("الرمز غير صحيح!");
+                    alert("خطأ!");
                     return;
                 }
             }
