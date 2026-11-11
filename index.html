@@ -65,8 +65,15 @@
         .modal-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); }
         .gallery-title { font-size: 0.9rem; font-weight: 700; margin: 12px 0 8px; color: var(--accent-cyan); }
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; border: 1px solid var(--card-border); }
-        
+        .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; border: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
+        .gallery-img:hover { opacity: 0.8; }
+
+        /* Lightbox for fullscreen image */
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: rgba(255,255,255,0.1); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
         footer { max-width: 600px; margin: 30px auto 0; padding: 20px 16px; text-align: center; border-top: 1px solid var(--card-border); }
         footer a { color: var(--accent-cyan); text-decoration: none; font-weight: 700; }
         
@@ -83,7 +90,7 @@
         <div class="header-container">
             <div class="brand-info">
                 <div class="logo-box" id="headerLogo">
-                    <i class="fa-solid fa-gamepad"></i>
+                    <img src="logo.png" class="logo-img" alt="logo" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-gamepad\'></i>'">
                 </div>
                 <div class="brand-text">
                     <h1>متجر المدينة</h1>
@@ -117,26 +124,21 @@
         <div class="admin-panel" id="adminPanelBox">
             <h3 style="font-size:0.9rem; color:var(--accent-cyan); margin-bottom:12px;"><i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر (محمية)</h3>
             
-            <div style="border-bottom: 1px dashed var(--card-border); padding-bottom: 10px; margin-bottom: 12px;">
-                <div class="form-group"><label>رابط شعار المتجر (Logo URL)</label><input type="text" id="storeLogoUrl" class="form-control" placeholder="رابط صورة اللوغو..."></div>
-                <button onclick="saveLogo()" class="whatsapp-btn" style="background:var(--card-border);"><i class="fa-solid fa-image"></i> تحديث شعار المتجر</button>
-            </div>
-
-            <h3 style="font-size:0.85rem; color:var(--text-main); margin-bottom:8px;"><i class="fa-solid fa-plus"></i> إضافة لعبة جديدة</h3>
-            <div class="form-group"><label>اسم اللعبة</label><input type="text" id="newTitle" class="form-control" placeholder="اسم اللعبة"></div>
+            <div class="form-group"><label>إضافة لعبة جديدة</label></div>
+            <div class="form-group"><input type="text" id="newTitle" class="form-control" placeholder="اسم اللعبة"></div>
             <div style="display:flex; gap:8px;">
-                <div class="form-group" style="flex:1;"><label>المنصة</label><select id="newPlatform" class="form-control"><option value="ps4">PS4</option><option value="ps5">PS5</option></select></div>
-                <div class="form-group" style="flex:1;"><label>الحجم</label><input type="text" id="newSize" class="form-control" value="~30 GB"></div>
+                <div class="form-group" style="flex:1;"><select id="newPlatform" class="form-control"><option value="ps4">PS4</option><option value="ps5">PS5</option></select></div>
+                <div class="form-group" style="flex:1;"><input type="text" id="newSize" class="form-control" value="~30 GB"></div>
             </div>
-            <div class="form-group"><label>رابط غلاف اللعبة (Cover Image)</label><input type="text" id="newCover" class="form-control" placeholder="رابط الغلاف..."></div>
-            <div class="form-group"><label>رابط التريلر (YouTube Video)</label><input type="text" id="newVideo" class="form-control" placeholder="رابط يوتيوب..."></div>
-            <div class="form-group"><label>رابط الصورة الداخلية الأولى</label><input type="text" id="newImg1" class="form-control" placeholder="رابط الصورة 1..."></div>
-            <div class="form-group"><label>رابط الصورة الداخلية الثانية</label><input type="text" id="newImg2" class="form-control" placeholder="رابط الصورة 2..."></div>
-            <div class="form-group"><label>وصف اللعبة</label><textarea id="newDesc" class="form-control" rows="2" placeholder="اكتب وصف اللعبة هنا..."></textarea></div>
+            <div class="form-group"><input type="text" id="newCover" class="form-control" placeholder="رابط غلاف اللعبة..."></div>
+            <div class="form-group"><input type="text" id="newVideo" class="form-control" placeholder="رابط يوتيوب التريلر..."></div>
+            <div class="form-group"><input type="text" id="newImg1" class="form-control" placeholder="رابط الصورة الداخلية الأولى..."></div>
+            <div class="form-group"><input type="text" id="newImg2" class="form-control" placeholder="رابط الصورة الداخلية الثانية..."></div>
+            <div class="form-group"><textarea id="newDesc" class="form-control" rows="2" placeholder="وصف اللعبة..."></textarea></div>
             <div class="form-group"><label><input type="checkbox" id="newArabic" checked> تدعم اللغة العربية</label></div>
             <button onclick="addGame()" class="whatsapp-btn" style="background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-save"></i> حفظ ونشر اللعبة</button>
 
-            <h3 style="font-size:0.85rem; color:var(--danger-color); margin: 15px 0 8px;"><i class="fa-solid fa-trash"></i> إدارة وحذف الألعاب الحالية</h3>
+            <h3 style="font-size:0.85rem; color:var(--danger-color); margin: 15px 0 8px;"><i class="fa-solid fa-trash"></i> إدارة وحذف الألعاب</h3>
             <div id="adminGamesList" style="max-height: 150px; overflow-y: auto;"></div>
         </div>
     </div>
@@ -158,47 +160,36 @@
                 <span id="modalSize"></span> | <span id="modalPlatform"></span>
             </div>
             <div class="modal-desc" id="modalDesc"></div>
-            <div class="gallery-title"><i class="fa-solid fa-images"></i> صور من داخل اللعبة</div>
+            <div class="gallery-title"><i class="fa-solid fa-images"></i> صور من داخل اللعبة (اضغط على الصورة لتكبيرها)</div>
             <div class="gallery-grid" id="modalGallery"></div>
             <a id="modalWaBtn" href="#" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> اطلب الآن عبر الواتساب</a>
         </div>
     </div>
 
+    <!-- Lightbox Modal for Fullscreen Image -->
+    <div class="lightbox" id="lightboxModal" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightboxImg" src="" alt="Fullscreen Image">
+    </div>
+
     <script>
         const defaultGames = [
-            { id: 1, title: "Cuphead", platform: "ps4", size: "~10 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202206/2815/9bH4v4cM2x9L1Z8s3T7vW5f6.png", video: "https://www.youtube.com/embed/NN-9SqSphtI", desc: "لعبة أكشن مغامرات كلاسيكية ممتعة ومميزة بطابع رسومات الكرتون من ثلاثينيات القرن الماضي.", img1: "", img2: "" },
-            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "خض تجربة باسم، لص الشوارع الماكر الذي يبحث عن الأجوبة والعدالة في شوارع بغداد التراثية الفخمة.", img1: "", img2: "" }
+            { id: 1, title: "Cuphead", platform: "ps4", size: "~10 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202206/2815/9bH4v4cM2x9L1Z8s3T7vW5f6.png", video: "https://www.youtube.com/embed/NN-9SqSphtI", desc: "لعبة أكشن مغامرات كلاسيكية ممتعة ومميزة بطابع رسومات الكرتون.", img1: "", img2: "" },
+            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "خض تجربة باسم في شوارع بغداد التراثية الفخمة.", img1: "", img2: "" }
         ];
 
         let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
         let activeTab = 'ps4';
         let currentPage = 1;
         const itemsPerPage = 8;
-        const adminPass = "Ah98Ab94"; // رمز المرور السري الخاص بك
-
-        function updateLogoUI() {
-            const savedLogo = localStorage.getItem('madina_logo');
-            const logoBox = document.getElementById('headerLogo');
-            if (savedLogo) {
-                logoBox.innerHTML = `<img src="${savedLogo}" class="logo-img" alt="logo">`;
-            }
-        }
-
-        function saveLogo() {
-            const logoUrl = document.getElementById('storeLogoUrl').value.trim();
-            if (logoUrl) {
-                localStorage.setItem('madina_logo', logoUrl);
-                updateLogoUI();
-                alert("تم تحديث لوغو المتجر بنجاح!");
-            }
-        }
+        const adminPass = "1234";
 
         function toggleAdmin() {
             const box = document.getElementById('adminPanelBox');
             if (box.style.display !== 'block') {
-                const enteredPass = prompt("أدخل رمز المرور السري للوحة التحكم:");
+                const enteredPass = prompt("أدخل رمز المرور السري لوحة التحكم:");
                 if (enteredPass !== adminPass) {
-                    alert("الرمز غير صحيح! هذه اللوحة مخصصة لمدير المتجر فقط.");
+                    alert("الرمز غير صحيح!");
                     return;
                 }
             }
@@ -321,7 +312,9 @@
             const galleryContainer = document.getElementById('modalGallery');
             const img1 = game.img1 ? game.img1 : game.cover;
             const img2 = game.img2 ? game.img2 : game.cover;
-            galleryContainer.innerHTML = `<img src="${img1}" class="gallery-img" onerror="this.src='${game.cover}'"><img src="${img2}" class="gallery-img" onerror="this.src='${game.cover}'">`;
+            galleryContainer.innerHTML = `
+                <img src="${img1}" class="gallery-img" onclick="openLightbox('${img1}')" onerror="this.style.display='none'">
+                <img src="${img2}" class="gallery-img" onclick="openLightbox('${img2}')" onerror="this.style.display='none'">`;
 
             document.getElementById('gameModal').classList.add('active');
         }
@@ -329,6 +322,15 @@
         function closeModal() {
             document.getElementById('gameModal').classList.remove('active');
             document.getElementById('modalVideo').src = "";
+        }
+
+        function openLightbox(imgSrc) {
+            document.getElementById('lightboxImg').src = imgSrc;
+            document.getElementById('lightboxModal').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.remove('active');
         }
 
         function addGame() {
@@ -361,7 +363,6 @@
             alert("تمت إضافة اللعبة ونشرها بنجاح!");
         }
 
-        updateLogoUI();
         renderGames();
     </script>
 </body>
