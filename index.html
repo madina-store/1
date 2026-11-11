@@ -188,7 +188,9 @@
             if (box.style.display !== 'block') {
                 const enteredPass = prompt("مرحباً بك:");
                 if (!enteredPass) return;
-                if (enteredPass !== configKey) {
+                
+                // تنظيف أي مسافات فارغة قد تنتج عن النسخ واللصق من الهاتف
+                if (enteredPass.trim() !== configKey) {
                     alert("خطأ!");
                     return;
                 }
