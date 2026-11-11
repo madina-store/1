@@ -181,15 +181,15 @@
         let currentPage = 1;
         const itemsPerPage = 8;
         
-        const configKey = "​M@dina_984$Secure#2026";
+        const configKey = "AhmedAli1200";
 
         function toggleAdmin() {
             const box = document.getElementById('adminPanelBox');
             if (box.style.display !== 'block') {
-                const enteredPass = prompt("​920:");
+                const enteredPass = prompt("أدخل رمز المرور السري لوحة التحكم:");
                 if (!enteredPass) return;
                 if (enteredPass !== configKey) {
-                    alert("r9l!");
+                    alert("الرمز غير صحيح!");
                     return;
                 }
             }
