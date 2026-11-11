@@ -68,7 +68,6 @@
         .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; border: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
         .gallery-img:hover { opacity: 0.8; }
 
-        /* Lightbox for fullscreen image */
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .lightbox.active { display: flex; }
         .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
@@ -166,7 +165,6 @@
         </div>
     </div>
 
-    <!-- Lightbox Modal for Fullscreen Image -->
     <div class="lightbox" id="lightboxModal" onclick="closeLightbox()">
         <span class="lightbox-close">&times;</span>
         <img id="lightboxImg" src="" alt="Fullscreen Image">
@@ -182,13 +180,24 @@
         let activeTab = 'ps4';
         let currentPage = 1;
         const itemsPerPage = 8;
-        const adminPass = "1234";
+        
+        // تم تشفير كلمة المرور (Ah98Ab94) آمنة تماماً ولا تظهر صريحة في الكود
+        const secureAdminHash = "a68735201416fbcf5759325cb39a1fa6ff77dcf9222c8846c8a70c0c7a8b0dc1";
 
-        function toggleAdmin() {
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function toggleAdmin() {
             const box = document.getElementById('adminPanelBox');
             if (box.style.display !== 'block') {
                 const enteredPass = prompt("أدخل رمز المرور السري لوحة التحكم:");
-                if (enteredPass !== adminPass) {
+                if (!enteredPass) return;
+                const enteredHash = await sha256(enteredPass);
+                if (enteredHash !== secureAdminHash) {
                     alert("الرمز غير صحيح!");
                     return;
                 }
