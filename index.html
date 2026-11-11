@@ -15,6 +15,7 @@
             --accent-blue: #4facfe;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --danger-color: #ef4444;
             --radius-lg: 16px;
             --radius-md: 10px;
         }
@@ -48,7 +49,8 @@
         .game-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; cursor: pointer; }
         .game-meta { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px; }
         .whatsapp-btn { width: 100%; background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; border: none; padding: 8px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; margin-bottom: 5px; }
-        .detail-trigger { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-muted); width: 100%; padding: 6px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; }
+        .detail-trigger { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-muted); width: 100%; padding: 6px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; margin-bottom: 5px; }
+        .delete-btn { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: var(--danger-color); width: 100%; padding: 6px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; }
         
         .pagination { max-width: 600px; margin: 20px auto; padding: 0 16px; display: flex; justify-content: center; align-items: center; gap: 10px; grid-column: span 2; }
         .page-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer; font-weight: 700; font-size: 0.85rem; }
@@ -108,14 +110,15 @@
     <div class="hero" id="adminSection">
         <div class="admin-panel" id="adminPanelBox">
             <h3 style="font-size:0.9rem; color:var(--accent-cyan); margin-bottom:10px;"><i class="fa-solid fa-plus"></i> إضافة لعبة جديدة</h3>
-            <div class="form-group"><label>اسم اللعبة</label><input type="text" id="newTitle" class="form-control" placeholder="اسم اللعبة"></div>
+            <div class="form-group"><label>اسم اللعبة</label><input type="text" id="newTitle" class="form-control" placeholder="اسم اللعبة بالإنجليزية أو العربية"></div>
             <div style="display:flex; gap:8px;">
                 <div class="form-group" style="flex:1;"><label>المنصة</label><select id="newPlatform" class="form-control"><option value="ps4">PS4</option><option value="ps5">PS5</option></select></div>
-                <div class="form-group" style="flex:1;"><label>الحجم</label><input type="text" id="newSize" class="form-control" value="~10 GB"></div>
+                <div class="form-group" style="flex:1;"><label>الحجم</label><input type="text" id="newSize" class="form-control" value="~25 GB"></div>
             </div>
-            <div class="form-group"><label>رابط غلاف اللعبة (Image URL)</label><input type="text" id="newCover" class="form-control" placeholder="رابط صورة مباشر..."></div>
+            <div class="form-group"><label>رابط غلاف اللعبة المباشر (Image URL)</label><input type="text" id="newCover" class="form-control" placeholder="الصق رابط الصورة هنا..."></div>
+            <div class="form-group"><label>رابط فيديو يوتيوب (Embed Video URL)</label><input type="text" id="newVideo" class="form-control" placeholder="مثال: https://www.youtube.com/embed/xxxx"></div>
             <div class="form-group"><label><input type="checkbox" id="newArabic" checked> تدعم اللغة العربية</label></div>
-            <button onclick="addGame()" class="whatsapp-btn" style="background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-save"></i> حفظ اللعبة</button>
+            <button onclick="addGame()" class="whatsapp-btn" style="background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-save"></i> حفظ ونشر اللعبة</button>
         </div>
     </div>
 
@@ -142,16 +145,10 @@
     </div>
 
     <script>
+        // الألعاب الأساسية النظيفة (فقط Cuphead و Assassin's Creed Mirage كمثال حقيقي)
         const defaultGames = [
             { id: 1, title: "Cuphead", platform: "ps4", size: "~10 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202206/2815/9bH4v4cM2x9L1Z8s3T7vW5f6.png", video: "https://www.youtube.com/embed/NN-9SqSphtI" },
-            { id: 2, title: "Uncharted: The Nathan Drake Collection", platform: "ps4", size: "~45 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/img/rnd/202010/2320/skW7vJp1yW038xK4X4zXpG2u.png", video: "https://www.youtube.com/embed/fSJuI833EC0" },
-            { id: 3, title: "Crash Bandicoot 4: It's About Time", platform: "ps4", size: "~30 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202007/0816/yU1W47M1sVqY6mQ5L3sF12Qf.png", video: "https://www.youtube.com/embed/aOGgx3k9bQQ" },
-            { id: 4, title: "Cyberpunk 2077", platform: "ps4", size: "~55 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202311/2911/a60e0a5ff79421f1589c3bc88365851486d3d4b684c3ea8a.png", video: "https://www.youtube.com/embed/8X2kIfS6fb8" },
-            { id: 5, title: "Grand Theft Auto: San Andreas", platform: "ps4", size: "~20 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202110/2020/eYy0mU8p3C3rS4N5Z1hW6q8L.png", video: "https://www.youtube.com/embed/u_CbHrU4n6g" },
-            { id: 6, title: "EA SPORTS FC 24", platform: "ps4", size: "~50 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202307/1117/a380ce5c6f62bc178cdd8d95155f9a2b5368a6fcf74092cb.png", video: "https://www.youtube.com/embed/XhP3Xh4Lvf8" },
-            { id: 7, title: "Assassin's Creed Valhalla", platform: "ps4", size: "~50 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202009/1511/T112C8m5sQ8v5C2y9N7w6b4t.png", video: "https://www.youtube.com/embed/ssrNcwxALS4" },
-            { id: 8, title: "Battlefield V", platform: "ps4", size: "~80 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202006/1520/b3e9qZ3w8xQ4p2m3vN6L9sT1.png", video: "https://www.youtube.com/embed/a7ZpQisiyp4" },
-            { id: 9, title: "Spider-Man: Miles Morales", platform: "ps5", size: "~40 GB", arabic: true, cover: "https://image.api.playstation.com/vulcan/ap/rnd/202008/1020/Tj4Hn9K2zXpG2uSkW7vJp1yW.png", video: "https://www.youtube.com/embed/gHzUqOpkVMg" }
+            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", size: "~35 GB", arabic: true, cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M" }
         ];
 
         let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
@@ -178,7 +175,7 @@
             const filtered = gamesList.filter(g => g.platform === activeTab && g.title.toLowerCase().includes(search));
             
             if(filtered.length === 0) {
-                grid.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:30px; color:var(--text-muted);">لا توجد ألعاب مطابقة حالياً.</div>`;
+                grid.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:30px; color:var(--text-muted);">لا توجد ألعاب مطابقة حالياً. أضف ألعابك عبر زر "إدارة" في الأعلى.</div>`;
                 return;
             }
 
@@ -201,7 +198,8 @@
                             <div class="game-title" onclick="openModal(${game.id})">${game.title}</div>
                             <div class="game-meta"><i class="fa-solid fa-hard-drive"></i> ${game.size}</div>
                             <a href="${waUrl}" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> طلب عبر الواتساب</a>
-                            <button class="detail-trigger" onclick="openModal(${game.id})"><i class="fa-solid fa-circle-info"></i> عرض التفاصيل بالفيديو</button>
+                            <button class="detail-trigger" onclick="openModal(${game.id})"><i class="fa-solid fa-circle-info"></i> التفاصيل والفيديو</button>
+                            <button class="delete-btn" onclick="deleteGame(${game.id})"><i class="fa-solid fa-trash"></i> حذف اللعبة</button>
                         </div>
                     </div>`;
             });
@@ -224,13 +222,21 @@
             window.scrollTo({ top: 300, behavior: 'smooth' });
         }
 
+        function deleteGame(id) {
+            if(confirm("هل أنت متأكد من حذف هذه اللعبة من متجرك؟")) {
+                gamesList = gamesList.filter(g => g.id !== id);
+                localStorage.setItem('madina_games', JSON.stringify(gamesList));
+                renderGames();
+            }
+        }
+
         function openModal(id) {
             const game = gamesList.find(g => g.id === id);
             if(!game) return;
             document.getElementById('modalTitle').innerText = game.title;
             document.getElementById('modalPlatform').innerText = game.platform.toUpperCase();
             document.getElementById('modalSize').innerText = game.size;
-            document.getElementById('modalVideo').src = game.video;
+            document.getElementById('modalVideo').src = game.video || "https://www.youtube.com/embed/aOGgx3k9bQQ";
             document.getElementById('modalWaBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(`السلام عليكم، أريد طلب لعبة ${game.title}`)}`;
             document.getElementById('modalGallery').innerHTML = `<img src="${game.cover}" class="gallery-img"><img src="${game.cover}" class="gallery-img">`;
             document.getElementById('gameModal').classList.add('active');
@@ -249,18 +255,24 @@
         function addGame() {
             const title = document.getElementById('newTitle').value;
             const platform = document.getElementById('newPlatform').value;
-            const size = document.getElementById('newSize').value || "~10 GB";
+            const size = document.getElementById('newSize').value || "~25 GB";
             const cover = document.getElementById('newCover').value || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
+            const videoInput = document.getElementById('newVideo').value.trim();
+            const video = videoInput ? videoInput : "https://www.youtube.com/embed/aOGgx3k9bQQ";
             const arabic = document.getElementById('newArabic').checked;
 
             if(!title) { alert("أدخل اسم اللعبة!"); return; }
-            gamesList.unshift({ id: Date.now(), title, platform, size, arabic, cover, video: "https://www.youtube.com/embed/aOGgx3k9bQQ" });
+            
+            gamesList.unshift({ id: Date.now(), title, platform, size, arabic, cover, video });
             localStorage.setItem('madina_games', JSON.stringify(gamesList));
+            
             document.getElementById('newTitle').value = '';
+            document.getElementById('newCover').value = '';
+            document.getElementById('newVideo').value = '';
             toggleAdmin();
             currentPage = 1;
             renderGames();
-            alert("تمت إضافة اللعبة بنجاح!");
+            alert("تمت إضافة اللعبة ونشرها بنجاح!");
         }
 
         renderGames();
