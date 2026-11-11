@@ -181,22 +181,14 @@
         let currentPage = 1;
         const itemsPerPage = 8;
         
-        const secureAdminHash = "a68735201416fbcf5759325cb39a1fa6ff77dcf9222c8846c8a70c0c7a8b0dc1";
+        const configKey = "AhmedAli1200";
 
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function toggleAdmin() {
+        function toggleAdmin() {
             const box = document.getElementById('adminPanelBox');
             if (box.style.display !== 'block') {
                 const enteredPass = prompt("أدخل رمز المرور السري لوحة التحكم:");
                 if (!enteredPass) return;
-                const enteredHash = await sha256(enteredPass);
-                if (enteredHash !== secureAdminHash) {
+                if (enteredPass !== configKey) {
                     alert("الرمز غير صحيح!");
                     return;
                 }
@@ -375,4 +367,3 @@
     </script>
 </body>
 </html>
-
