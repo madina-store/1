@@ -52,7 +52,6 @@
         .hero-btn-trailer { flex: 1; background: var(--accent-orange); color: #000; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 900; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .hero-btn-details { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         
-        /* مصغرات السلايدر والشريط الزمني بالأسفل */
         .hero-thumbs-row { display: flex; gap: 8px; overflow-x: auto; padding-top: 5px; }
         .hero-thumb { width: 45px; height: 45px; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; opacity: 0.5; transition: 0.3s; flex-shrink: 0; }
         .hero-thumb.active { border-color: var(--accent-orange); opacity: 1; transform: scale(1.05); }
@@ -114,13 +113,12 @@
         .map-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 242, 254, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 11px 20px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.9rem; text-decoration: none; width: 100%; margin-top: 12px; transition: 0.2s; }
         .map-btn:hover { background: var(--accent-cyan); color: #000; }
 
-        /* نافذة تفاصيل اللعبة بالتصميم الاحترافي المطلوب */
+        /* نافذة تفاصيل اللعبة */
         .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(10px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
         .modal.active { display: flex; }
         .modal-content { background: var(--bg-color); border-top: 1px solid var(--card-border); width: 100%; max-width: 600px; max-height: 92vh; border-radius: 24px 24px 0 0; overflow-y: auto; position: relative; padding-bottom: 30px; }
         .modal-close { position: absolute; left: 15px; top: 15px; background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 1.1rem; }
         
-        /* الفيديو في الأعلى تماماً */
         .modal-video-container { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; }
         .modal-video-container iframe { width: 100%; height: 100%; border: none; }
 
@@ -130,19 +128,26 @@
         .modal-badge-item { background: var(--card-bg); border: 1px solid var(--card-border); padding: 5px 12px; border-radius: 8px; color: var(--text-muted); font-weight: 700; }
         
         .modal-section-heading { font-size: 0.95rem; font-weight: 900; color: #fff; margin: 20px 0 10px; display: flex; align-items: center; gap: 6px; }
-        
-        /* الوصف بخط بارز وواضح وأكبر من المعتاد */
         .modal-desc { font-size: 1.02rem; color: #cbd5e1; line-height: 1.8; font-weight: 500; background: rgba(255,255,255,0.02); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--card-border); margin-bottom: 20px; }
         
-        /* الصور تحت الوصف عمودية وبحجم كبير وواضح */
         .gallery-stack { display: flex; flex-direction: column; gap: 12px; }
         .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
         .gallery-img:hover { opacity: 0.9; }
 
-        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        /* مكبر الصور التفاعلي بالأسهم (Lightbox Slider) */
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
-        .lightbox-close { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: rgba(255,255,255,0.1); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .lightbox-img-wrapper { position: relative; width: 100%; max-width: 900px; display: flex; align-items: center; justify-content: center; }
+        .lightbox img { max-width: 100%; max-height: 80vh; border-radius: 10px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        
+        .lightbox-close { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 24px; cursor: pointer; background: rgba(255,255,255,0.15); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2010; border: none; }
+        
+        .lightbox-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.25); color: #fff; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 2010; transition: 0.2s; }
+        .lightbox-nav-btn:hover { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
+        .lightbox-prev { right: 10px; } /* السهم الأيمن للصورة السابقة في RTL */
+        .lightbox-next { left: 10px; }  /* السهم الأيسر للصورة التالية في RTL */
+        
+        .lightbox-counter { margin-top: 15px; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; background: rgba(255,255,255,0.08); padding: 5px 15px; border-radius: 20px; }
 
         .admin-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 15px; margin: 15px auto; max-width: 600px; display: none; }
         .form-group { margin-bottom: 10px; }
@@ -174,9 +179,7 @@
     </div>
 
     <!-- قسم السلايدر البانر العلوي (أُضيف حديثاً) -->
-    <div class="hero-slider-container" id="heroSliderContainer">
-        <!-- يتم تعبئته تلقائياً بأحدث الألعاب -->
-    </div>
+    <div class="hero-slider-container" id="heroSliderContainer"></div>
 
     <!-- الأقسام والفلترة مع العدادات -->
     <div class="filter-section">
@@ -204,8 +207,13 @@
         <div class="form-group"><input type="text" id="newSize" class="form-control" placeholder="الحجم (مثال: 35 أو 35 GB)"></div>
         <div class="form-group"><input type="text" id="newCover" class="form-control" placeholder="رابط غلاف اللعبة..."></div>
         <div class="form-group"><input type="text" id="newVideo" class="form-control" placeholder="رابط يوتيوب التريلر..."></div>
-        <div class="form-group"><input type="text" id="newImg1" class="form-control" placeholder="رابط الصورة الداخلية الأولى..."></div>
-        <div class="form-group"><input type="text" id="newImg2" class="form-control" placeholder="رابط الصورة الداخلية الثانية..."></div>
+        
+        <!-- مربع واحد لإضافة حتى 4 لقطات شاشة -->
+        <div class="form-group">
+            <label>روابط لقطات الشاشة (حد أقصى 4 صور - ضع كل رابط في سطر):</label>
+            <textarea id="newScreenshots" class="form-control" rows="4" placeholder="https://link1.jpg&#10;https://link2.jpg&#10;https://link3.jpg&#10;https://link4.jpg"></textarea>
+        </div>
+
         <div class="form-group"><textarea id="newDesc" class="form-control" rows="2" placeholder="وصف اللعبة..."></textarea></div>
         
         <div class="form-group">
@@ -263,12 +271,11 @@
         <div style="font-size:0.7rem; color:var(--text-muted); margin-top:15px;">&copy; متجر المدينة - جميع الحقوق محفوظة</div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة بالتصميم الاحترافي -->
+    <!-- نافذة تفاصيل اللعبة -->
     <div class="modal" id="gameModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             
-            <!-- الفيديو في الأعلى تماماً -->
             <div class="modal-video-container">
                 <iframe id="modalVideo" src="" allowfullscreen></iframe>
             </div>
@@ -284,23 +291,36 @@
                 <div class="modal-section-heading"><i class="fa-solid fa-circle-info" style="color: var(--accent-cyan);"></i> عن اللعبة</div>
                 <div class="modal-desc" id="modalDesc"></div>
 
-                <div class="modal-section-heading"><i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة</div>
+                <div class="modal-section-heading" id="screenshotsHeading"><i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (اضغط للتكبير والتقليب)</div>
                 <div class="gallery-stack" id="modalGallery"></div>
             </div>
         </div>
     </div>
 
-    <!-- مكبر الصور (Lightbox) -->
-    <div class="lightbox" id="lightboxModal" onclick="closeLightbox()">
-        <span class="lightbox-close">&times;</span>
-        <img id="lightboxImg" src="" alt="Fullscreen">
+    <!-- مكبر الصور التفاعلي بالأسهم للتنقل السلس -->
+    <div class="lightbox" id="lightboxModal" onclick="closeLightboxOnBg(event)">
+        <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+        
+        <div class="lightbox-img-wrapper">
+            <button class="lightbox-nav-btn lightbox-prev" onclick="changeLightboxSlide(-1, event)" title="السابق">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            
+            <img id="lightboxImg" src="" alt="Fullscreen">
+            
+            <button class="lightbox-nav-btn lightbox-next" onclick="changeLightboxSlide(1, event)" title="التالي">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="lightbox-counter" id="lightboxCounter">1 / 1</div>
     </div>
 
     <script>
         const defaultGames = [
-            { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", arabicStatus: "تدعم اللغة العربية (دبلجة)", cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية لمواجهة المعارك المصيرية.", img1: "", img2: "" },
-            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", arabicStatus: "تدعم اللغة العربية (ترجمة)", cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة واستكشف أسرار القتلة.", img1: "", img2: "" },
-            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك لتصبح ملك الأسرار.", img1: "", img2: "" }
+            { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", arabicStatus: "تدعم اللغة العربية (دبلجة)", cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية لمواجهة المعارك المصيرية.", screenshots: ["https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800", "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800"] },
+            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", arabicStatus: "تدعم اللغة العربية (ترجمة)", cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة واستكشف أسرار القتلة.", screenshots: ["https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg"] },
+            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك لتصبح ملك الأسرار.", screenshots: ["https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800"] }
         ];
 
         let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
@@ -311,7 +331,10 @@
 
         const categoriesList = ["الكل", "مغامرات", "حركة", "تصويب", "عالم مفتوح", "تقمص الأدوار", "رعب", "تسلل", "قتال"];
 
-        // كود سلايدر أُضيف حديثاً التفاعلي
+        // متغيرات التنقل بين الصور داخل المكبر (Lightbox)
+        let currentGalleryImages = [];
+        let currentLightboxIndex = 0;
+
         let currentHeroIndex = 0;
         let heroTimer = null;
 
@@ -319,7 +342,6 @@
             const container = document.getElementById('heroSliderContainer');
             if (!container || gamesList.length === 0) return;
 
-            // نأخذ أحدث 4 ألعاب مضافة
             const latestGames = gamesList.slice(0, 4);
             
             function renderHero(index) {
@@ -581,11 +603,26 @@
             document.getElementById('modalVideo').src = formatYouTubeUrl(game.video);
             document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر لهذه اللعبة حالياً.";
 
-            const img1 = game.img1 || game.cover;
-            const img2 = game.img2 || game.cover;
-            document.getElementById('modalGallery').innerHTML = `
-                <img src="${img1}" class="gallery-img" onclick="openLightbox('${img1}')" onerror="this.style.display='none'">
-                <img src="${img2}" class="gallery-img" onclick="openLightbox('${img2}')" onerror="this.style.display='none'">`;
+            // جمع مصفوفة صور الشاشة للعبة (دعم الصيغة الجديدة والقديمة)
+            let imgs = [];
+            if (game.screenshots && Array.isArray(game.screenshots) && game.screenshots.length > 0) {
+                imgs = game.screenshots.filter(url => url && url.trim() !== '');
+            } else {
+                if (game.img1) imgs.push(game.img1);
+                if (game.img2) imgs.push(game.img2);
+                if (imgs.length === 0) imgs.push(game.cover);
+            }
+            
+            currentGalleryImages = imgs;
+            const galleryContainer = document.getElementById('modalGallery');
+            galleryContainer.innerHTML = '';
+
+            document.getElementById('screenshotsHeading').innerHTML = `<i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (${imgs.length}) - اضغط للتقليب`;
+
+            imgs.forEach((src, index) => {
+                galleryContainer.innerHTML += `
+                    <img src="${src}" class="gallery-img" onclick="openLightbox(${index})" onerror="this.style.display='none'">`;
+            });
 
             document.getElementById('gameModal').classList.add('active');
         }
@@ -595,13 +632,44 @@
             document.getElementById('modalVideo').src = "";
         }
 
-        function openLightbox(src) {
-            document.getElementById('lightboxImg').src = src;
+        // وظائف المكبر التفاعلي بالأسهم
+        function openLightbox(index) {
+            if (!currentGalleryImages || currentGalleryImages.length === 0) return;
+            currentLightboxIndex = index;
+            updateLightboxDisplay();
             document.getElementById('lightboxModal').classList.add('active');
+        }
+
+        function updateLightboxDisplay() {
+            const imgEl = document.getElementById('lightboxImg');
+            const counterEl = document.getElementById('lightboxCounter');
+            const navBtns = document.querySelectorAll('.lightbox-nav-btn');
+
+            imgEl.src = currentGalleryImages[currentLightboxIndex];
+            counterEl.innerText = `${currentLightboxIndex + 1} / ${currentGalleryImages.length}`;
+
+            // إخفاء الأسهم إذا كانت هناك صورة واحدة فقط
+            navBtns.forEach(btn => {
+                btn.style.display = currentGalleryImages.length > 1 ? 'flex' : 'none';
+            });
+        }
+
+        function changeLightboxSlide(step, event) {
+            if (event) event.stopPropagation();
+            if (currentGalleryImages.length <= 1) return;
+
+            currentLightboxIndex = (currentLightboxIndex + step + currentGalleryImages.length) % currentGalleryImages.length;
+            updateLightboxDisplay();
         }
 
         function closeLightbox() {
             document.getElementById('lightboxModal').classList.remove('active');
+        }
+
+        function closeLightboxOnBg(event) {
+            if (event.target.id === 'lightboxModal' || event.target.classList.contains('lightbox-img-wrapper')) {
+                closeLightbox();
+            }
         }
 
         function addGame() {
@@ -612,22 +680,30 @@
             const size = rawSize.toUpperCase().includes('GB') ? rawSize : rawSize + ' GB';
             const cover = document.getElementById('newCover').value || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
             const video = formatYouTubeUrl(document.getElementById('newVideo').value);
-            const img1 = document.getElementById('newImg1').value;
-            const img2 = document.getElementById('newImg2').value;
             const desc = document.getElementById('newDesc').value;
             const arabicStatus = document.getElementById('newArabicStatus').value;
 
+            // استخراج حتى 4 صور من المربع الواحد (مفصولة بسطر جديد أو فاصلة)
+            const rawScreenshots = document.getElementById('newScreenshots').value.trim();
+            let screenshots = [];
+            if (rawScreenshots) {
+                screenshots = rawScreenshots
+                    .split(/[\n,]+/)
+                    .map(s => s.trim())
+                    .filter(s => s !== '')
+                    .slice(0, 4); // حد أقصى 4 صور
+            }
+
             if (!title) { alert("أدخل اسم اللعبة!"); return; }
 
-            gamesList.unshift({ id: Date.now(), title, platform, category, size, cover, video, img1, img2, desc, arabicStatus });
+            gamesList.unshift({ id: Date.now(), title, platform, category, size, cover, video, screenshots, desc, arabicStatus });
             localStorage.setItem('madina_games', JSON.stringify(gamesList));
             
             document.getElementById('newTitle').value = '';
             document.getElementById('newSize').value = '';
             document.getElementById('newCover').value = '';
             document.getElementById('newVideo').value = '';
-            document.getElementById('newImg1').value = '';
-            document.getElementById('newImg2').value = '';
+            document.getElementById('newScreenshots').value = '';
             document.getElementById('newDesc').value = '';
 
             renderGames();
