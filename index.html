@@ -63,9 +63,9 @@
         .game-info { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; cursor: pointer; }
         .game-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; }
         
-        .game-meta-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted); margin-top: 6px; }
-        .game-size { font-weight: 900; color: var(--accent-cyan); font-size: 0.85rem; }
-        .arabic-support { font-size: 0.72rem; color: #10b981; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+        .game-meta-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
+        .game-size { font-weight: 900; color: var(--accent-cyan); font-size: 0.95rem; }
+        .arabic-support { font-size: 0.75rem; color: #10b981; font-weight: 700; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
 
         /* شريط السلة العائم السفلي */
         .cart-floating-bar { position: fixed; bottom: 15px; left: 16px; right: 16px; max-width: 568px; margin: 0 auto; background: #182238; border: 1px solid var(--accent-orange); border-radius: var(--radius-lg); padding: 12px 16px; display: none; align-items: center; justify-content: space-between; z-index: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.6); animation: slideUp 0.3s ease; }
@@ -164,7 +164,7 @@
             <div class="form-group" style="flex:1;"><select id="newPlatform" class="form-control"><option value="ps4">PS4</option><option value="ps5">PS5</option></select></div>
             <div class="form-group" style="flex:1;"><select id="newCategory" class="form-control"><option value="مغامرات">مغامرات</option><option value="حركة">حركة</option><option value="تصويب">تصويب</option><option value="عالم مفتوح">عالم مفتوح</option><option value="تقمص الأدوار">تقمص الأدوار</option><option value="رعب">رعب</option><option value="تسلل">تسلل</option><option value="قتال">قتال</option></select></div>
         </div>
-        <div class="form-group"><input type="text" id="newSize" class="form-control" placeholder="الحجم (مثال: 35 GB)"></div>
+        <div class="form-group"><input type="text" id="newSize" class="form-control" placeholder="الحجم (مثال: 35 أو 35 GB)"></div>
         <div class="form-group"><input type="text" id="newCover" class="form-control" placeholder="رابط غلاف اللعبة..."></div>
         <div class="form-group"><input type="text" id="newVideo" class="form-control" placeholder="رابط يوتيوب التريلر..."></div>
         <div class="form-group"><input type="text" id="newImg1" class="form-control" placeholder="رابط الصورة الداخلية الأولى..."></div>
@@ -315,7 +315,6 @@
             const container = document.getElementById('categoriesContainer');
             container.innerHTML = '';
 
-            // تصفية الألعاب حسب المنصة الحالية لحساب العدادات بدقة لكل قسم
             const platformFiltered = gamesList.filter(g => selectedPlatform === 'all' || g.platform === selectedPlatform);
 
             categoriesList.forEach(cat => {
@@ -360,7 +359,8 @@
             
             let totalGb = 0;
             cart.forEach(item => {
-                let num = parseFloat(item.size);
+                let sizeStr = item.size ? item.size.replace(/[^0-9.]/g, '') : "0";
+                let num = parseFloat(sizeStr);
                 if (!isNaN(num)) totalGb += num;
             });
 
@@ -410,9 +410,18 @@
 
             filtered.forEach(game => {
                 const isSelected = cart.some(item => item.id === game.id);
+                
+                // معالجة حالة دعم العربية لضمان ظهورها بشكل دقيق
                 let arabicHtml = '';
-                if (game.arabicStatus && game.arabicStatus !== 'لا تدعم') {
-                    arabicHtml = `<div class="arabic-support"><i class="fa-solid fa-check"></i> ${game.arabicStatus}</div>`;
+                let status = game.arabicStatus || (game.arabic ? 'تدعم اللغة العربية (ترجمة)' : '');
+                if (status && status !== 'لا تدعم' && status !== '') {
+                    arabicHtml = `<div class="arabic-support"><i class="fa-solid fa-check"></i> ${status}</div>`;
+                }
+
+                // معالجة عرض الحجم ليتضمن GB بوضوح
+                let gameSize = game.size || "30 GB";
+                if (!gameSize.toUpperCase().includes('GB')) {
+                    gameSize += ' GB';
                 }
 
                 grid.innerHTML += `
@@ -427,7 +436,7 @@
                         <div class="game-info" onclick="openModal(${game.id})">
                             <div class="game-title">${game.title}</div>
                             <div class="game-meta-bottom">
-                                <span class="game-size">${game.size}</span>
+                                <span class="game-size">${gameSize}</span>
                                 <span>${game.category}</span>
                             </div>
                             ${arabicHtml}
@@ -442,7 +451,7 @@
             if (!game) return;
             document.getElementById('modalTitle').innerText = game.title;
             document.getElementById('modalPlatform').innerText = game.platform.toUpperCase();
-            document.getElementById('modalSize').innerText = game.size;
+            document.getElementById('modalSize').innerText = (game.size && game.size.toUpperCase().includes('GB')) ? game.size : (game.size ? game.size + ' GB' : '30 GB');
             document.getElementById('modalCategory').innerText = game.category;
             document.getElementById('modalVideo').src = formatYouTubeUrl(game.video);
             document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر.";
@@ -474,7 +483,8 @@
             const title = document.getElementById('newTitle').value;
             const platform = document.getElementById('newPlatform').value;
             const category = document.getElementById('newCategory').value;
-            const size = document.getElementById('newSize').value || "30 GB";
+            let rawSize = document.getElementById('newSize').value.trim() || "30";
+            const size = rawSize.toUpperCase().includes('GB') ? rawSize : rawSize + ' GB';
             const cover = document.getElementById('newCover').value || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
             const video = formatYouTubeUrl(document.getElementById('newVideo').value);
             const img1 = document.getElementById('newImg1').value;
@@ -488,6 +498,7 @@
             localStorage.setItem('madina_games', JSON.stringify(gamesList));
             
             document.getElementById('newTitle').value = '';
+            document.getElementById('newSize').value = '';
             document.getElementById('newCover').value = '';
             document.getElementById('newVideo').value = '';
             document.getElementById('newImg1').value = '';
