@@ -37,7 +37,7 @@
         .search-box i { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
         .search-input { width: 100%; padding: 12px 40px 12px 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: #fff; font-size: 0.9rem; outline: none; }
 
-        /* الأقسام والمنصات */
+        /* الأقسام والفلترة */
         .filter-section { max-width: 600px; margin: 0 auto 15px; padding: 0 16px; }
         .platforms-container { display: flex; gap: 8px; margin-bottom: 10px; }
         .plat-btn { flex: 1; padding: 10px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: var(--text-muted); font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center; transition: 0.2s; }
@@ -55,7 +55,6 @@
         .game-cover { width: 100%; height: 100%; object-fit: cover; }
         
         .platform-tag { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, 0.75); color: var(--accent-cyan); font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.3); }
-        .arabic-tag { position: absolute; top: 8px; left: 8px; background: rgba(245, 158, 11, 0.9); color: #000; font-size: 0.62rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; }
         
         /* زر الإضافة السريع (+) */
         .add-cart-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; transition: 0.2s; z-index: 5; }
@@ -66,6 +65,7 @@
         
         .game-meta-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; }
         .game-size { font-weight: 700; color: var(--accent-cyan); }
+        .arabic-support { font-size: 0.68rem; color: #10b981; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
 
         /* شريط السلة العائم السفلي */
         .cart-floating-bar { position: fixed; bottom: 15px; left: 16px; right: 16px; max-width: 568px; margin: 0 auto; background: #182238; border: 1px solid var(--accent-orange); border-radius: var(--radius-lg); padding: 12px 16px; display: none; align-items: center; justify-content: space-between; z-index: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.6); animation: slideUp 0.3s ease; }
@@ -76,7 +76,7 @@
         .btn-clear { background: rgba(239, 68, 68, 0.2); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.75rem; cursor: pointer; font-weight: 700; }
         .btn-send-wa { background: var(--whatsapp-color); color: #fff; border: none; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.78rem; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 5px; text-decoration: none; }
 
-        /* تذييل الصفحة الفخم المطابق للطلب */
+        /* تذييل الصفحة الفخم */
         .store-footer { max-width: 600px; margin: 40px auto 20px; padding: 25px 16px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); text-align: center; }
         .footer-logo { width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #000; }
         .footer-store-name { font-size: 1.1rem; font-weight: 900; margin-bottom: 12px; color: #fff; }
@@ -165,16 +165,13 @@
             <div class="form-group" style="flex:1;"><select id="newPlatform" class="form-control"><option value="ps4">PS4</option><option value="ps5">PS5</option></select></div>
             <div class="form-group" style="flex:1;"><select id="newCategory" class="form-control"><option value="مغامرات">مغامرات</option><option value="حركة">حركة</option><option value="تصويب">تصويب</option><option value="عالم مفتوح">عالم مفتوح</option><option value="تقمص الأدوار">تقمص الأدوار</option><option value="رعب">رعب</option><option value="تسلل">تسلل</option><option value="قتال">قتال</option></select></div>
         </div>
-        <div style="display:flex; gap:8px;">
-            <div class="form-group" style="flex:1;"><input type="text" id="newSize" class="form-control" placeholder="الحجم (مثال: 35 GB)"></div>
-            <div class="form-group" style="flex:1;"><input type="text" id="newYear" class="form-control" placeholder="سنة الإصدار (مثال: 2026)"></div>
-        </div>
+        <div class="form-group"><input type="text" id="newSize" class="form-control" placeholder="الحجم (مثال: 35 GB)"></div>
         <div class="form-group"><input type="text" id="newCover" class="form-control" placeholder="رابط غلاف اللعبة..."></div>
         <div class="form-group"><input type="text" id="newVideo" class="form-control" placeholder="رابط يوتيوب التريلر..."></div>
         <div class="form-group"><input type="text" id="newImg1" class="form-control" placeholder="رابط الصورة الداخلية الأولى..."></div>
         <div class="form-group"><input type="text" id="newImg2" class="form-control" placeholder="رابط الصورة الداخلية الثانية..."></div>
         <div class="form-group"><textarea id="newDesc" class="form-control" rows="2" placeholder="وصف اللعبة..."></textarea></div>
-        <div class="form-group"><label><input type="checkbox" id="newArabic" checked> تدعم العربية رسمياً</label></div>
+        <div class="form-group"><label><input type="checkbox" id="newArabic" checked> تدعم اللغة العربية</label></div>
         <button onclick="addGame()" class="map-btn" style="background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-save"></i> حفظ ونشر اللعبة</button>
 
         <h3 style="font-size:0.85rem; color:var(--danger-color); margin: 15px 0 8px;">إدارة وحذف الألعاب</h3>
@@ -193,7 +190,7 @@
         </div>
     </div>
 
-    <!-- تذييل الصفحة الفخم المطابق للمتجر الاحترافي -->
+    <!-- تذييل الصفحة الفخم -->
     <footer class="store-footer">
         <div class="footer-logo"><i class="fa-solid fa-gamepad"></i></div>
         <div class="footer-store-name">متجر المدينة</div>
@@ -228,9 +225,9 @@
 
     <script>
         const defaultGames = [
-            { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", year: "2022", arabic: true, cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية.", img1: "", img2: "" },
-            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", year: "2023", arabic: true, cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة.", img1: "", img2: "" },
-            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", year: "2022", arabic: false, cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك.", img1: "", img2: "" }
+            { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", arabic: true, cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية.", img1: "", img2: "" },
+            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", arabic: true, cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة.", img1: "", img2: "" },
+            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabic: false, cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك.", img1: "", img2: "" }
         ];
 
         let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
@@ -320,7 +317,7 @@
                 if (!isNaN(num)) totalGb += num;
             });
 
-            document.getElementById('cartInfoTextinnerText', 'cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;
+            document.getElementById('cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;
             
             let msg = "السلام عليكم، أريد طلب الألعاب التالية:\n" + cart.map(i => `- ${i.title} (${i.platform.toUpperCase()} - ${i.size})`).join("\n");
             document.getElementById('cartWhatsAppBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`;
@@ -340,7 +337,7 @@
             if (url.includes('youtu.be/')) {
                 videoId = url.split('youtu.be/')[1].split('?')[0];
             } else if (url.includes('watch?v=')) {
-                videoId = url.split('watch?v=')[1].split('&')[0];
+                videoId = url.split('watch?v=').length > 1 ? url.split('watch?v=')[1].split('&')[0] : '';
             }
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
@@ -370,7 +367,6 @@
                         <div class="game-cover-container" onclick="openModal(${game.id})">
                             <img src="${game.cover}" class="game-cover" alt="${game.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'">
                             <span class="platform-tag">${game.platform.toUpperCase()}</span>
-                            ${game.arabic ? '<span class="arabic-tag">عربي رسمي</span>' : ''}
                             <button class="add-cart-btn" onclick="toggleCart(${game.id}, event)">
                                 <i class="fa-solid ${isSelected ? 'fa-check' : 'fa-plus'}"></i>
                             </button>
@@ -379,8 +375,9 @@
                             <div class="game-title">${game.title}</div>
                             <div class="game-meta-bottom">
                                 <span class="game-size">${game.size}</span>
-                                <span>${game.category} · ${game.year || '2026'}</span>
+                                <span>${game.category}</span>
                             </div>
+                            ${game.arabic ? '<div class="arabic-support"><i class="fa-solid fa-check"></i> تدعم اللغة العربية</div>' : ''}
                         </div>
                     </div>`;
             });
@@ -425,7 +422,6 @@
             const platform = document.getElementById('newPlatform').value;
             const category = document.getElementById('newCategory').value;
             const size = document.getElementById('newSize').value || "30 GB";
-            const year = document.getElementById('newYear').value || "2026";
             const cover = document.getElementById('newCover').value || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
             const video = formatYouTubeUrl(document.getElementById('newVideo').value);
             const img1 = document.getElementById('newImg1').value;
@@ -435,7 +431,7 @@
 
             if (!title) { alert("أدخل اسم اللعبة!"); return; }
 
-            gamesList.unshift({ id: Date.now(), title, platform, category, size, year, cover, video, img1, img2, desc, arabic });
+            gamesList.unshift({ id: Date.now(), title, platform, category, size, cover, video, img1, img2, desc, arabic });
             localStorage.setItem('madina_games', JSON.stringify(gamesList));
             
             document.getElementById('newTitle').value = '';
@@ -482,3 +478,4 @@
     </script>
 </body>
 </html>
+
