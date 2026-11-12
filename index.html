@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -330,12 +329,25 @@
             { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك لتصبح ملك الأسرار.", screenshots: ["https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800"] }
         ];
 
-        let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
+        let gamesList = [];
+        try {
+            gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
+            if (!Array.isArray(gamesList)) gamesList = defaultGames;
+        } catch(e) {
+            gamesList = defaultGames;
+            localStorage.setItem('madina_games', JSON.stringify(defaultGames));
+        }
+
         let selectedPlatform = 'all';
         let selectedCategory = 'all';
-        let cart = JSON.parse(localStorage.getItem('madina_cart')) || [];
-        const configKey = "AFC24";
+        
+        let cart = [];
+        try {
+            cart = JSON.parse(localStorage.getItem('madina_cart')) || [];
+            if (!Array.isArray(cart)) cart = [];
+        } catch(e) { cart = []; }
 
+        const configKey = "AFC24";
         const categoriesList = ["الكل", "مغامرات", "حركة", "تصويب", "عالم مفتوح", "تقمص الأدوار", "رعب", "تسلل", "قتال"];
 
         let currentGalleryImages = [];
@@ -344,78 +356,84 @@
         let heroTimer = null;
 
         function initHeroSlider() {
-            const container = document.getElementById('heroSliderContainer');
-            if (!container || gamesList.length === 0) return;
+            try {
+                const container = document.getElementById('heroSliderContainer');
+                if (!container || gamesList.length === 0) return;
 
-            const latestGames = gamesList.slice(0, 4);
-            
-            function renderHero(index) {
-                currentHeroIndex = index;
-                const game = latestGames[index];
-                let gameSize = game.size || "30 GB";
-                if (!gameSize.toUpperCase().includes('GB')) gameSize += ' GB';
+                const latestGames = gamesList.slice(0, 4);
+                
+                function renderHero(index) {
+                    currentHeroIndex = index;
+                    const game = latestGames[index];
+                    let gameSize = game.size || "30 GB";
+                    if (!gameSize.toUpperCase().includes('GB')) gameSize += ' GB';
 
-                let thumbsHtml = '';
-                latestGames.forEach((g, idx) => {
-                    thumbsHtml += `
-                        <div class="hero-thumb ${idx === index ? 'active' : ''}" onclick="switchHero(${idx})">
-                            <img src="${g.cover}" alt="thumb">
+                    let thumbsHtml = '';
+                    latestGames.forEach((g, idx) => {
+                        thumbsHtml += `
+                            <div class="hero-thumb ${idx === index ? 'active' : ''}" onclick="switchHero(${idx})">
+                                <img src="${g.cover || ''}" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'">
+                            </div>`;
+                    });
+
+                    container.innerHTML = `
+                        <div class="hero-slide-card">
+                            <img src="${game.cover || ''}" class="hero-bg-img" alt="bg" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'">
+                            <div class="hero-gradient-overlay"></div>
+                            <div class="hero-content">
+                                <span class="hero-tag-badge"><i class="fa-solid fa-sparkles"></i> أُضيف حديثاً</span>
+                                <div class="hero-game-title">${game.title || 'لعبة'}</div>
+                                <div class="hero-game-meta">
+                                    <span>${(game.platform || 'ps4').toUpperCase()}</span> • <span>${game.category || 'عام'}</span> • <span>${gameSize}</span>
+                                </div>
+                                <div class="hero-desc-preview">${game.desc || "متوفر الآن في متجر المدينة بأعلى جودة."}</div>
+                                <div class="hero-actions">
+                                    <button class="hero-btn-trailer" onclick="openModal(${game.id})"><i class="fa-solid fa-play"></i> شاهد المقطع</button>
+                                    <button class="hero-btn-details" onclick="openModal(${game.id})"><i class="fa-solid fa-circle-info"></i> التفاصيل</button>
+                                </div>
+                                <div class="hero-thumbs-row">${thumbsHtml}</div>
+                                <div class="hero-progress-bar"><div class="hero-progress-fill" id="heroProgress"></div></div>
+                            </div>
                         </div>`;
-                });
+                    
+                    startHeroTimer();
+                }
 
-                container.innerHTML = `
-                    <div class="hero-slide-card">
-                        <img src="${game.cover}" class="hero-bg-img" alt="bg">
-                        <div class="hero-gradient-overlay"></div>
-                        <div class="hero-content">
-                            <span class="hero-tag-badge"><i class="fa-solid fa-sparkles"></i> أُضيف حديثاً</span>
-                            <div class="hero-game-title">${game.title}</div>
-                            <div class="hero-game-meta">
-                                <span>${game.platform.toUpperCase()}</span> • <span>${game.category}</span> • <span>${gameSize}</span>
-                            </div>
-                            <div class="hero-desc-preview">${game.desc || "متوفر الآن في متجر المدينة بأعلى جودة."}</div>
-                            <div class="hero-actions">
-                                <button class="hero-btn-trailer" onclick="openModal(${game.id})"><i class="fa-solid fa-play"></i> شاهد المقطع</button>
-                                <button class="hero-btn-details" onclick="openModal(${game.id})"><i class="fa-solid fa-circle-info"></i> التفاصيل</button>
-                            </div>
-                            <div class="hero-thumbs-row">${thumbsHtml}</div>
-                            <div class="hero-progress-bar"><div class="hero-progress-fill" id="heroProgress"></div></div>
-                        </div>
-                    </div>`;
-                
-                startHeroTimer();
+                window.switchHero = function(idx) {
+                    clearInterval(heroTimer);
+                    renderHero(idx);
+                };
+
+                function startHeroTimer() {
+                    let progress = 0;
+                    const fill = document.getElementById('heroProgress');
+                    if(!fill) return;
+                    
+                    clearInterval(heroTimer);
+                    heroTimer = setInterval(() => {
+                        progress += 2;
+                        fill.style.width = progress + '%';
+                        if (progress >= 100) {
+                            clearInterval(heroTimer);
+                            let nextIdx = (currentHeroIndex + 1) % latestGames.length;
+                            renderHero(nextIdx);
+                        }
+                    }, 100);
+                }
+
+                renderHero(0);
+            } catch(err) {
+                console.error("Hero Slider Error:", err);
             }
-
-            window.switchHero = function(idx) {
-                clearInterval(heroTimer);
-                renderHero(idx);
-            };
-
-            function startHeroTimer() {
-                let progress = 0;
-                const fill = document.getElementById('heroProgress');
-                if(!fill) return;
-                
-                clearInterval(heroTimer);
-                heroTimer = setInterval(() => {
-                    progress += 2;
-                    fill.style.width = progress + '%';
-                    if (progress >= 100) {
-                        clearInterval(heroTimer);
-                        let nextIdx = (currentHeroIndex + 1) % latestGames.length;
-                        renderHero(nextIdx);
-                    }
-                }, 100);
-            }
-
-            renderHero(0);
         }
 
         function applySavedLogo() {
-            const savedLogo = localStorage.getItem('madina_logo');
-            if (savedLogo) {
-                document.getElementById('headerLogo').innerHTML = `<img src="${savedLogo}" class="logo-img" alt="logo">`;
-            }
+            try {
+                const savedLogo = localStorage.getItem('madina_logo');
+                if (savedLogo) {
+                    document.getElementById('headerLogo').innerHTML = `<img src="${savedLogo}" class="logo-img" alt="logo">`;
+                }
+            } catch(e) {}
         }
         applySavedLogo();
 
@@ -424,9 +442,13 @@
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    localStorage.setItem('madina_logo', e.target.result);
-                    applySavedLogo();
-                    alert("تم تحديث الشعار بنجاح!");
+                    try {
+                        localStorage.setItem('madina_logo', e.target.result);
+                        applySavedLogo();
+                        alert("تم تحديث الشعار بنجاح!");
+                    } catch(err) {
+                        alert("حجم الصورة كبير جداً، يرجى اختيار صورة أصغر.");
+                    }
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
@@ -435,25 +457,30 @@
         }
 
         function toggleAdmin() {
-            const box = document.getElementById('adminPanelBox');
-            if (box.style.display !== 'block') {
-                const enteredPass = prompt("أدخل رمز الإدارة:");
-                if (!enteredPass || enteredPass.trim() !== configKey) {
-                    alert("الرمز غير صحيح!");
-                    return;
+            try {
+                const box = document.getElementById('adminPanelBox');
+                if (!box) return;
+                if (box.style.display !== 'block') {
+                    const enteredPass = prompt("أدخل رمز الإدارة:");
+                    if (!enteredPass || enteredPass.trim() !== configKey) {
+                        alert("الرمز غير صحيح!");
+                        return;
+                    }
                 }
-            }
-            box.style.display = box.style.display === 'block' ? 'none' : 'block';
-            if (box.style.display === 'block') {
-                resetAdminForm();
-                renderAdminGamesList();
+                box.style.display = box.style.display === 'block' ? 'none' : 'block';
+                if (box.style.display === 'block') {
+                    resetAdminForm();
+                    renderAdminGamesList();
+                }
+            } catch(e) {
+                console.error(e);
             }
         }
 
         function setPlatform(plat) {
             selectedPlatform = plat;
             document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            if(event && event.target) event.target.classList.add('active');
             renderGames();
         }
 
@@ -464,29 +491,32 @@
         }
 
         function renderCategories() {
-            const container = document.getElementById('categoriesContainer');
-            container.innerHTML = '';
+            try {
+                const container = document.getElementById('categoriesContainer');
+                if (!container) return;
+                container.innerHTML = '';
 
-            const platformFiltered = gamesList.filter(g => selectedPlatform === 'all' || g.platform === selectedPlatform);
+                const platformFiltered = gamesList.filter(g => selectedPlatform === 'all' || g.platform === selectedPlatform);
 
-            categoriesList.forEach(cat => {
-                let count = 0;
-                if (cat === 'الكل') {
-                    count = platformFiltered.length;
-                } else {
-                    count = platformFiltered.filter(g => g.category === cat).length;
-                }
+                categoriesList.forEach(cat => {
+                    let count = 0;
+                    if (cat === 'الكل') {
+                        count = platformFiltered.length;
+                    } else {
+                        count = platformFiltered.filter(g => g.category === cat).length;
+                    }
 
-                const isActive = (selectedCategory === (cat === 'الكل' ? 'all' : cat));
-                container.innerHTML += `
-                    <button class="cat-chip ${isActive ? 'active' : ''}" onclick="setCategory('${cat === 'الكل' ? 'all' : cat}')">
-                        ${cat} (${count})
-                    </button>`;
-            });
+                    const isActive = (selectedCategory === (cat === 'الكل' ? 'all' : cat));
+                    container.innerHTML += `
+                        <button class="cat-chip ${isActive ? 'active' : ''}" onclick="setCategory('${cat === 'الكل' ? 'all' : cat}')">
+                            ${cat} (${count})
+                        </button>`;
+                });
+            } catch(e) {}
         }
 
         function toggleCart(id, event) {
-            event.stopPropagation();
+            if(event) event.stopPropagation();
             const game = gamesList.find(g => g.id === id);
             if (!game) return;
 
@@ -496,146 +526,189 @@
             } else {
                 cart.push(game);
             }
-            localStorage.setItem('madina_cart', JSON.stringify(cart));
+            try {
+                localStorage.setItem('madina_cart', JSON.stringify(cart));
+            } catch(e) {}
             renderGames();
             updateCartBar();
         }
 
         function updateCartBar() {
-            const bar = document.getElementById('cartBar');
-            if (cart.length === 0) {
-                bar.classList.remove('active');
-                return;
-            }
-            bar.classList.add('active');
-            
-            let totalGb = 0;
-            cart.forEach(item => {
-                let sizeStr = item.size ? item.size.replace(/[^0-9.]/g, '') : "0";
-                let num = parseFloat(sizeStr);
-                if (!isNaN(num)) totalGb += num;
-            });
+            try {
+                const bar = document.getElementById('cartBar');
+                if (!bar) return;
+                if (cart.length === 0) {
+                    bar.classList.remove('active');
+                    return;
+                }
+                bar.classList.add('active');
+                
+                let totalGb = 0;
+                cart.forEach(item => {
+                    let sizeStr = item.size ? item.size.replace(/[^0-9.]/g, '') : "0";
+                    let num = parseFloat(sizeStr);
+                    if (!isNaN(num)) totalGb += num;
+                });
 
-            document.getElementById('cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;  let msg = "السلام عليكم، أريد طلب الألعاب الآتية:\n" + cart.map(i => `- ${i.title} (${i.platform.toUpperCase()} -${i.size})`).join("\n");
-            document.getElementById('cartWhatsAppBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`; }  function clearCart() { cart = []; localStorage.setItem('madina_cart', JSON.stringify(cart)); renderGames(); updateCartBar(); }  function formatYouTubeUrl(url) { if (!url) return "https://www.youtube.com/embed/aOGgx3k9bQQ"; if (url.includes('embed/')) return url; let videoId = ''; if (url.includes('youtu.be/')) { videoId = url.split('youtu.be/')[1].split('?')[0]; } else if (url.includes('watch?v=')) { videoId = url.split('watch?v=').length > 1 ? url.split('watch?v=')[1].split('&')[0] : ''; } return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+                document.getElementById('cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;
+                
+                let msg = "السلام عليكم، أريد طلب الألعاب الآتية:\n" + cart.map(i => `- ${i.title} (${(i.platform || '').toUpperCase()} - ${i.size})`).join("\n");
+                document.getElementById('cartWhatsAppBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`;
+            } catch(e) {}
         }
 
-        function renderGames() {
-            renderCategories();
-            initHeroSlider();
-            const grid = document.getElementById('gamesGrid');
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            grid.innerHTML = '';
-
-            const filtered = gamesList.filter(g => {
-                const matchPlat = (selectedPlatform === 'all' || g.platform === selectedPlatform);
-                const matchCat = (selectedCategory === 'all' || g.category === selectedCategory);
-                const matchSearch = g.title.toLowerCase().includes(search);
-                return matchPlat && matchCat && matchSearch;
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:40px; color:var(--text-muted);">لا توجد ألعاب مطابقة.</div>`;
-                updateCartBar();
-                return;
-            }
-
-            filtered.forEach(game => {
-                const isSelected = cart.some(item => item.id === game.id);
-                
-                let arabicHtml = '';
-                let status = game.arabicStatus || '';
-                if (status && status !== 'لا تدعم' && status !== '') {
-                    arabicHtml = `<div class="arabic-support"><i class="fa-solid fa-check"></i> ${status}</div>`;
-                }
-
-                let gameSize = game.size || "30 GB";
-                if (!gameSize.toUpperCase().includes('GB')) {
-                    gameSize += ' GB';
-                }
-
-                grid.innerHTML += `
-                    <div class="game-card ${isSelected ? 'selected' : ''}">
-                        <div class="game-cover-container" onclick="openModal(${game.id})">
-                            <img src="${game.cover}" class="game-cover" alt="${game.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'">
-                            <span class="platform-tag">${game.platform.toUpperCase()}</span>
-                            <button class="add-cart-btn" onclick="toggleCart(${game.id}, event)">
-                                <i class="fa-solid ${isSelected ? 'fa-check' : 'fa-plus'}"></i>
-                            </button>
-                        </div>
-                        <div class="game-info" onclick="openModal(${game.id})">
-                            <div class="game-title">${game.title}</div>
-                            <div class="game-meta-bottom">
-                                <span class="game-size">${gameSize}</span>
-                                <span>${game.category}</span>
-                            </div>
-                            ${arabicHtml}
-                        </div>
-                    </div>`;
-            });
+        function clearCart() {
+            cart = [];
+            try {
+                localStorage.setItem('madina_cart', JSON.stringify(cart));
+            } catch(e) {}
+            renderGames();
             updateCartBar();
         }
 
-        function openModal(id) {
-            const game = gamesList.find(g => g.id === id);
-            if (!game) return;
-
-            let gameSize = game.size || "30 GB";
-            if (!gameSize.toUpperCase().includes('GB')) gameSize += ' GB';
-
-            document.getElementById('modalTitle').innerText = game.title;
-            document.getElementById('modalPlatform').innerText = game.platform.toUpperCase();
-            document.getElementById('modalCategory').innerText = game.category;
-            document.getElementById('modalSizeBadge').innerText = gameSize;
-            document.getElementById('modalVideo').src = formatYouTubeUrl(game.video);
-            document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر لهذه اللعبة حالياً.";
-
-            let imgs = [];
-            if (game.screenshots && Array.isArray(game.screenshots) && game.screenshots.length > 0) {
-                imgs = game.screenshots.filter(url => url && url.trim() !== '');
-            } else {
-                if (game.img1) imgs.push(game.img1);
-                if (game.img2) imgs.push(game.img2);
-                if (imgs.length === 0) imgs.push(game.cover);
+        function formatYouTubeUrl(url) {
+            if (!url) return "https://www.youtube.com/embed/aOGgx3k9bQQ";
+            if (url.includes('embed/')) return url;
+            let videoId = '';
+            if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else if (url.includes('watch?v=')) {
+                videoId = url.split('watch?v=').length > 1 ? url.split('watch?v=')[1].split('&')[0] : '';
             }
-            
-            currentGalleryImages = imgs;
-            const galleryContainer = document.getElementById('modalGallery');
-            galleryContainer.innerHTML = '';
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+        }
 
-            document.getElementById('screenshotsHeading').innerHTML = `<i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (${imgs.length}) - اضغط للتكبير والتقليب`;
+        function renderGames() {
+            try {
+                renderCategories();
+                initHeroSlider();
+                const grid = document.getElementById('gamesGrid');
+                const searchInput = document.getElementById('searchInput');
+                const search = searchInput ? searchInput.value.toLowerCase() : '';
+                if (!grid) return;
+                grid.innerHTML = '';
 
-            imgs.forEach((src, index) => {
-                galleryContainer.innerHTML += `
-                    <img src="${src}" class="gallery-img" onclick="openLightbox(${index})" onerror="this.style.display='none'">`;
-            });
+                const filtered = gamesList.filter(g => {
+                    const matchPlat = (selectedPlatform === 'all' || g.platform === selectedPlatform);
+                    const matchCat = (selectedCategory === 'all' || g.category === selectedCategory);
+                    const titleStr = g.title ? g.title.toLowerCase() : '';
+                    const matchSearch = titleStr.includes(search);
+                    return matchPlat && matchCat && matchSearch;
+                });
 
-            document.getElementById('gameModal').classList.add('active');
+                if (filtered.length === 0) {
+                    grid.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:40px; color:var(--text-muted);">لا توجد ألعاب مطابقة.</div>`;
+                    updateCartBar();
+                    return;
+                }
+
+                filtered.forEach(game => {
+                    const isSelected = cart.some(item => item.id === game.id);
+                    
+                    let arabicHtml = '';
+                    let status = game.arabicStatus || '';
+                    if (status && status !== 'لا تدعم' && status !== '') {
+                        arabicHtml = `<div class="arabic-support"><i class="fa-solid fa-check"></i> ${status}</div>`;
+                    }
+
+                    let gameSize = game.size || "30 GB";
+                    if (!gameSize.toUpperCase().includes('GB')) {
+                        gameSize += ' GB';
+                    }
+
+                    grid.innerHTML += `
+                        <div class="game-card ${isSelected ? 'selected' : ''}">
+                            <div class="game-cover-container" onclick="openModal(${game.id})">
+                                <img src="${game.cover || ''}" class="game-cover" alt="${game.title || ''}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'">
+                                <span class="platform-tag">${(game.platform || 'ps4').toUpperCase()}</span>
+                                <button class="add-cart-btn" onclick="toggleCart(${game.id}, event)">
+                                    <i class="fa-solid ${isSelected ? 'fa-check' : 'fa-plus'}"></i>
+                                </button>
+                            </div>
+                            <div class="game-info" onclick="openModal(${game.id})">
+                                <div class="game-title">${game.title || 'بدون اسم'}</div>
+                                <div class="game-meta-bottom">
+                                    <span class="game-size">${gameSize}</span>
+                                    <span>${game.category || 'عام'}</span>
+                                </div>
+                                ${arabicHtml}
+                            </div>
+                        </div>`;
+                });
+                updateCartBar();
+            } catch(err) {
+                console.error("Render Games Error:", err);
+            }
+        }
+
+        function openModal(id) {
+            try {
+                const game = gamesList.find(g => g.id === id);
+                if (!game) return;
+
+                let gameSize = game.size || "30 GB";
+                if (!gameSize.toUpperCase().includes('GB')) gameSize += ' GB';
+
+                document.getElementById('modalTitle').innerText = game.title || '';
+                document.getElementById('modalPlatform').innerText = (game.platform || 'ps4').toUpperCase();
+                document.getElementById('modalCategory').innerText = game.category || '';
+                document.getElementById('modalSizeBadge').innerText = gameSize;
+                document.getElementById('modalVideo').src = formatYouTubeUrl(game.video);
+                document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر لهذه اللعبة حالياً.";
+
+                let imgs = [];
+                if (game.screenshots && Array.isArray(game.screenshots) && game.screenshots.length > 0) {
+                    imgs = game.screenshots.filter(url => url && url.trim() !== '');
+                } else {
+                    if (game.img1) imgs.push(game.img1);
+                    if (game.img2) imgs.push(game.img2);
+                    if (imgs.length === 0 && game.cover) imgs.push(game.cover);
+                }
+                
+                currentGalleryImages = imgs;
+                const galleryContainer = document.getElementById('modalGallery');
+                galleryContainer.innerHTML = '';
+
+                document.getElementById('screenshotsHeading').innerHTML = `<i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (${imgs.length}) - اضغط للتكبير والتقليب`;
+
+                imgs.forEach((src, index) => {
+                    galleryContainer.innerHTML += `
+                        <img src="${src}" class="gallery-img" onclick="openLightbox(${index})" onerror="this.style.display='none'">`;
+                });
+
+                document.getElementById('gameModal').classList.add('active');
+            } catch(e) {}
         }
 
         function closeModal() {
-            document.getElementById('gameModal').classList.remove('active');
-            document.getElementById('modalVideo').src = "";
+            try {
+                document.getElementById('gameModal').classList.remove('active');
+                document.getElementById('modalVideo').src = "";
+            } catch(e) {}
         }
 
         function openLightbox(index) {
-            if (!currentGalleryImages || currentGalleryImages.length === 0) return;
-            currentLightboxIndex = index;
-            updateLightboxDisplay();
-            document.getElementById('lightboxModal').classList.add('active');
+            try {
+                if (!currentGalleryImages || currentGalleryImages.length === 0) return;
+                currentLightboxIndex = index;
+                updateLightboxDisplay();
+                document.getElementById('lightboxModal').classList.add('active');
+            } catch(e) {}
         }
 
         function updateLightboxDisplay() {
-            const imgEl = document.getElementById('lightboxImg');
-            const counterEl = document.getElementById('lightboxCounter');
-            const navBtns = document.querySelectorAll('.lightbox-nav-btn');
+            try {
+                const imgEl = document.getElementById('lightboxImg');
+                const counterEl = document.getElementById('lightboxCounter');
+                const navBtns = document.querySelectorAll('.lightbox-nav-btn');
 
-            imgEl.src = currentGalleryImages[currentLightboxIndex];
-            counterEl.innerText = `${currentLightboxIndex + 1} /${currentGalleryImages.length}`;
+                imgEl.src = currentGalleryImages[currentLightboxIndex];
+                counterEl.innerText = `${currentLightboxIndex + 1} / ${currentGalleryImages.length}`;
 
-            navBtns.forEach(btn => {
-                btn.style.display = currentGalleryImages.length > 1 ? 'flex' : 'none';
-            });
+                navBtns.forEach(btn => {
+                    btn.style.display = currentGalleryImages.length > 1 ? 'flex' : 'none';
+                });
+            } catch(e) {}
         }
 
         function changeLightboxSlide(step, event) {
@@ -647,7 +720,9 @@
         }
 
         function closeLightbox() {
-            document.getElementById('lightboxModal').classList.remove('active');
+            try {
+                document.getElementById('lightboxModal').classList.remove('active');
+            } catch(e) {}
         }
 
         function closeLightboxOnBg(event) {
@@ -657,88 +732,139 @@
         }
 
         function saveGameData() {
-            const editId = document.getElementById('editGameId').value;
-            const title = document.getElementById('newTitle').value;
-            const platform = document.getElementById('newPlatform').value;
-            const category = document.getElementById('newCategory').value;
-            let rawSize = document.getElementById('newSize').value.trim() || "30";
-            const size = rawSize.toUpperCase().includes('GB') ? rawSize : rawSize + ' GB';
-            const cover = document.getElementById('newCover').value || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
-            const video = formatYouTubeUrl(document.getElementById('newVideo').value);
-            const desc = document.getElementById('newDesc').value;
-            const arabicStatus = document.getElementById('newArabicStatus').value;
+            try {
+                const editId = document.getElementById('editGameId').value;
+                const title = document.getElementById('newTitle').value.trim();
+                const platform = document.getElementById('newPlatform').value;
+                const category = document.getElementById('newCategory').value;
+                let rawSize = document.getElementById('newSize').value.trim() || "30";
+                const size = rawSize.toUpperCase().includes('GB') ? rawSize : rawSize + ' GB';
+                const cover = document.getElementById('newCover').value.trim() || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500";
+                const video = formatYouTubeUrl(document.getElementById('newVideo').value.trim());
+                const desc = document.getElementById('newDesc').value.trim();
+                const arabicStatus = document.getElementById('newArabicStatus').value;
 
-            const rawScreenshots = document.getElementById('newScreenshots').value.trim();
-            let screenshots = [];
-            if (rawScreenshots) {
-                screenshots = rawScreenshots
-                    .split(/[\n,]+/)
-                    .map(s => s.trim())
-                    .filter(s => s !== '')
-                    .slice(0, 4);
-            }
-
-            if (!title) { alert("أدخل اسم اللعبة!"); return; }
-
-            if (editId) {
-                // تعديل لعبة موجودة
-                let game = gamesList.find(g => g.id == editId);
-                if (game) {
-                    game.title = title;
-                    game.platform = platform;
-                    game.category = category;
-                    game.size = size;
-                    game.cover = cover;
-                    game.video = video;
-                    game.desc = desc;
-                    game.arabicStatus = arabicStatus;
-                    if(screenshots.length > 0) game.screenshots = screenshots;
+                const rawScreenshots = document.getElementById('newScreenshots').value.trim();
+                let screenshots = [];
+                if (rawScreenshots) {
+                    screenshots = rawScreenshots
+                        .split(/[\n,]+/)
+                        .map(s => s.trim())
+                        .filter(s => s !== '')
+                        .slice(0, 4);
                 }
-                alert("تم تحديث اللعبة بنجاح!");
-            } else {
-                // إضافة لعبة جديدة
-                const newGame = { id: Date.now(), title, platform, category, size, cover, video, screenshots, desc, arabicStatus };
-                gamesList.unshift(newGame);
-                alert("تمت إضافة اللعبة ونشرها بنجاح!");
-            }
 
-            localStorage.setItem('madina_games', JSON.stringify(gamesList));
-            resetAdminForm();
-            renderGames();
-            renderAdminGamesList();
+                if (!title) { alert("أدخل اسم اللعبة!"); return; }
+
+                if (editId) {
+                    let game = gamesList.find(g => g.id == editId);
+                    if (game) {
+                        game.title = title;
+                        game.platform = platform;
+                        game.category = category;
+                        game.size = size;
+                        game.cover = cover;
+                        game.video = video;
+                        game.desc = desc;
+                        game.arabicStatus = arabicStatus;
+                        if(screenshots.length > 0) game.screenshots = screenshots;
+                    }
+                    alert("تم تحديث اللعبة بنجاح!");
+                } else {
+                    const newGame = { id: Date.now(), title, platform, category, size, cover, video, screenshots, desc, arabicStatus };
+                    gamesList.unshift(newGame);
+                    alert("تمت إضافة اللعبة ونشرها بنجاح!");
+                }
+
+                localStorage.setItem('madina_games', JSON.stringify(gamesList));
+                resetAdminForm();
+                renderGames();
+                renderAdminGamesList();
+            } catch(err) {
+                alert("حدث خطأ أثناء الحفظ، تأكد من صحة الروابط المدخلة.");
+            }
         }
 
         function editGame(id) {
-            const game = gamesList.find(g => g.id == id);
-            if (!game) return;
+            try {
+                const game = gamesList.find(g => g.id == id);
+                if (!game) return;
 
-            document.getElementById('editGameId').value = game.id;
-            document.getElementById('newTitle').value = game.title;
-            document.getElementById('newPlatform').value = game.platform;
-            document.getElementById('newCategory').value = game.category;
-            document.getElementById('newSize').value = game.size;
-            document.getElementById('newCover').value = game.cover;
-            document.getElementById('newVideo').value = game.video;
-            document.getElementById('newDesc').value = game.desc || '';
-            document.getElementById('newArabicStatus').value = game.arabicStatus || 'لا تدعم';
-            document.getElementById('newScreenshots').value = game.screenshots ? game.screenshots.join('\n') : '';
+                document.getElementById('editGameId').value = game.id;
+                document.getElementById('newTitle').value = game.title || '';
+                document.getElementById('newPlatform').value = game.platform || 'ps4';
+                document.getElementById('newCategory').value = game.category || 'مغامرات';
+                document.getElementById('newSize').value = game.size || '';
+                document.getElementById('newCover').value = game.cover || '';
+                document.getElementById('newVideo').value = game.video || '';
+                document.getElementById('newDesc').value = game.desc || '';
+                document.getElementById('newArabicStatus').value = game.arabicStatus || 'لا تدعم';
+                document.getElementById('newScreenshots').value = (game.screenshots && Array.isArray(game.screenshots)) ? game.screenshots.join('\n') : '';
 
-            document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل اللعبة: ${game.title}`;
-            document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-check"></i> حفظ التعديلات`;
-            document.getElementById('cancelEditBtn').style.display = 'block';
+                document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل اللعبة: ${game.title}`;
+                document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-check"></i> حفظ التعديلات`;
+                document.getElementById('cancelEditBtn').style.display = 'block';
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch(e) {}
         }
 
         function resetAdminForm() {
-            document.getElementById('editGameId').value = '';
-            document.getElementById('newTitle').value = '';
-            document.getElementById('newSize').value = '';
-            document.getElementById('newCover').value = '';
-            document.getElementById('newVideo').value = '';
-            document.getElementById('newScreenshots').value = '';
-            document.getElementById('newDesc').value = '';
-            document.getElementById('newArabicStatus').value = 'لا تدعم';
+            try {
+                document.getElementById('editGameId').value = '';
+                document.getElementById('newTitle').value = '';
+                document.getElementById('newSize').value = '';
+                document.getElementById('newCover').value = '';
+                document.getElementById('newVideo').value = '';
+                document.getElementById('newScreenshots').value = '';
+                document.getElementById('newDesc').value = '';
+                document.getElementById('newArabicStatus').value = 'لا تدعم';
 
-            document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر`;
-            document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-save"></i> حفظ ونشر الل
+                document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر`;
+                document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-save"></i> حفظ ونشر اللعبة`;
+                document.getElementById('cancelEditBtn').style.display = 'none';
+            } catch(e) {}
+        }
+
+        function renderAdminGamesList() {
+            try {
+                const list = document.getElementById('adminGamesList');
+                if (!list) return;
+                list.innerHTML = '';
+                if (gamesList.length === 0) {
+                    list.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted);">لا توجد ألعاب.</div>`;
+                    return;
+                }
+                gamesList.forEach(g => {
+                    list.innerHTML += `
+                        <div class="admin-game-item">
+                            <span>${g.title || ''} (${(g.platform || '').toUpperCase()})</span>
+                            <div class="admin-btns-group">
+                                <button class="edit-mini-btn" onclick="editGame(${g.id})">تعديل</button>
+                                <button class="delete-mini-btn" onclick="deleteGame(${g.id})">حذف</button>
+                            </div>
+                        </div>`;
+                });
+            } catch(e) {}
+        }
+
+        function deleteGame(id) {
+            if (confirm("هل تريد حذف اللعبة؟")) {
+                gamesList = gamesList.filter(g => g.id !== id);
+                cart = cart.filter(item => item.id !== id);
+                try {
+                    localStorage.setItem('madina_games', JSON.stringify(gamesList));
+                    localStorage.setItem('madina_cart', JSON.stringify(cart));
+                } catch(e) {}
+                resetAdminForm();
+                renderGames();
+                renderAdminGamesList();
+            }
+        }
+
+        renderGames();
+        updateCartBar();
+    </script>
+</body>
+</html>
+
