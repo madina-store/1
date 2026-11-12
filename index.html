@@ -76,13 +76,20 @@
         .btn-clear { background: rgba(239, 68, 68, 0.2); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.75rem; cursor: pointer; font-weight: 700; }
         .btn-send-wa { background: var(--whatsapp-color); color: #fff; border: none; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.78rem; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 5px; text-decoration: none; }
 
-        /* تذييل الصفحة الفخم */
-        .store-footer { max-width: 600px; margin: 40px auto 20px; padding: 25px 16px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); text-align: center; }
-        .footer-logo { width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #000; }
-        .footer-store-name { font-size: 1.1rem; font-weight: 900; margin-bottom: 12px; color: #fff; }
-        .footer-row { margin-bottom: 12px; font-size: 0.85rem; color: var(--text-muted); }
-        .footer-row span { display: block; color: #fff; font-weight: 700; margin-top: 3px; }
-        .map-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 242, 254, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 10px 20px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.85rem; text-decoration: none; width: 100%; margin-top: 10px; transition: 0.2s; }
+        /* تذييل الصفحة الفخم والمنسق حديثاً */
+        .store-footer { max-width: 600px; margin: 40px auto 20px; padding: 30px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); text-align: center; }
+        .footer-logo { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #000; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+        .footer-store-name { font-size: 1.25rem; font-weight: 900; margin-bottom: 20px; color: #fff; letter-spacing: 0.5px; }
+        
+        .footer-info-row { margin-bottom: 16px; }
+        .footer-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+        .footer-value-group { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .footer-val { font-size: 1.1rem; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
+        
+        .footer-wa-icon-btn { background: var(--whatsapp-color); color: #fff; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4); transition: 0.2s; }
+        .footer-wa-icon-btn:hover { transform: scale(1.08); }
+
+        .map-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 242, 254, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 11px 20px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.9rem; text-decoration: none; width: 100%; margin-top: 12px; transition: 0.2s; }
         .map-btn:hover { background: var(--accent-cyan); color: #000; }
 
         /* نافذة تفاصيل اللعبة */
@@ -190,14 +197,30 @@
         </div>
     </div>
 
-    <!-- تذييل الصفحة الفخم -->
+    <!-- تذييل الصفحة الفخم المطابق للمواصفات -->
     <footer class="store-footer">
         <div class="footer-logo"><i class="fa-solid fa-gamepad"></i></div>
         <div class="footer-store-name">متجر المدينة</div>
-        <div class="footer-row">واتساب<span>07858858844</span></div>
-        <div class="footer-row">العنوان<span>ذي قار - قضاء النصر</span></div>
+        
+        <div class="footer-info-row">
+            <div class="footer-label">واتساب</div>
+            <div class="footer-value-group">
+                <span class="footer-val">07858858844</span>
+                <a href="https://wa.me/9647858858844?text=السلام%20عليكم" target="_blank" class="footer-wa-icon-btn">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-info-row">
+            <div class="footer-label">العنوان</div>
+            <div class="footer-value-group">
+                <span class="footer-val"><i class="fa-solid fa-location-dot" style="color: var(--accent-cyan); margin-left: 6px;"></i> ذي قار - قضاء النصر</span>
+            </div>
+        </div>
+
         <a href="https://maps.app.goo.gl/5y1AmnQqyYhpeQjH8?g_st=ac" target="_blank" class="map-btn">
-            <i class="fa-solid fa-location-dot"></i> افتح في خرائط Google
+            <i class="fa-solid fa-map-location-dot"></i> افتح في خرائط Google
         </a>
         <div style="font-size:0.7rem; color:var(--text-muted); margin-top:15px;">&copy; متجر المدينة - جميع الحقوق محفوظة</div>
     </footer>
@@ -319,7 +342,7 @@
 
             document.getElementById('cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;
             
-            let msg = "السلام عليكم، أريد طلب الألعاب التالية:\n" + cart.map(i => `- ${i.title} (${i.platform.toUpperCase()} - ${i.size})`).join("\n");
+            let msg = "السلام عليكم، أريد طلب الألعاب الآتية:\n" + cart.map(i => `- ${i.title} (${i.platform.toUpperCase()} - ${i.size})`).join("\n");
             document.getElementById('cartWhatsAppBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`;
         }
 
@@ -478,4 +501,3 @@
     </script>
 </body>
 </html>
-
