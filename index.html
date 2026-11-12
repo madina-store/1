@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -13,10 +14,10 @@
             --card-border: #1e293b;
             --accent-cyan: #00f2fe;
             --accent-blue: #4facfe;
-            --accent-orange: #f59e0b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --danger-color: #ef4444;
+            --edit-color: #3b82f6;
             --whatsapp-color: #25d366;
             --radius-lg: 16px;
             --radius-md: 10px;
@@ -33,31 +34,33 @@
         .location-badge { font-size: 0.72rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 4px; }
         .manage-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-muted); padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.8rem; cursor: pointer; }
 
+        /* شريط البحث العلوي المتفاعل المضيء */
         .search-box { max-width: 600px; margin: 15px auto; padding: 0 16px; position: relative; }
-        .search-box i { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input { width: 100%; padding: 12px 40px 12px 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: #fff; font-size: 0.9rem; outline: none; }
+        .search-box i { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); color: var(--accent-cyan); }
+        .search-input { width: 100%; padding: 12px 40px 12px 14px; background: var(--card-bg); border: 2px solid rgba(0, 242, 254, 0.4); border-radius: var(--radius-md); color: #fff; font-size: 0.9rem; outline: none; box-shadow: 0 0 12px rgba(0, 242, 254, 0.15); transition: 0.3s; }
+        .search-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 242, 254, 0.35); }
 
-        /* قسم السلايدر البانر العلوي (أُضيف حديثاً) */
+        /* قسم السلايدر البانر العلوي */
         .hero-slider-container { max-width: 600px; margin: 0 auto 20px; padding: 0 16px; }
         .hero-slide-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; background: var(--card-bg); border: 1px solid var(--card-border); min-height: 380px; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .hero-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.45; z-index: 1; }
         .hero-gradient-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #0b0f19 10%, rgba(11,15,25,0.7) 50%, rgba(11,15,25,0.2) 100%); z-index: 2; }
         .hero-content { position: relative; z-index: 3; }
-        .hero-tag-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-orange); color: var(--accent-orange); font-size: 0.72rem; font-weight: 900; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+        .hero-tag-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(0, 242, 254, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.72rem; font-weight: 900; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
         .hero-game-title { font-size: 1.5rem; font-weight: 900; color: #fff; margin-bottom: 8px; line-height: 1.2; }
         .hero-game-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; align-items: center; }
         .hero-game-meta span { color: #fff; font-weight: 700; }
         .hero-desc-preview { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
         .hero-actions { display: flex; gap: 10px; margin-bottom: 15px; }
-        .hero-btn-trailer { flex: 1; background: var(--accent-orange); color: #000; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 900; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .hero-btn-trailer { flex: 1; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: #000; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 900; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .hero-btn-details { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         
         .hero-thumbs-row { display: flex; gap: 8px; overflow-x: auto; padding-top: 5px; }
         .hero-thumb { width: 45px; height: 45px; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; opacity: 0.5; transition: 0.3s; flex-shrink: 0; }
-        .hero-thumb.active { border-color: var(--accent-orange); opacity: 1; transform: scale(1.05); }
+        .hero-thumb.active { border-color: var(--accent-cyan); opacity: 1; transform: scale(1.05); }
         .hero-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .hero-progress-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
-        .hero-progress-fill { width: 0%; height: 100%; background: var(--accent-orange); transition: width 0.1s linear; }
+        .hero-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); transition: width 0.1s linear; }
 
         /* الأقسام والفلترة */
         .filter-section { max-width: 600px; margin: 0 auto 15px; padding: 0 16px; }
@@ -68,7 +71,7 @@
         .categories-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .categories-scroll::-webkit-scrollbar { display: none; }
         .cat-chip { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .cat-chip.active { background: var(--accent-orange); color: #000; border-color: var(--accent-orange); }
+        .cat-chip.active { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: #000; border-color: transparent; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
 
         /* شبكة الألعاب */
         .games-grid { max-width: 600px; margin: 0 auto; padding: 0 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -79,7 +82,7 @@
         .platform-tag { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, 0.75); color: var(--accent-cyan); font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.3); }
         
         .add-cart-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; transition: 0.2s; z-index: 5; }
-        .game-card.selected .add-cart-btn { background: var(--accent-orange); color: #000; border-color: var(--accent-orange); }
+        .game-card.selected .add-cart-btn { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
 
         .game-info { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; cursor: pointer; }
         .game-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; }
@@ -89,7 +92,7 @@
         .arabic-support { font-size: 0.75rem; color: #10b981; font-weight: 700; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
 
         /* شريط السلة العائم السفلي */
-        .cart-floating-bar { position: fixed; bottom: 15px; left: 16px; right: 16px; max-width: 568px; margin: 0 auto; background: #182238; border: 1px solid var(--accent-orange); border-radius: var(--radius-lg); padding: 12px 16px; display: none; align-items: center; justify-content: space-between; z-index: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.6); animation: slideUp 0.3s ease; }
+        .cart-floating-bar { position: fixed; bottom: 15px; left: 16px; right: 16px; max-width: 568px; margin: 0 auto; background: #182238; border: 1px solid var(--accent-cyan); border-radius: var(--radius-lg); padding: 12px 16px; display: none; align-items: center; justify-content: space-between; z-index: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.6); animation: slideUp 0.3s ease; }
         .cart-floating-bar.active { display: flex; }
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .cart-info-text { font-size: 0.82rem; font-weight: 700; color: #fff; }
@@ -134,7 +137,7 @@
         .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
         .gallery-img:hover { opacity: 0.9; }
 
-        /* مكبر الصور التفاعلي بالأسهم (Lightbox Slider) */
+        /* مكبر الصور التفاعلي بالأسهم */
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
         .lightbox.active { display: flex; }
         .lightbox-img-wrapper { position: relative; width: 100%; max-width: 900px; display: flex; align-items: center; justify-content: center; }
@@ -144,8 +147,8 @@
         
         .lightbox-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.25); color: #fff; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 2010; transition: 0.2s; }
         .lightbox-nav-btn:hover { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
-        .lightbox-prev { right: 10px; } /* السهم الأيمن للصورة السابقة في RTL */
-        .lightbox-next { left: 10px; }  /* السهم الأيسر للصورة التالية في RTL */
+        .lightbox-prev { right: 10px; }
+        .lightbox-next { left: 10px; }
         
         .lightbox-counter { margin-top: 15px; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; background: rgba(255,255,255,0.08); padding: 5px 15px; border-radius: 20px; }
 
@@ -154,7 +157,9 @@
         .form-group label { display: block; font-size: 0.78rem; margin-bottom: 3px; color: var(--text-muted); }
         .form-control { width: 100%; padding: 8px; background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 6px; color: #fff; font-size: 0.85rem; }
         .admin-game-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem; border: 1px solid var(--card-border); }
+        .admin-btns-group { display: flex; gap: 5px; }
         .delete-mini-btn { background: rgba(239, 68, 68, 0.2); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+        .edit-mini-btn { background: rgba(59, 130, 246, 0.2); color: var(--edit-color); border: 1px solid rgba(59, 130, 246, 0.4); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -178,7 +183,7 @@
         <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن لعبة، مطور..." oninput="renderGames()">
     </div>
 
-    <!-- قسم السلايدر البانر العلوي (أُضيف حديثاً) -->
+    <!-- قسم السلايدر البانر العلوي -->
     <div class="hero-slider-container" id="heroSliderContainer"></div>
 
     <!-- الأقسام والفلترة مع العدادات -->
@@ -193,12 +198,14 @@
 
     <!-- لوحة التحكم للإدارة -->
     <div class="admin-panel" id="adminPanelBox">
-        <h3 style="font-size:0.9rem; color:var(--accent-cyan); margin-bottom:12px;"><i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر</h3>
+        <h3 id="adminFormTitle" style="font-size:0.9rem; color:var(--accent-cyan); margin-bottom:12px;"><i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر</h3>
+        
         <div class="form-group"><label>تغيير شعار المتجر (من الاستوديو)</label></div>
         <div class="form-group"><input type="file" id="logoFileInput" class="form-control" accept="image/*"></div>
         <button onclick="updateLogo()" class="map-btn" style="margin-bottom:15px; background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-upload"></i> حفظ وتحديث الشعار</button>
 
-        <div class="form-group"><label>إضافة لعبة جديدة</label></div>
+        <input type="hidden" id="editGameId" value="">
+        <div class="form-group"><label>إضافة / تعديل لعبة</label></div>
         <div class="form-group"><input type="text" id="newTitle" class="form-control" placeholder="اسم اللعبة"></div>
         <div style="display:flex; gap:8px;">
             <div class="form-group" style="flex:1;"><select id="newPlatform" class="form-control"><option value="ps4">PS4</option><option value="ps5">PS5</option></select></div>
@@ -208,10 +215,9 @@
         <div class="form-group"><input type="text" id="newCover" class="form-control" placeholder="رابط غلاف اللعبة..."></div>
         <div class="form-group"><input type="text" id="newVideo" class="form-control" placeholder="رابط يوتيوب التريلر..."></div>
         
-        <!-- مربع واحد لإضافة حتى 4 لقطات شاشة -->
         <div class="form-group">
             <label>روابط لقطات الشاشة (حد أقصى 4 صور - ضع كل رابط في سطر):</label>
-            <textarea id="newScreenshots" class="form-control" rows="4" placeholder="https://link1.jpg&#10;https://link2.jpg&#10;https://link3.jpg&#10;https://link4.jpg"></textarea>
+            <textarea id="newScreenshots" class="form-control" rows="3" placeholder="https://link1.jpg&#10;https://link2.jpg"></textarea>
         </div>
 
         <div class="form-group"><textarea id="newDesc" class="form-control" rows="2" placeholder="وصف اللعبة..."></textarea></div>
@@ -225,7 +231,8 @@
             </select>
         </div>
 
-        <button onclick="addGame()" class="map-btn" style="background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-save"></i> حفظ ونشر اللعبة</button>
+        <button id="saveGameBtn" onclick="saveGameData()" class="map-btn" style="background:var(--accent-cyan); color:#000;"><i class="fa-solid fa-save"></i> حفظ ونشر اللعبة</button>
+        <button id="cancelEditBtn" onclick="resetAdminForm()" class="map-btn" style="background:rgba(239,68,68,0.2); color:var(--danger-color); display:none; margin-top:5px;">إلغاء التعديل</button>
 
         <h3 style="font-size:0.85rem; color:var(--danger-color); margin: 15px 0 8px;">إدارة وحذف الألعاب</h3>
         <div id="adminGamesList" style="max-height: 150px; overflow-y: auto;"></div>
@@ -291,13 +298,13 @@
                 <div class="modal-section-heading"><i class="fa-solid fa-circle-info" style="color: var(--accent-cyan);"></i> عن اللعبة</div>
                 <div class="modal-desc" id="modalDesc"></div>
 
-                <div class="modal-section-heading" id="screenshotsHeading"><i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (اضغط للتكبير والتقليب)</div>
+                <div class="modal-section-heading" id="screenshotsHeading"><i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة</div>
                 <div class="gallery-stack" id="modalGallery"></div>
             </div>
         </div>
     </div>
 
-    <!-- مكبر الصور التفاعلي بالأسهم للتنقل السلس -->
+    <!-- مكبر الصور التفاعلي بالأسهم -->
     <div class="lightbox" id="lightboxModal" onclick="closeLightboxOnBg(event)">
         <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
         
@@ -331,10 +338,8 @@
 
         const categoriesList = ["الكل", "مغامرات", "حركة", "تصويب", "عالم مفتوح", "تقمص الأدوار", "رعب", "تسلل", "قتال"];
 
-        // متغيرات التنقل بين الصور داخل المكبر (Lightbox)
         let currentGalleryImages = [];
         let currentLightboxIndex = 0;
-
         let currentHeroIndex = 0;
         let heroTimer = null;
 
@@ -439,7 +444,10 @@
                 }
             }
             box.style.display = box.style.display === 'block' ? 'none' : 'block';
-            if (box.style.display === 'block') renderAdminGamesList();
+            if (box.style.display === 'block') {
+                resetAdminForm();
+                renderAdminGamesList();
+            }
         }
 
         function setPlatform(plat) {
@@ -508,29 +516,8 @@
                 if (!isNaN(num)) totalGb += num;
             });
 
-            document.getElementById('cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;
-            
-            let msg = "السلام عليكم، أريد طلب الألعاب الآتية:\n" + cart.map(i => `- ${i.title} (${i.platform.toUpperCase()} - ${i.size})`).join("\n");
-            document.getElementById('cartWhatsAppBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`;
-        }
-
-        function clearCart() {
-            cart = [];
-            localStorage.setItem('madina_cart', JSON.stringify(cart));
-            renderGames();
-            updateCartBar();
-        }
-
-        function formatYouTubeUrl(url) {
-            if (!url) return "https://www.youtube.com/embed/aOGgx3k9bQQ";
-            if (url.includes('embed/')) return url;
-            let videoId = '';
-            if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes('watch?v=')) {
-                videoId = url.split('watch?v=').length > 1 ? url.split('watch?v=')[1].split('&')[0] : '';
-            }
-            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+            document.getElementById('cartInfoText').innerText = `${cart.length} ألعاب محددة الإجمالي: ${totalGb.toFixed(1)} GB`;  let msg = "السلام عليكم، أريد طلب الألعاب الآتية:\n" + cart.map(i => `- ${i.title} (${i.platform.toUpperCase()} -${i.size})`).join("\n");
+            document.getElementById('cartWhatsAppBtn').href = `https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`; }  function clearCart() { cart = []; localStorage.setItem('madina_cart', JSON.stringify(cart)); renderGames(); updateCartBar(); }  function formatYouTubeUrl(url) { if (!url) return "https://www.youtube.com/embed/aOGgx3k9bQQ"; if (url.includes('embed/')) return url; let videoId = ''; if (url.includes('youtu.be/')) { videoId = url.split('youtu.be/')[1].split('?')[0]; } else if (url.includes('watch?v=')) { videoId = url.split('watch?v=').length > 1 ? url.split('watch?v=')[1].split('&')[0] : ''; } return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
         function renderGames() {
@@ -603,7 +590,6 @@
             document.getElementById('modalVideo').src = formatYouTubeUrl(game.video);
             document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر لهذه اللعبة حالياً.";
 
-            // جمع مصفوفة صور الشاشة للعبة (دعم الصيغة الجديدة والقديمة)
             let imgs = [];
             if (game.screenshots && Array.isArray(game.screenshots) && game.screenshots.length > 0) {
                 imgs = game.screenshots.filter(url => url && url.trim() !== '');
@@ -617,7 +603,7 @@
             const galleryContainer = document.getElementById('modalGallery');
             galleryContainer.innerHTML = '';
 
-            document.getElementById('screenshotsHeading').innerHTML = `<i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (${imgs.length}) - اضغط للتقليب`;
+            document.getElementById('screenshotsHeading').innerHTML = `<i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة (${imgs.length}) - اضغط للتكبير والتقليب`;
 
             imgs.forEach((src, index) => {
                 galleryContainer.innerHTML += `
@@ -632,7 +618,6 @@
             document.getElementById('modalVideo').src = "";
         }
 
-        // وظائف المكبر التفاعلي بالأسهم
         function openLightbox(index) {
             if (!currentGalleryImages || currentGalleryImages.length === 0) return;
             currentLightboxIndex = index;
@@ -646,9 +631,8 @@
             const navBtns = document.querySelectorAll('.lightbox-nav-btn');
 
             imgEl.src = currentGalleryImages[currentLightboxIndex];
-            counterEl.innerText = `${currentLightboxIndex + 1} / ${currentGalleryImages.length}`;
+            counterEl.innerText = `${currentLightboxIndex + 1} /${currentGalleryImages.length}`;
 
-            // إخفاء الأسهم إذا كانت هناك صورة واحدة فقط
             navBtns.forEach(btn => {
                 btn.style.display = currentGalleryImages.length > 1 ? 'flex' : 'none';
             });
@@ -672,7 +656,8 @@
             }
         }
 
-        function addGame() {
+        function saveGameData() {
+            const editId = document.getElementById('editGameId').value;
             const title = document.getElementById('newTitle').value;
             const platform = document.getElementById('newPlatform').value;
             const category = document.getElementById('newCategory').value;
@@ -683,7 +668,6 @@
             const desc = document.getElementById('newDesc').value;
             const arabicStatus = document.getElementById('newArabicStatus').value;
 
-            // استخراج حتى 4 صور من المربع الواحد (مفصولة بسطر جديد أو فاصلة)
             const rawScreenshots = document.getElementById('newScreenshots').value.trim();
             let screenshots = [];
             if (rawScreenshots) {
@@ -691,55 +675,70 @@
                     .split(/[\n,]+/)
                     .map(s => s.trim())
                     .filter(s => s !== '')
-                    .slice(0, 4); // حد أقصى 4 صور
+                    .slice(0, 4);
             }
 
             if (!title) { alert("أدخل اسم اللعبة!"); return; }
 
-            gamesList.unshift({ id: Date.now(), title, platform, category, size, cover, video, screenshots, desc, arabicStatus });
+            if (editId) {
+                // تعديل لعبة موجودة
+                let game = gamesList.find(g => g.id == editId);
+                if (game) {
+                    game.title = title;
+                    game.platform = platform;
+                    game.category = category;
+                    game.size = size;
+                    game.cover = cover;
+                    game.video = video;
+                    game.desc = desc;
+                    game.arabicStatus = arabicStatus;
+                    if(screenshots.length > 0) game.screenshots = screenshots;
+                }
+                alert("تم تحديث اللعبة بنجاح!");
+            } else {
+                // إضافة لعبة جديدة
+                const newGame = { id: Date.now(), title, platform, category, size, cover, video, screenshots, desc, arabicStatus };
+                gamesList.unshift(newGame);
+                alert("تمت إضافة اللعبة ونشرها بنجاح!");
+            }
+
             localStorage.setItem('madina_games', JSON.stringify(gamesList));
-            
+            resetAdminForm();
+            renderGames();
+            renderAdminGamesList();
+        }
+
+        function editGame(id) {
+            const game = gamesList.find(g => g.id == id);
+            if (!game) return;
+
+            document.getElementById('editGameId').value = game.id;
+            document.getElementById('newTitle').value = game.title;
+            document.getElementById('newPlatform').value = game.platform;
+            document.getElementById('newCategory').value = game.category;
+            document.getElementById('newSize').value = game.size;
+            document.getElementById('newCover').value = game.cover;
+            document.getElementById('newVideo').value = game.video;
+            document.getElementById('newDesc').value = game.desc || '';
+            document.getElementById('newArabicStatus').value = game.arabicStatus || 'لا تدعم';
+            document.getElementById('newScreenshots').value = game.screenshots ? game.screenshots.join('\n') : '';
+
+            document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل اللعبة: ${game.title}`;
+            document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-check"></i> حفظ التعديلات`;
+            document.getElementById('cancelEditBtn').style.display = 'block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetAdminForm() {
+            document.getElementById('editGameId').value = '';
             document.getElementById('newTitle').value = '';
             document.getElementById('newSize').value = '';
             document.getElementById('newCover').value = '';
             document.getElementById('newVideo').value = '';
             document.getElementById('newScreenshots').value = '';
             document.getElementById('newDesc').value = '';
+            document.getElementById('newArabicStatus').value = 'لا تدعم';
 
-            renderGames();
-            renderAdminGamesList();
-            alert("تمت إضافة اللعبة ونشرها بنجاح!");
-        }
-
-        function renderAdminGamesList() {
-            const list = document.getElementById('adminGamesList');
-            list.innerHTML = '';
-            if (gamesList.length === 0) {
-                list.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted);">لا توجد ألعاب.</div>`;
-                return;
-            }
-            gamesList.forEach(g => {
-                list.innerHTML += `
-                    <div class="admin-game-item">
-                        <span>${g.title} (${g.platform.toUpperCase()})</span>
-                        <button class="delete-mini-btn" onclick="deleteGame(${g.id})">حذف</button>
-                    </div>`;
-            });
-        }
-
-        function deleteGame(id) {
-            if (confirm("هل تريد حذف اللعبة؟")) {
-                gamesList = gamesList.filter(g => g.id !== id);
-                cart = cart.filter(item => item.id !== id);
-                localStorage.setItem('madina_games', JSON.stringify(gamesList));
-                localStorage.setItem('madina_cart', JSON.stringify(cart));
-                renderGames();
-                renderAdminGamesList();
-            }
-        }
-
-        renderGames();
-        updateCartBar();
-    </script>
-</body>
-</html>
+            document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر`;
+            document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-save"></i> حفظ ونشر الل
