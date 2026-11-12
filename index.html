@@ -37,6 +37,29 @@
         .search-box i { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
         .search-input { width: 100%; padding: 12px 40px 12px 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: #fff; font-size: 0.9rem; outline: none; }
 
+        /* قسم السلايدر البانر العلوي (أُضيف حديثاً) */
+        .hero-slider-container { max-width: 600px; margin: 0 auto 20px; padding: 0 16px; }
+        .hero-slide-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; background: var(--card-bg); border: 1px solid var(--card-border); min-height: 380px; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .hero-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.45; z-index: 1; }
+        .hero-gradient-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #0b0f19 10%, rgba(11,15,25,0.7) 50%, rgba(11,15,25,0.2) 100%); z-index: 2; }
+        .hero-content { position: relative; z-index: 3; }
+        .hero-tag-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-orange); color: var(--accent-orange); font-size: 0.72rem; font-weight: 900; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+        .hero-game-title { font-size: 1.5rem; font-weight: 900; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+        .hero-game-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; align-items: center; }
+        .hero-game-meta span { color: #fff; font-weight: 700; }
+        .hero-desc-preview { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+        .hero-actions { display: flex; gap: 10px; margin-bottom: 15px; }
+        .hero-btn-trailer { flex: 1; background: var(--accent-orange); color: #000; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 900; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .hero-btn-details { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        
+        /* مصغرات السلايدر والشريط الزمني بالأسفل */
+        .hero-thumbs-row { display: flex; gap: 8px; overflow-x: auto; padding-top: 5px; }
+        .hero-thumb { width: 45px; height: 45px; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; opacity: 0.5; transition: 0.3s; flex-shrink: 0; }
+        .hero-thumb.active { border-color: var(--accent-orange); opacity: 1; transform: scale(1.05); }
+        .hero-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-progress-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+        .hero-progress-fill { width: 0%; height: 100%; background: var(--accent-orange); transition: width 0.1s linear; }
+
         /* الأقسام والفلترة */
         .filter-section { max-width: 600px; margin: 0 auto 15px; padding: 0 16px; }
         .platforms-container { display: flex; gap: 8px; margin-bottom: 10px; }
@@ -56,7 +79,6 @@
         
         .platform-tag { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, 0.75); color: var(--accent-cyan); font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.3); }
         
-        /* زر الإضافة السريع (+) */
         .add-cart-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; transition: 0.2s; z-index: 5; }
         .game-card.selected .add-cart-btn { background: var(--accent-orange); color: #000; border-color: var(--accent-orange); }
 
@@ -92,18 +114,30 @@
         .map-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 242, 254, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 11px 20px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.9rem; text-decoration: none; width: 100%; margin-top: 12px; transition: 0.2s; }
         .map-btn:hover { background: var(--accent-cyan); color: #000; }
 
-        /* نافذة تفاصيل اللعبة */
-        .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
+        /* نافذة تفاصيل اللعبة بالتصميم الاحترافي المطلوب */
+        .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(10px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
         .modal.active { display: flex; }
-        .modal-content { background: var(--bg-color); border-top: 1px solid var(--card-border); width: 100%; max-width: 600px; max-height: 90vh; border-radius: 24px 24px 0 0; overflow-y: auto; padding: 20px; position: relative; }
-        .modal-close { position: absolute; left: 20px; top: 20px; background: rgba(255, 255, 255, 0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-top: 30px; margin-bottom: 12px; }
-        .video-container iframe { width: 100%; height: 100%; border: none; }
-        .modal-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 6px; }
-        .modal-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); }
-        .gallery-title { font-size: 0.9rem; font-weight: 700; margin: 15px 0 10px; color: var(--accent-cyan); }
-        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; border: 1px solid var(--card-border); cursor: pointer; }
+        .modal-content { background: var(--bg-color); border-top: 1px solid var(--card-border); width: 100%; max-width: 600px; max-height: 92vh; border-radius: 24px 24px 0 0; overflow-y: auto; position: relative; padding-bottom: 30px; }
+        .modal-close { position: absolute; left: 15px; top: 15px; background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 1.1rem; }
+        
+        /* الفيديو في الأعلى تماماً */
+        .modal-video-container { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; }
+        .modal-video-container iframe { width: 100%; height: 100%; border: none; }
+
+        .modal-body-padding { padding: 20px; }
+        .modal-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 8px; color: #fff; }
+        .modal-badges-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; font-size: 0.78rem; }
+        .modal-badge-item { background: var(--card-bg); border: 1px solid var(--card-border); padding: 5px 12px; border-radius: 8px; color: var(--text-muted); font-weight: 700; }
+        
+        .modal-section-heading { font-size: 0.95rem; font-weight: 900; color: #fff; margin: 20px 0 10px; display: flex; align-items: center; gap: 6px; }
+        
+        /* الوصف بخط بارز وواضح وأكبر من المعتاد */
+        .modal-desc { font-size: 1.02rem; color: #cbd5e1; line-height: 1.8; font-weight: 500; background: rgba(255,255,255,0.02); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--card-border); margin-bottom: 20px; }
+        
+        /* الصور تحت الوصف عمودية وبحجم كبير وواضح */
+        .gallery-stack { display: flex; flex-direction: column; gap: 12px; }
+        .gallery-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
+        .gallery-img:hover { opacity: 0.9; }
 
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .lightbox.active { display: flex; }
@@ -139,6 +173,11 @@
         <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن لعبة، مطور..." oninput="renderGames()">
     </div>
 
+    <!-- قسم السلايدر البانر العلوي (أُضيف حديثاً) -->
+    <div class="hero-slider-container" id="heroSliderContainer">
+        <!-- يتم تعبئته تلقائياً بأحدث الألعاب -->
+    </div>
+
     <!-- الأقسام والفلترة مع العدادات -->
     <div class="filter-section">
         <div class="platforms-container">
@@ -146,9 +185,7 @@
             <button class="plat-btn" onclick="setPlatform('ps4')">PS4</button>
             <button class="plat-btn" onclick="setPlatform('ps5')">PS5</button>
         </div>
-        <div class="categories-scroll" id="categoriesContainer">
-            <!-- يتم تعبئة الأقسام ديناميكياً مع العدادات -->
-        </div>
+        <div class="categories-scroll" id="categoriesContainer"></div>
     </div>
 
     <!-- لوحة التحكم للإدارة -->
@@ -226,18 +263,30 @@
         <div style="font-size:0.7rem; color:var(--text-muted); margin-top:15px;">&copy; متجر المدينة - جميع الحقوق محفوظة</div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة ومعرض الصور -->
+    <!-- نافذة تفاصيل اللعبة بالتصميم الاحترافي -->
     <div class="modal" id="gameModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-            <div class="video-container"><iframe id="modalVideo" src="" allowfullscreen></iframe></div>
-            <h3 class="modal-title" id="modalTitle"></h3>
-            <div style="display:flex; gap:8px; margin-bottom:10px; font-size:0.75rem; color:var(--text-muted);">
-                <span id="modalSize"></span> | <span id="modalPlatform"></span> | <span id="modalCategory"></span>
+            
+            <!-- الفيديو في الأعلى تماماً -->
+            <div class="modal-video-container">
+                <iframe id="modalVideo" src="" allowfullscreen></iframe>
             </div>
-            <div class="modal-desc" id="modalDesc"></div>
-            <div class="gallery-title"><i class="fa-solid fa-images"></i> صور من داخل اللعبة (اضغط لتكبيرها)</div>
-            <div class="gallery-grid" id="modalGallery"></div>
+
+            <div class="modal-body-padding">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <div class="modal-badges-row">
+                    <span class="modal-badge-item" id="modalPlatform"></span>
+                    <span class="modal-badge-item" id="modalCategory"></span>
+                    <span class="modal-badge-item" id="modalSizeBadge"></span>
+                </div>
+
+                <div class="modal-section-heading"><i class="fa-solid fa-circle-info" style="color: var(--accent-cyan);"></i> عن اللعبة</div>
+                <div class="modal-desc" id="modalDesc"></div>
+
+                <div class="modal-section-heading"><i class="fa-solid fa-images" style="color: var(--accent-cyan);"></i> لقطات الشاشة</div>
+                <div class="gallery-stack" id="modalGallery"></div>
+            </div>
         </div>
     </div>
 
@@ -249,9 +298,9 @@
 
     <script>
         const defaultGames = [
-            { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", arabicStatus: "تدعم اللغة العربية (دبلجة)", cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية.", img1: "", img2: "" },
-            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", arabicStatus: "تدعم اللغة العربية (ترجمة)", cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة.", img1: "", img2: "" },
-            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك.", img1: "", img2: "" }
+            { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", arabicStatus: "تدعم اللغة العربية (دبلجة)", cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية لمواجهة المعارك المصيرية.", img1: "", img2: "" },
+            { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", arabicStatus: "تدعم اللغة العربية (ترجمة)", cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة واستكشف أسرار القتلة.", img1: "", img2: "" },
+            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك لتصبح ملك الأسرار.", img1: "", img2: "" }
         ];
 
         let gamesList = JSON.parse(localStorage.getItem('madina_games')) || defaultGames;
@@ -261,6 +310,79 @@
         const configKey = "AFC24";
 
         const categoriesList = ["الكل", "مغامرات", "حركة", "تصويب", "عالم مفتوح", "تقمص الأدوار", "رعب", "تسلل", "قتال"];
+
+        // كود سلايدر أُضيف حديثاً التفاعلي
+        let currentHeroIndex = 0;
+        let heroTimer = null;
+
+        function initHeroSlider() {
+            const container = document.getElementById('heroSliderContainer');
+            if (!container || gamesList.length === 0) return;
+
+            // نأخذ أحدث 4 ألعاب مضافة
+            const latestGames = gamesList.slice(0, 4);
+            
+            function renderHero(index) {
+                currentHeroIndex = index;
+                const game = latestGames[index];
+                let gameSize = game.size || "30 GB";
+                if (!gameSize.toUpperCase().includes('GB')) gameSize += ' GB';
+
+                let thumbsHtml = '';
+                latestGames.forEach((g, idx) => {
+                    thumbsHtml += `
+                        <div class="hero-thumb ${idx === index ? 'active' : ''}" onclick="switchHero(${idx})">
+                            <img src="${g.cover}" alt="thumb">
+                        </div>`;
+                });
+
+                container.innerHTML = `
+                    <div class="hero-slide-card">
+                        <img src="${game.cover}" class="hero-bg-img" alt="bg">
+                        <div class="hero-gradient-overlay"></div>
+                        <div class="hero-content">
+                            <span class="hero-tag-badge"><i class="fa-solid fa-sparkles"></i> أُضيف حديثاً</span>
+                            <div class="hero-game-title">${game.title}</div>
+                            <div class="hero-game-meta">
+                                <span>${game.platform.toUpperCase()}</span> • <span>${game.category}</span> • <span>${gameSize}</span>
+                            </div>
+                            <div class="hero-desc-preview">${game.desc || "متوفر الآن في متجر المدينة بأعلى جودة."}</div>
+                            <div class="hero-actions">
+                                <button class="hero-btn-trailer" onclick="openModal(${game.id})"><i class="fa-solid fa-play"></i> شاهد المقطع</button>
+                                <button class="hero-btn-details" onclick="openModal(${game.id})"><i class="fa-solid fa-circle-info"></i> التفاصيل</button>
+                            </div>
+                            <div class="hero-thumbs-row">${thumbsHtml}</div>
+                            <div class="hero-progress-bar"><div class="hero-progress-fill" id="heroProgress"></div></div>
+                        </div>
+                    </div>`;
+                
+                startHeroTimer();
+            }
+
+            window.switchHero = function(idx) {
+                clearInterval(heroTimer);
+                renderHero(idx);
+            };
+
+            function startHeroTimer() {
+                let progress = 0;
+                const fill = document.getElementById('heroProgress');
+                if(!fill) return;
+                
+                clearInterval(heroTimer);
+                heroTimer = setInterval(() => {
+                    progress += 2;
+                    fill.style.width = progress + '%';
+                    if (progress >= 100) {
+                        clearInterval(heroTimer);
+                        let nextIdx = (currentHeroIndex + 1) % latestGames.length;
+                        renderHero(nextIdx);
+                    }
+                }, 100);
+            }
+
+            renderHero(0);
+        }
 
         function applySavedLogo() {
             const savedLogo = localStorage.getItem('madina_logo');
@@ -391,6 +513,7 @@
 
         function renderGames() {
             renderCategories();
+            initHeroSlider();
             const grid = document.getElementById('gamesGrid');
             const search = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = '';
@@ -411,14 +534,12 @@
             filtered.forEach(game => {
                 const isSelected = cart.some(item => item.id === game.id);
                 
-                // معالجة حالة دعم العربية لضمان ظهورها بشكل دقيق
                 let arabicHtml = '';
-                let status = game.arabicStatus || (game.arabic ? 'تدعم اللغة العربية (ترجمة)' : '');
+                let status = game.arabicStatus || '';
                 if (status && status !== 'لا تدعم' && status !== '') {
                     arabicHtml = `<div class="arabic-support"><i class="fa-solid fa-check"></i> ${status}</div>`;
                 }
 
-                // معالجة عرض الحجم ليتضمن GB بوضوح
                 let gameSize = game.size || "30 GB";
                 if (!gameSize.toUpperCase().includes('GB')) {
                     gameSize += ' GB';
@@ -449,12 +570,16 @@
         function openModal(id) {
             const game = gamesList.find(g => g.id === id);
             if (!game) return;
+
+            let gameSize = game.size || "30 GB";
+            if (!gameSize.toUpperCase().includes('GB')) gameSize += ' GB';
+
             document.getElementById('modalTitle').innerText = game.title;
             document.getElementById('modalPlatform').innerText = game.platform.toUpperCase();
-            document.getElementById('modalSize').innerText = (game.size && game.size.toUpperCase().includes('GB')) ? game.size : (game.size ? game.size + ' GB' : '30 GB');
             document.getElementById('modalCategory').innerText = game.category;
+            document.getElementById('modalSizeBadge').innerText = gameSize;
             document.getElementById('modalVideo').src = formatYouTubeUrl(game.video);
-            document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر.";
+            document.getElementById('modalDesc').innerText = game.desc || "لا يوجد وصف متوفر لهذه اللعبة حالياً.";
 
             const img1 = game.img1 || game.cover;
             const img2 = game.img2 || game.cover;
