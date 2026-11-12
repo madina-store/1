@@ -33,11 +33,65 @@
         .location-badge { font-size: 0.72rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 4px; }
         .manage-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-muted); padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.8rem; cursor: pointer; }
 
-        /* شريط البحث العلوي المتفاعل المضيء */
-        .search-box { max-width: 600px; margin: 15px auto; padding: 0 16px; position: relative; }
-        .search-box i { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); color: var(--accent-cyan); }
-        .search-input { width: 100%; padding: 12px 40px 12px 14px; background: var(--card-bg); border: 2px solid rgba(0, 242, 254, 0.4); border-radius: var(--radius-md); color: #fff; font-size: 0.9rem; outline: none; box-shadow: 0 0 12px rgba(0, 242, 254, 0.15); transition: 0.3s; }
-        .search-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 242, 254, 0.35); }
+        /* شريط البحث بإضاءة LED متحركة تدور حوله باستمرار */
+        .search-wrapper { max-width: 600px; margin: 16px auto; padding: 0 16px; }
+        .search-led-border {
+            position: relative;
+            border-radius: 14px;
+            padding: 2px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px rgba(0, 242, 254, 0.22);
+        }
+        .search-led-border::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 600%;
+            background: conic-gradient(
+                transparent 0deg,
+                transparent 60deg,
+                var(--accent-blue) 120deg,
+                var(--accent-cyan) 180deg,
+                #ffffff 200deg,
+                var(--accent-cyan) 220deg,
+                transparent 280deg,
+                transparent 360deg
+            );
+            animation: rotateLed 3.5s linear infinite;
+            z-index: 1;
+        }
+        @keyframes rotateLed {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .search-box-inner {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .search-box-inner i {
+            position: absolute;
+            right: 14px;
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 42px 12px 14px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 0.92rem;
+            outline: none;
+        }
 
         /* قسم السلايدر البانر العلوي */
         .hero-slider-container { max-width: 600px; margin: 0 auto 20px; padding: 0 16px; }
@@ -88,7 +142,10 @@
         
         .game-meta-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
         .game-size { font-weight: 900; color: var(--accent-cyan); font-size: 0.95rem; }
-        .arabic-support { font-size: 0.75rem; color: #10b981; font-weight: 700; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+        
+        /* شارات حالة اللغة العربية */
+        .arabic-support { font-size: 0.74rem; color: #10b981; font-weight: 700; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+        .no-arabic-support { font-size: 0.74rem; color: #f87171; font-weight: 700; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
 
         /* شريط السلة العائم السفلي */
         .cart-floating-bar { position: fixed; bottom: 15px; left: 16px; right: 16px; max-width: 568px; margin: 0 auto; background: #182238; border: 1px solid var(--accent-cyan); border-radius: var(--radius-lg); padding: 12px 16px; display: none; align-items: center; justify-content: space-between; z-index: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.6); animation: slideUp 0.3s ease; }
@@ -177,9 +234,14 @@
         </div>
     </header>
 
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن لعبة، مطور..." oninput="renderGames()">
+    <!-- شريط البحث بالإضاءة الدوارة LED -->
+    <div class="search-wrapper">
+        <div class="search-led-border">
+            <div class="search-box-inner">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن لعبة، مطور..." oninput="renderGames()">
+            </div>
+        </div>
     </div>
 
     <!-- قسم السلايدر البانر العلوي -->
@@ -224,7 +286,7 @@
         <div class="form-group">
             <label>حالة دعم اللغة العربية:</label>
             <select id="newArabicStatus" class="form-control">
-                <option value="لا تدعم">لا تدعم العربية</option>
+                <option value="لا تدعم العربية">لا تدعم العربية</option>
                 <option value="تدعم اللغة العربية (ترجمة)">تدعم اللغة العربية (ترجمة)</option>
                 <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
             </select>
@@ -326,7 +388,7 @@
         const defaultGames = [
             { id: 1, title: "God of War Ragnarok", platform: "ps5", category: "مغامرات", size: "84.5 GB", arabicStatus: "تدعم اللغة العربية (دبلجة)", cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", video: "https://www.youtube.com/embed/EE-4GvjKcfs", desc: "رحلة ملحمية لكراتوس وأتروس في عوالم الأساطير الإسكندنافية لمواجهة المعارك المصيرية.", screenshots: ["https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800", "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800"] },
             { id: 2, title: "Assassin's Creed Mirage", platform: "ps4", category: "عالم مفتوح", size: "35.2 GB", arabicStatus: "تدعم اللغة العربية (ترجمة)", cover: "https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg", video: "https://www.youtube.com/embed/9w66x5x5Z1M", desc: "عش مغامرة باسم في شوارع بغداد التاريخية الخلابة واستكشف أسرار القتلة.", screenshots: ["https://m.media-amazon.com/images/I/71N1C-8jU1L._SL1500_.jpg"] },
-            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك لتصبح ملك الأسرار.", screenshots: ["https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800"] }
+            { id: 3, title: "Elden Ring", platform: "ps5", category: "تقمص الأدوار", size: "45.0 GB", arabicStatus: "لا تدعم العربية", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500", video: "https://www.youtube.com/embed/AKX3MRWZgbI", desc: "عالم مفتوح شاسع وتحديات قوية بانتظارك لتصبح ملك الأسرار.", screenshots: ["https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800"] }
         ];
 
         let gamesList = [];
@@ -472,9 +534,7 @@
                     resetAdminForm();
                     renderAdminGamesList();
                 }
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) {}
         }
 
         function setPlatform(plat) {
@@ -605,9 +665,12 @@
                 filtered.forEach(game => {
                     const isSelected = cart.some(item => item.id === game.id);
                     
+                    // معالجة عرض جميع حالات اللغة العربية (بما فيها لا تدعم العربية)
                     let arabicHtml = '';
                     let status = game.arabicStatus || '';
-                    if (status && status !== 'لا تدعم' && status !== '') {
+                    if (status === 'لا تدعم' || status === 'لا تدعم العربية') {
+                        arabicHtml = `<div class="no-arabic-support"><i class="fa-solid fa-xmark"></i> لا تدعم العربية</div>`;
+                    } else if (status !== '') {
                         arabicHtml = `<div class="arabic-support"><i class="fa-solid fa-check"></i> ${status}</div>`;
                     }
 
@@ -798,7 +861,11 @@
                 document.getElementById('newCover').value = game.cover || '';
                 document.getElementById('newVideo').value = game.video || '';
                 document.getElementById('newDesc').value = game.desc || '';
-                document.getElementById('newArabicStatus').value = game.arabicStatus || 'لا تدعم';
+                
+                let statusVal = game.arabicStatus || 'لا تدعم العربية';
+                if (statusVal === 'لا تدعم') statusVal = 'لا تدعم العربية';
+                document.getElementById('newArabicStatus').value = statusVal;
+
                 document.getElementById('newScreenshots').value = (game.screenshots && Array.isArray(game.screenshots)) ? game.screenshots.join('\n') : '';
 
                 document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل اللعبة: ${game.title}`;
@@ -818,7 +885,7 @@
                 document.getElementById('newVideo').value = '';
                 document.getElementById('newScreenshots').value = '';
                 document.getElementById('newDesc').value = '';
-                document.getElementById('newArabicStatus').value = 'لا تدعم';
+                document.getElementById('newArabicStatus').value = 'لا تدعم العربية';
 
                 document.getElementById('adminFormTitle').innerHTML = `<i class="fa-solid fa-sliders"></i> لوحة تحكم المتجر`;
                 document.getElementById('saveGameBtn').innerHTML = `<i class="fa-solid fa-save"></i> حفظ ونشر اللعبة`;
@@ -867,4 +934,3 @@
     </script>
 </body>
 </html>
-
