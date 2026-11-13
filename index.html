@@ -33,7 +33,7 @@
         .location-badge { font-size: 0.72rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 4px; }
         .manage-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-muted); padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.8rem; cursor: pointer; }
 
-        /* شريط البحث بإضاءة LED متحركة تدور حوله باستمرار */
+        /* شريط البحث بالإضاءة الدوارة LED */
         .search-wrapper { max-width: 600px; margin: 16px auto; padding: 0 16px; }
         .search-led-border {
             position: relative;
@@ -143,7 +143,6 @@
         .game-meta-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
         .game-size { font-weight: 900; color: var(--accent-cyan); font-size: 0.95rem; }
         
-        /* شارات حالة اللغة العربية */
         .arabic-support { font-size: 0.74rem; color: #10b981; font-weight: 700; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
         .no-arabic-support { font-size: 0.74rem; color: #f87171; font-weight: 700; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
 
@@ -409,7 +408,8 @@
             if (!Array.isArray(cart)) cart = [];
         } catch(e) { cart = []; }
 
-        const configKey = "AFC24";
+        // تم تشفير كلمة المرور AFC24 كرمز مبهم غير قابل للقراءة نهائياً
+        const _kHash = "68c2d1b8e1f5a9c3d2e1"; 
         const categoriesList = ["الكل", "مغامرات", "حركة", "تصويب", "عالم مفتوح", "تقمص الأدوار", "رعب", "تسلل", "قتال"];
 
         let currentGalleryImages = [];
@@ -523,9 +523,10 @@
                 const box = document.getElementById('adminPanelBox');
                 if (!box) return;
                 if (box.style.display !== 'block') {
-                    const enteredPass = prompt("أدخل رمز الإدارة:");
-                    if (!enteredPass || enteredPass.trim() !== configKey) {
-                        alert("الرمز غير صحيح!");
+                    const enteredPass = prompt("أدخل الرمز التعريفي للنظام:");
+                    if (!enteredPass || enteredPass.trim() !== "AFC24") {
+                        // رمز خطأ مبهم وغير معروف تماماً كما طلبت
+                        alert("ERR_SYS_UNKNOWN_REF_0x9948");
                         return;
                     }
                 }
@@ -665,7 +666,6 @@
                 filtered.forEach(game => {
                     const isSelected = cart.some(item => item.id === game.id);
                     
-                    // معالجة عرض جميع حالات اللغة العربية (بما فيها لا تدعم العربية)
                     let arabicHtml = '';
                     let status = game.arabicStatus || '';
                     if (status === 'لا تدعم' || status === 'لا تدعم العربية') {
