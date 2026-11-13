@@ -13,13 +13,15 @@
             background-color: #090d16;
             color: #ffffff;
         }
-        @keyframes ledGlow {
-            0%, 100% { border-color: #06b6d4; box-shadow: 0 0 12px rgba(6, 182, 212, 0.35); }
-            50% { border-color: #3b82f6; box-shadow: 0 0 16px rgba(59, 130, 246, 0.45); }
+        @keyframes superLedGlow {
+            0% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.6), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+            33% { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.8), inset 0 0 15px rgba(59, 130, 246, 0.3); }
+            66% { border-color: #ec4899; box-shadow: 0 0 25px rgba(236, 72, 153, 0.8), inset 0 0 15px rgba(236, 72, 153, 0.3); }
+            100% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.6), inset 0 0 10px rgba(6, 182, 212, 0.2); }
         }
         .led-search-bar {
-            border: 1.5px solid #06b6d4;
-            animation: ledGlow 4s infinite ease-in-out;
+            border: 2px solid #06b6d4;
+            animation: superLedGlow 3s infinite ease-in-out;
         }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -39,7 +41,6 @@
     <!-- الهيدر المطابق للهوية مع دعم الشعار السحابي -->
     <header class="bg-[#0b101b]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 sticky top-0 z-40">
         <div class="container mx-auto max-w-4xl flex justify-between items-center">
-            <!-- الشعار الخفي للإدارة (3 نقرات) + اسم المتجر والشعار السحابي -->
             <div id="secret-admin-trigger" class="flex items-center gap-3 cursor-pointer select-none">
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center overflow-hidden">
                     <img id="store-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[10px] hidden">
@@ -56,7 +57,6 @@
                 </div>
             </div>
 
-            <!-- زر السلة العائم في الأعلى -->
             <button onclick="toggleCartModal()" class="relative bg-[#131b2e] border border-slate-700/80 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
                 <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
                 <span class="text-xs font-bold">السلة</span>
@@ -68,8 +68,8 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث المضيء -->
-        <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3">
+        <!-- شريط البحث المضيء (LED المتحرك الأنيق) -->
+        <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
@@ -80,7 +80,6 @@
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0b101b] via-[#0b101b]/75 to-black/20"></div>
                 
-                <!-- المحتوى فوق الصورة -->
                 <div class="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
                     <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2.5 backdrop-blur-sm">
                         أضيف حديثاً
@@ -89,7 +88,6 @@
                     <div id="hero-meta" class="text-xs sm:text-sm text-slate-300 font-semibold mb-2 flex items-center gap-2"></div>
                     <p id="hero-desc" class="text-xs text-slate-300/90 max-w-lg line-clamp-2 mb-4 leading-relaxed"></p>
 
-                    <!-- أزرار البنر -->
                     <div class="flex items-center gap-3 w-full max-w-md mb-4">
                         <a id="hero-youtube-btn" href="#" target="_blank" class="flex-1 cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 hover:opacity-95 transition">
                             <i class="fa-solid fa-play"></i> شاهد المقطع
@@ -99,32 +97,31 @@
                         </button>
                     </div>
 
-                    <!-- مصغرات التنقل السريع للألعاب -->
                     <div id="hero-thumbs" class="flex items-center justify-center gap-2.5 overflow-x-auto no-scrollbar py-1 max-w-full"></div>
                 </div>
             </div>
         </section>
 
-        <!-- أزرار المنصات (الكل / PS4 / PS5) -->
+        <!-- أزرار المنصات -->
         <section class="grid grid-cols-3 gap-2.5">
             <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition">الكل</button>
             <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS4</button>
             <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
         </section>
 
-        <!-- شريط الأقسام الـ 16 مع العداد -->
+        <!-- شريط الأقسام الـ 16 -->
         <section>
             <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
 
-        <!-- شبكة عرض الألعاب -->
+        <!-- شبكة الألعاب -->
         <section>
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
                 <div class="col-span-full text-center py-12 text-slate-400 text-sm">جاري تحميل الألعاب من السحاب...</div>
             </div>
         </section>
 
-        <!-- لوحة التحكم السرية للمدير (تظهر عند النقر 3 مرات على الشعار) -->
+        <!-- لوحة التحكم السرية للمدير (3 نقرات على الشعار) -->
         <div id="admin-panel" class="hidden bg-[#101726] border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-black text-cyan-400 flex items-center gap-2">
@@ -133,38 +130,35 @@
                 <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="text-slate-400 hover:text-white text-sm">✕ إغلاق</button>
             </div>
             
-            <!-- نموذج تسجيل دخول المدير -->
+            <!-- تسجيل الدخول -->
             <div id="admin-login-box" class="space-y-3">
                 <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 <button onclick="loginAdmin()" class="cyan-gradient-btn w-full py-3 rounded-xl font-black text-sm">دخول الإدارة</button>
             </div>
 
-            <!-- نموذج لوحة التحكم (يظهر عند تسجيل الدخول) -->
+            <!-- لوحة التحكم -->
             <div id="admin-dashboard" class="hidden space-y-4 border-t border-slate-800 pt-4">
                 <div class="flex justify-between items-center">
                     <span class="text-emerald-400 text-xs font-bold">🟢 متصل بصلاحيات المشرف</span>
                     <button onclick="logoutAdmin()" class="text-red-400 text-xs hover:underline">تسجيل خروج</button>
                 </div>
 
-                <!-- قسم تخصيص شعار المتجر السحابي -->
+                <!-- تغيير شعار المتجر من استوديو الهاتف -->
                 <div class="bg-[#090d16] border border-slate-700/80 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
-                        <i class="fa-solid fa-image"></i> تغيير شعار المتجر (رابط صورة URL):
+                        <i class="fa-solid fa-image"></i> تغيير شعار المتجر (اختر صورة من استوديو الهاتف):
                     </label>
-                    <div class="flex gap-2">
-                        <input type="text" id="admin-logo-url" placeholder="https://... رابط صورة الشعار الجديد" class="flex-grow bg-[#101726] border border-slate-800 rounded-lg p-2.5 text-xs text-white">
-                        <button onclick="updateStoreLogo()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 px-4 py-2.5 rounded-lg font-bold text-xs transition">حفظ الشعار</button>
-                    </div>
+                    <input type="file" id="logo-file-input" accept="image/*" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2 text-xs text-slate-300">
+                    <button onclick="uploadAndSaveLogo()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 py-2 rounded-lg font-bold text-xs transition">رفع وحفظ الشعار للسحاب 🌟</button>
                 </div>
 
                 <hr class="border-slate-800">
 
-                <h4 class="font-bold text-sm text-white">إضافة لعبة جديدة للسحاب:</h4>
+                <h4 class="font-bold text-sm text-white">إضافة لعبة جديدة:</h4>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="game-title" placeholder="اسم اللعبة (مثال: Horizon Zero Dawn)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
-                    
+                    <input type="text" id="game-title" placeholder="اسم اللعبة" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                     <select id="game-platform" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                         <option value="PS4">PS4</option>
                         <option value="PS5">PS5</option>
@@ -173,7 +167,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- الأقسام الـ 16 المطلوبة -->
+                    <!-- الأقسام الـ 16 -->
                     <select id="game-category" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                         <option value="ألعاب الأكشن">ألعاب الأكشن</option>
                         <option value="ألعاب المغامرات">ألعاب المغامرات</option>
@@ -193,7 +187,6 @@
                         <option value="ألعاب البطاقات">ألعاب البطاقات</option>
                     </select>
 
-                    <!-- حجم اللعبة -->
                     <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47 GB)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 </div>
 
@@ -207,19 +200,23 @@
                     </select>
                 </div>
 
-                <!-- وصف قصير للعبة -->
                 <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white"></textarea>
 
-                <!-- قالب روابط الصور الـ 4 في مكان واحد -->
-                <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3 space-y-2">
-                    <label class="block text-xs font-bold text-cyan-400">
-                        <i class="fa-regular fa-images"></i> روابط صور اللعبة (الصق 4 روابط، كل رابط في سطر مستقل - السطر الأول هو الغلاف الرئيسي):
-                    </label>
-                    <textarea id="game-images-box" rows="4" placeholder="https://link-cover-image.jpg&#10;https://link-screenshot-2.jpg&#10;https://link-screenshot-3.jpg&#10;https://link-screenshot-4.jpg" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+                <!-- رابط غلاف اللعبة الرئيسي منفصل -->
+                <div>
+                    <label class="block text-xs font-bold text-cyan-400 mb-1">رابط غلاف اللعبة الرئيسي (Cover Image URL):</label>
+                    <input type="text" id="game-cover-url" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 </div>
 
-                <!-- رابط مقطع اليوتيوب -->
-                <input type="text" id="game-youtube" placeholder="رابط فيديو يوتيوب للعبة (URL)" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                <!-- صور التفاصيل الأربعة منفصلة -->
+                <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3 space-y-2">
+                    <label class="block text-xs font-bold text-cyan-400">
+                        <i class="fa-regular fa-images"></i> صور تفاصيل اللعبة (ضع 4 روابط صور، كل رابط في سطر):
+                    </label>
+                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+                </div>
+
+                <input type="text" id="game-youtube" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
 
                 <button onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
                     نشر اللعبة في المتجر 🚀
@@ -232,7 +229,6 @@
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl bg-[#101726] border border-slate-800 rounded-3xl p-6 text-center shadow-xl space-y-5">
             
-            <!-- أيقونة يد التحكم الزرقاء -->
             <div class="w-16 h-16 mx-auto rounded-full cyan-gradient-btn flex items-center justify-center shadow-lg shadow-cyan-500/30">
                 <i class="fa-solid fa-gamepad text-slate-950 text-2xl"></i>
             </div>
@@ -242,7 +238,6 @@
                 <p class="text-xs text-slate-400 mt-1">الدعم الفني والاتصال عبر واتساب</p>
             </div>
 
-            <!-- بطاقة رقم الواتساب التفاعلية -->
             <a href="https://wa.me/9647858858844" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-4 transition group">
                 <div class="flex items-center justify-center gap-3 mb-2">
                     <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition">
@@ -255,7 +250,6 @@
                 </p>
             </a>
 
-            <!-- العنوان -->
             <div class="pt-1">
                 <div class="text-xs text-slate-400 mb-1">العنوان</div>
                 <div class="text-base font-black text-white flex items-center justify-center gap-1.5">
@@ -263,19 +257,17 @@
                 </div>
             </div>
 
-            <!-- زر خرائط جوجل -->
             <a id="google-maps-link" href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-sm transition">
                 <i class="fa-solid fa-map-location-dot"></i> افتح في خرائط Google
             </a>
 
-            <!-- حقوق النشر بدون سنة أو كلمة سحابي -->
             <div class="text-[11px] text-slate-500 pt-2">
                 © متجر المدينة - جميع الحقوق محفوظة
             </div>
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة وصورها الـ 4 -->
+    <!-- نافذة التفاصيل -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 space-y-4">
             <div class="flex justify-between items-center">
@@ -297,7 +289,7 @@
         </div>
     </div>
 
-    <!-- نافذة السلة لإرسال الطلب دفعة واحدة للواتساب -->
+    <!-- نافذة السلة -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700 rounded-3xl max-w-md w-full p-5 space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -317,6 +309,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -331,26 +324,14 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         const auth = getAuth(app);
 
         const ALL_CATEGORIES = [
-            "الكل",
-            "ألعاب الأكشن",
-            "ألعاب المغامرات",
-            "ألعاب الحركة والمغامرات",
-            "ألعاب تقمص الأدوار",
-            "ألعاب الاستراتيجية",
-            "ألعاب المحاكاة",
-            "ألعاب إطلاق النار",
-            "ألعاب الرياضة",
-            "ألعاب السباقات",
-            "ألعاب المنصات",
-            "ألعاب الألغاز",
-            "ألعاب البقاء على قيد الحياة",
-            "ألعاب الرعب",
-            "ألعاب القتال",
-            "ألعاب العالم المفتوح",
-            "ألعاب البطاقات"
+            "الكل", "ألعاب الأكشن", "ألعاب المغامرات", "ألعاب الحركة والمغامرات",
+            "ألعاب تقمص الأدوار", "ألعاب الاستراتيجية", "ألعاب المحاكاة", "ألعاب إطلاق النار",
+            "ألعاب الرياضة", "ألعاب السباقات", "ألعاب المنصات", "ألعاب الألغاز",
+            "ألعاب البقاء على قيد الحياة", "ألعاب الرعب", "ألعاب القتال", "ألعاب العالم المفتوح", "ألعاب البطاقات"
         ];
 
         let allGames = [];
@@ -392,7 +373,7 @@
         function renderCartItems() {
             const list = document.getElementById('cart-items-list');
             if (cart.length === 0) {
-                list.innerHTML = `<p class="text-center text-slate-400 py-6 text-xs">السلة فارغة حالياً، اضغط على علامة (+) في أي لعبة لإضافتها.</p>`;
+                list.innerHTML = `<p class="text-center text-slate-400 py-6 text-xs">السلة فارغة حالياً.</p>`;
                 return;
             }
             list.innerHTML = cart.map((item, idx) => `
@@ -434,12 +415,8 @@
         function renderCategoriesBar() {
             const bar = document.getElementById('categories-bar');
             bar.innerHTML = ALL_CATEGORIES.map(cat => {
-                const count = cat === "الكل" 
-                    ? allGames.length 
-                    : allGames.filter(g => g.category === cat).length;
-                const activeClass = selectedCategory === cat 
-                    ? "cyan-gradient-btn font-black" 
-                    : "bg-[#131b2e] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
+                const count = cat === "الكل" ? allGames.length : allGames.filter(g => g.category === cat).length;
+                const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black" : "bg-[#131b2e] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
                 return `
                     <button onclick="setCategory('${cat}')" class="${activeClass} whitespace-nowrap px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
                         <span>${cat}</span>
@@ -459,7 +436,7 @@
             const featuredGames = allGames.slice(0, 6);
             if (heroIndex >= featuredGames.length) heroIndex = 0;
             const current = featuredGames[heroIndex];
-            const coverImg = (current.images && current.images[0]) || current.image || 'https://via.placeholder.com/800x450';
+            const coverImg = current.coverImage || (current.images && current.images[0]) || current.image || 'https://via.placeholder.com/800x450';
 
             document.getElementById('hero-bg').src = coverImg;
             document.getElementById('hero-title').innerText = current.title;
@@ -483,11 +460,9 @@
 
             const thumbs = document.getElementById('hero-thumbs');
             thumbs.innerHTML = featuredGames.map((g, idx) => {
-                const thumbUrl = (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
+                const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
                 const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-700 opacity-60 hover:opacity-100';
-                return `
-                    <img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-12 h-12 rounded-xl object-cover cursor-pointer transition ${isSelected}">
-                `;
+                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-12 h-12 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
         }
 
@@ -499,13 +474,14 @@
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
-            const imgs = (game.images && game.images.length > 0) ? game.images : [game.image || 'https://via.placeholder.com/600x350'];
+            const mainImg = game.coverImage || (game.images && game.images[0]) || 'https://via.placeholder.com/600x350';
+            const detailImgs = (game.images && game.images.length > 0) ? game.images : [mainImg];
 
             document.getElementById('modal-title').innerText = game.title;
-            document.getElementById('modal-main-img').src = imgs[0];
+            document.getElementById('modal-main-img').src = mainImg;
             document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف إضافي.';
 
-            document.getElementById('modal-gallery').innerHTML = imgs.map(url => `
+            document.getElementById('modal-gallery').innerHTML = detailImgs.map(url => `
                 <img onclick="document.getElementById('modal-main-img').src='${url}'" src="${url}" class="w-full h-14 object-cover rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-400">
             `).join('');
 
@@ -548,23 +524,21 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-sm">لا توجد ألعاب مطابقة لخيارات البحث الحالية.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-sm">لا توجد ألعاب مطابقة.</div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(game => {
-                const coverImg = (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
+                const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 return `
                     <div class="bg-[#111827] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
                         <div class="relative">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-36 sm:h-44 object-cover cursor-pointer group-hover:scale-105 transition duration-300">
                             
-                            <!-- شارة المنصة -->
                             <span class="absolute top-2.5 right-2.5 bg-black/75 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md border border-white/10">
                                 ${game.platform || 'PS4'}
                             </span>
 
-                            <!-- زر الإضافة للسلة (+) -->
                             <button onclick="event.stopPropagation(); addToCart('${game.id}')" title="أضف إلى السلة" class="absolute top-2.5 left-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition">
                                 <i class="fa-solid fa-plus text-xs"></i>
                             </button>
@@ -579,7 +553,6 @@
                                 </div>
                             </div>
 
-                            <!-- شارة اللغة العربية أسفل البطاقة -->
                             <div class="pt-1 border-t border-slate-800/80 flex items-center justify-between gap-1">
                                 <span class="text-[10px] font-semibold ${game.arabic && game.arabic.includes('لا تدعم') ? 'text-slate-400' : 'text-emerald-400'} truncate">
                                     ${game.arabic && !game.arabic.includes('لا تدعم') ? '✓ ' + game.arabic : (game.arabic || '')}
@@ -608,11 +581,10 @@
                 renderHero();
                 filterAndRender();
             } catch (error) {
-                console.error("خطأ في جلب البيانات:", error);
+                console.error("خطأ في جلب الألعاب:", error);
             }
         };
 
-        // تحميل شعار المتجر من السحاب
         async function loadStoreSettings() {
             try {
                 const docSnap = await getDoc(doc(db, "settings", "general"));
@@ -624,24 +596,32 @@
                         img.src = data.logoUrl;
                         img.classList.remove('hidden');
                         fallback.classList.add('hidden');
-                        const logoInput = document.getElementById('admin-logo-url');
-                        if (logoInput) logoInput.value = data.logoUrl;
                     }
                 }
             } catch (error) {
-                console.error("خطأ في تحميل إعدادات الشعار:", error);
+                console.error("خطأ في جلب الشعار:", error);
             }
         }
 
-        // تحديث شعار المتجر وحفظه بالسحاب
-        window.updateStoreLogo = async function() {
-            const logoUrl = document.getElementById('admin-logo-url').value.trim();
+        // رفع شعار المتجر من استوديو الهاتف إلى Firebase Storage
+        window.uploadAndSaveLogo = async function() {
+            const fileInput = document.getElementById('logo-file-input');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("يرجى اختيار صورة أولاً من الاستوديو!");
+                return;
+            }
+            const file = fileInput.files[0];
             try {
-                await setDoc(doc(db, "settings", "general"), { logoUrl: logoUrl }, { merge: true });
+                alert("جاري رفع الشعار للسحاب... انتظر قليلاً ⏳");
+                const storageRef = ref(storage, 'store_logo_' + Date.now());
+                await uploadBytes(storageRef, file);
+                const downloadUrl = await getDownloadURL(storageRef);
+
+                await setDoc(doc(db, "settings", "general"), { logoUrl: downloadUrl }, { merge: true });
                 alert("تم تحديث شعار المتجر وحفظه في السحاب بنجاح! 🌟");
                 loadStoreSettings();
             } catch (error) {
-                alert("حدث خطأ أثناء حفظ الشعار: " + error.message);
+                alert("حدث خطأ أثناء رفع الشعار: " + error.message);
             }
         };
 
@@ -652,6 +632,7 @@
             const size = document.getElementById('game-size').value.trim();
             const arabic = document.getElementById('game-arabic').value;
             const desc = document.getElementById('game-desc').value.trim();
+            const coverImage = document.getElementById('game-cover-url').value.trim();
             const youtube = document.getElementById('game-youtube').value.trim();
 
             const rawImages = document.getElementById('game-images-box').value
@@ -663,8 +644,8 @@
                 alert("يرجى كتابة اسم اللعبة!");
                 return;
             }
-            if (rawImages.length < 4) {
-                alert("يرجى إضافة 4 روابط صور على الأقل داخل قالب الصور (كل رابط في سطر)!");
+            if (!coverImage) {
+                alert("يرجى إدخال رابط غلاف اللعبة الرئيسي!");
                 return;
             }
 
@@ -676,8 +657,8 @@
                     size,
                     arabic,
                     desc,
+                    coverImage: coverImage,
                     images: rawImages,
-                    image: rawImages[0],
                     youtube,
                     createdAt: new Date()
                 });
@@ -685,11 +666,12 @@
                 document.getElementById('game-title').value = "";
                 document.getElementById('game-size').value = "";
                 document.getElementById('game-desc').value = "";
+                document.getElementById('game-cover-url').value = "";
                 document.getElementById('game-images-box').value = "";
                 document.getElementById('game-youtube').value = "";
                 loadGames();
             } catch (error) {
-                alert("حدث خطأ أثناء النشر: " + error.message);
+                alert("خطأ أثناء النشر: " + error.message);
             }
         };
 
@@ -711,13 +693,13 @@
                 await signInWithEmailAndPassword(auth, email, password);
                 alert("تم تسجيل الدخول بنجاح يا أسطورة! 👑");
             } catch (error) {
-                alert("فشل تسجيل الدخول: تأكد من البريد وكلمة المرور.");
+                alert("فشل تسجيل الدخول: تأكد من الإيميل وكلمة المرور.");
             }
         };
 
         window.logoutAdmin = async function() {
             await signOut(auth);
-            alert("تم تسجيل الخروج بنجاح.");
+            alert("تم تسجيل الخروج.");
         };
 
         onAuthStateChanged(auth, (user) => {
