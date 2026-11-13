@@ -34,7 +34,6 @@
             background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
             color: #06131f;
         }
-        /* تنسيقات مؤشر التحميل */
         .spinner-overlay {
             position: fixed;
             top: 0;
@@ -67,7 +66,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- مؤشر التحميل لتغطية التأخير الأولي -->
+    <!-- مؤشر التحميل الأنيق -->
     <div id="loading-spinner" class="spinner-overlay">
         <div class="spinner"></div>
         <p class="text-sm font-bold text-cyan-400">جاري تحضير متجر المدينة...</p>
@@ -106,7 +105,7 @@
         <!-- شريط البحث المضيء -->
         <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
-            <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
+            <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
         <!-- البنر الرئيسي -->
@@ -120,7 +119,7 @@
                         أضيف حديثاً
                     </span>
                     <h2 id="hero-title" class="text-2xl sm:text-3xl font-black text-white mb-1.5 drop-shadow"></h2>
-                    <div id="hero-meta" class="text-xs sm:text-sm text-slate-300 font-semibold mb-2 flex items-center gap-2"></div>
+                    <div id="hero-meta" class="text-xs sm:text-sm text-slate-300 font-semibold mb-2 flex items-center gap-2 flex-wrap justify-center"></div>
                     <p id="hero-desc" class="text-xs text-slate-300/90 max-w-lg line-clamp-2 mb-4 leading-relaxed"></p>
 
                     <div class="flex items-center gap-3 w-full max-w-md mb-4">
@@ -193,31 +192,19 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <select id="game-category" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
-                        <option value="ألعاب الأكشن">ألعاب الأكشن</option>
-                        <option value="ألعاب المغامرات">ألعاب المغامرات</option>
-                        <option value="ألعاب الحركة والمغامرات">ألعاب الحركة والمغامرات</option>
-                        <option value="ألعاب تقمص الأدوار">ألعاب تقمص الأدوار</option>
-                        <option value="ألعاب الاستراتيجية">ألعاب الاستراتيجية</option>
-                        <option value="ألعاب المحاكاة">ألعاب المحاكاة</option>
-                        <option value="ألعاب إطلاق النار">ألعاب إطلاق النار</option>
-                        <option value="ألعاب الرياضة">ألعاب الرياضة</option>
-                        <option value="ألعاب السباقات">ألعاب السباقات</option>
-                        <option value="ألعاب المنصات">ألعاب المنصات</option>
-                        <option value="ألعاب الألغاز">ألعاب الألغاز</option>
-                        <option value="ألعاب البقاء على قيد الحياة">ألعاب البقاء على قيد الحياة</option>
-                        <option value="ألعاب الرعب">ألعاب الرعب</option>
-                        <option value="ألعاب القتال">ألعاب القتال</option>
-                        <option value="ألعاب العالم المفتوح">ألعاب العالم المفتوح</option>
-                        <option value="ألعاب البطاقات">ألعاب البطاقات</option>
-                    </select>
-                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47 GB)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                <!-- اختيار أصناف متعددة (Checkbox) -->
+                <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3.5 space-y-2">
+                    <label class="block text-xs font-bold text-cyan-400 mb-1">
+                        <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر):
+                    </label>
+                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#101726] rounded-lg text-xs">
+                        <!-- سيتم تعبئتها تلقائياً عبر الجافاسكريبت -->
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">حالة دعم اللغة العربية:</label>
-                    <select id="game-arabic" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47 GB)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <select id="game-arabic" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
                         <option value="تدعم اللغة العربية (ترجمة)">تدعم اللغة العربية (ترجمة)</option>
                         <option value="لا تدعم اللغة العربية">لا تدعم اللغة العربية</option>
@@ -233,7 +220,7 @@
 
                 <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
-                        <i class="fa-regular fa-images"></i> صور تفاصيل اللعبة (ضع 4 روابط صور، كل رابط في سطر):
+                        <i class="fa-regular fa-images"></i> لقطات الشاشة (ضع 4 روابط صور، كل رابط في سطر):
                     </label>
                     <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
@@ -283,35 +270,38 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة المحدثة كلياً -->
+    <!-- نافذة تفاصيل اللعبة المحدثة تماماً حسب طلبك (فيديو أولاً، ثم العنوان والبادجز، ثم الوصف، ثم لقطات الشاشة) -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             
             <!-- زر الإغلاق -->
             <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
             
-            <h3 id="modal-title" class="text-lg font-black text-white pr-6"></h3>
-
             <!-- 1. فيديو يوتيوب في الأعلى بشكل بارز -->
-            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-800 hidden">
+            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-800 hidden mt-2">
                 <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
             </div>
 
-            <!-- 2. وصف اللعبة بحجم واضح وبارز -->
+            <!-- 2. عنوان اللعبة والبادجز (المنصة والأصناف المتعددة) -->
+            <div class="space-y-2 pt-1">
+                <h3 id="modal-title" class="text-xl font-black text-white"></h3>
+                <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
+            </div>
+
+            <!-- 3. نبذة عن اللعبة (الوصف البارز) -->
             <div class="bg-slate-900/70 border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
-                <h4 class="text-xs font-bold text-cyan-400">نبذة عن اللعبة</h4>
+                <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> عن اللعبة</h4>
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
 
-            <!-- 3. الصور الأربعة بشكل عرضي قابل للتمرير والقلب -->
-            <div class="space-y-1.5">
-                <h4 class="text-xs font-bold text-cyan-400">معرض الصور</h4>
-                <div id="modal-gallery" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-2"></div>
+            <!-- 4. لقطات الشاشة (الصور) بشكل عمودي أو عرضي مرتب -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة</h4>
+                <div id="modal-gallery" class="space-y-3"></div>
             </div>
 
-            <div id="modal-badges" class="flex flex-wrap gap-2 text-xs pt-1"></div>
-
-            <div class="flex gap-2 pt-2">
+            <!-- زر أضف للسلة -->
+            <div class="pt-2">
                 <button id="modal-add-cart" class="w-full cyan-gradient-btn py-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
                     <i class="fa-solid fa-plus"></i> أضف للسلة
                 </button>
@@ -376,6 +366,19 @@
                 setTimeout(() => spinner.style.display = 'none', 400);
             }
         }
+
+        function renderAdminCheckboxes() {
+            const container = document.getElementById('admin-categories-checkboxes');
+            if (!container) return;
+            const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
+            container.innerHTML = subCategories.map(cat => `
+                <label class="flex items-center gap-2 cursor-pointer hover:text-cyan-400 select-none">
+                    <input type="checkbox" name="game-cat-checkbox" value="${cat}" class="rounded bg-[#090d16] border-slate-700 text-cyan-500 focus:ring-0">
+                    <span>${cat}</span>
+                </label>
+            `).join('');
+        }
+        renderAdminCheckboxes();
 
         function updateCartBadge() {
             document.getElementById('cart-badge').innerText = cart.length;
@@ -446,7 +449,7 @@
         function renderCategoriesBar() {
             const bar = document.getElementById('categories-bar');
             bar.innerHTML = ALL_CATEGORIES.map(cat => {
-                const count = cat === "الكل" ? allGames.length : allGames.filter(g => g.category === cat).length;
+                const count = cat === "الكل" ? allGames.length : allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
                 const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black" : "bg-[#131b2e] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
                 return `
                     <button onclick="setCategory('${cat}')" class="${activeClass} whitespace-nowrap px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
@@ -471,11 +474,12 @@
 
             document.getElementById('hero-bg').src = coverImg;
             document.getElementById('hero-title').innerText = current.title;
+            
+            const catsList = current.categories || [current.category].filter(Boolean);
             document.getElementById('hero-meta').innerHTML = `
-                <span>${current.platform || 'PS4'}</span>
-                <span>•</span>
-                <span>${current.category || ''}</span>
-                ${current.size ? `<span>•</span><span dir="ltr">${current.size}</span>` : ''}
+                <span class="bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-md border border-cyan-500/30">${current.platform || 'PS4'}</span>
+                ${catsList.map(c => `<span class="bg-slate-800 text-slate-200 px-2 py-0.5 rounded-md border border-slate-700">${c}</span>`).join('')}
+                ${current.size ? `<span class="text-amber-300" dir="ltr">${current.size}</span>` : ''}
             `;
             document.getElementById('hero-desc').innerText = current.desc || '';
 
@@ -499,7 +503,7 @@
             }
         };
 
-        // نافذة التفاصيل الجديدة بالترتيب المطلوب (فيديو في الأعلى، وصف بارز، صور عرضية)
+        // نافذة التفاصيل بالترتيب المطلوب: فيديو بالاعلى -> العنوان والبادجز -> الوصف -> لقطات الشاشة
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
@@ -507,7 +511,7 @@
             document.getElementById('modal-title').innerText = game.title;
             document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
 
-            // إعداد الفيديو في الأعلى
+            // 1. الفيديو في الأعلى
             const videoContainer = document.getElementById('modal-video-container');
             const ytIframe = document.getElementById('modal-yt-iframe');
             if (game.youtube) {
@@ -524,20 +528,24 @@
                 videoContainer.classList.add('hidden');
             }
 
-            // معرض الصور الأربعة بشكل عرضي قابل للتمرير
+            // 2. البادجز (المنصة، التصنيفات المتعددة، الحجم، اللغة)
+            const catsList = game.categories || [game.category].filter(Boolean);
+            document.getElementById('modal-badges').innerHTML = `
+                <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
+                ${catsList.map(c => `<span class="bg-slate-800 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-700">${c}</span>`).join('')}
+                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700" dir="ltr">${game.size}</span>` : ''}
+                ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
+            `;
+
+            // 3. لقطات الشاشة بشكل عمودي أو عرضي مرتب
             const galleryTrack = document.getElementById('modal-gallery');
             const images = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             
-            galleryTrack.innerHTML = images.map((url, idx) => `
-                <img src="${url}" class="w-28 h-18 object-cover rounded-xl border-2 ${idx === 0 ? 'border-cyan-400 scale-105' : 'border-slate-700 opacity-70'} cursor-pointer hover:border-cyan-400 hover:opacity-100 flex-shrink-0 transition" onclick="selectModalImage(this, '${url}')">
+            galleryTrack.innerHTML = images.map(url => `
+                <div class="w-full rounded-2xl overflow-hidden border border-slate-800 bg-black/40">
+                    <img src="${url}" class="w-full h-auto object-cover max-h-80">
+                </div>
             `).join('');
-
-            document.getElementById('modal-badges').innerHTML = `
-                <span class="bg-slate-800 text-cyan-400 px-3 py-1.5 rounded-xl font-bold">${game.platform || 'PS4'}</span>
-                <span class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl">${game.category || ''}</span>
-                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-3 py-1.5 rounded-xl" dir="ltr">${game.size}</span>` : ''}
-                ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-xl">✓ ${game.arabic}</span>` : ''}
-            `;
 
             document.getElementById('modal-add-cart').onclick = () => {
                 addToCart(game.id);
@@ -547,18 +555,9 @@
             document.getElementById('details-modal').classList.remove('hidden');
         };
 
-        window.selectModalImage = function(imgElement, url) {
-            document.querySelectorAll('#modal-gallery img').forEach(img => {
-                img.classList.remove('border-cyan-400', 'scale-105');
-                img.classList.add('border-slate-700', 'opacity-70');
-            });
-            imgElement.classList.remove('border-slate-700', 'opacity-70');
-            imgElement.classList.add('border-cyan-400', 'scale-105');
-        };
-
         window.closeDetailsModal = function() {
             document.getElementById('details-modal').classList.add('hidden');
-            document.getElementById('modal-yt-iframe').src = ''; // إيقاف الفيديو عند الإغلاق
+            document.getElementById('modal-yt-iframe').src = '';
         };
 
         window.filterAndRender = function() {
@@ -566,9 +565,10 @@
             const grid = document.getElementById('games-grid');
 
             const filtered = allGames.filter(g => {
-                const matchSearch = g.title.toLowerCase().includes(search) || (g.category && g.category.toLowerCase().includes(search));
+                const cats = g.categories || [g.category].filter(Boolean);
+                const matchSearch = g.title.toLowerCase().includes(search) || cats.some(c => c.toLowerCase().includes(search));
                 const matchPlat = selectedPlatform === "الكل" || (g.platform && g.platform.includes(selectedPlatform));
-                const matchCat = selectedCategory === "الكل" || g.category === selectedCategory;
+                const matchCat = selectedCategory === "الكل" || cats.includes(selectedCategory) || g.category === selectedCategory;
                 return matchSearch && matchPlat && matchCat;
             });
 
@@ -579,6 +579,7 @@
 
             grid.innerHTML = filtered.map(game => {
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
+                const firstCat = (game.categories && game.categories[0]) || game.category || '';
                 return `
                     <div class="bg-[#111827] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
                         <div class="relative">
@@ -597,7 +598,7 @@
                             <div>
                                 <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${game.title}</h3>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
-                                    <span class="truncate max-w-[65%]">${game.category || ''}</span>
+                                    <span class="truncate max-w-[65%]">${firstCat}</span>
                                     ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size}</span>` : ''}
                                 </div>
                             </div>
@@ -632,7 +633,7 @@
             } catch (error) {
                 console.error("خطأ في جلب الألعاب:", error);
             } finally {
-                hideLoadingSpinner(); // إخفاء مؤشر التحميل فور اكتمال الجلب
+                hideLoadingSpinner();
             }
         };
 
@@ -678,12 +679,15 @@
         window.addNewGame = async function() {
             const title = document.getElementById('game-title').value.trim();
             const platform = document.getElementById('game-platform').value;
-            const category = document.getElementById('game-category').value;
             const size = document.getElementById('game-size').value.trim();
             const arabic = document.getElementById('game-arabic').value;
             const desc = document.getElementById('game-desc').value.trim();
             const coverImage = document.getElementById('game-cover-url').value.trim();
             const youtube = document.getElementById('game-youtube').value.trim();
+
+            // جمع الأصناف المختارة (Checkboxes)
+            const selectedCats = Array.from(document.querySelectorAll('input[name="game-cat-checkbox"]:checked'))
+                .map(cb => cb.value);
 
             const rawImages = document.getElementById('game-images-box').value
                 .split('\n')
@@ -703,7 +707,8 @@
                 await addDoc(collection(db, "games"), {
                     title,
                     platform,
-                    category,
+                    categories: selectedCats.length > 0 ? selectedCats : ["ألعاب الأكشن"],
+                    category: selectedCats[0] || "ألعاب الأكشن",
                     size,
                     arabic,
                     desc,
@@ -719,6 +724,7 @@
                 document.getElementById('game-cover-url').value = "";
                 document.getElementById('game-images-box').value = "";
                 document.getElementById('game-youtube').value = "";
+                document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
                 loadGames();
             } catch (error) {
                 alert("خطأ أثناء النشر: تأكد من إدخال روابط صحيحة. (" + error.message + ")");
@@ -731,7 +737,7 @@
                     await deleteDoc(doc(db, "games", gameId));
                     loadGames();
                 } catch (error) {
-                    alert("خطأ أثناء الحذف: " + error.message);
+                    alert("خطأ أثناء الحذف: " + error.message + ")");
                 }
             }
         };
