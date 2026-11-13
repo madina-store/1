@@ -144,7 +144,7 @@
                     <button onclick="logoutAdmin()" class="text-red-400 text-xs hover:underline">تسجيل خروج</button>
                 </div>
 
-                <!-- تغيير شعار المتجر من استوديو الهاتف (بدون تعليق وبسرعة فائقة) -->
+                <!-- تغيير شعار المتجر من استوديو الهاتف -->
                 <div class="bg-[#090d16] border border-slate-700/80 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-solid fa-image"></i> تغيير شعار المتجر (اختر صورة من استوديو الهاتف):
@@ -202,13 +202,13 @@
 
                 <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white"></textarea>
 
-                <!-- رابط غلاف اللعبة الرئيسي منفصل -->
+                <!-- رابط غلاف اللعبة الرئيسي (Textarea لتجنب تقييد الروابط الطويلة) -->
                 <div>
                     <label class="block text-xs font-bold text-cyan-400 mb-1">رابط غلاف اللعبة الرئيسي (Cover Image URL):</label>
-                    <input type="text" id="game-cover-url" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <textarea id="game-cover-url" rows="2" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <!-- صور التفاصيل الأربعة منفصلة -->
+                <!-- صور التفاصيل الأربعة منفصلة (Textarea) -->
                 <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-regular fa-images"></i> صور تفاصيل اللعبة (ضع 4 روابط صور، كل رابط في سطر):
@@ -216,7 +216,7 @@
                     <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <input type="text" id="game-youtube" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
                 <button onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
                     نشر اللعبة في المتجر 🚀
@@ -238,7 +238,7 @@
                 <p class="text-xs text-slate-400 mt-1">الدعم الفني والاتصال عبر واتساب</p>
             </div>
 
-            <a href="https://wa.me/9647858858844" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-4 transition group">
+            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-4 transition group">
                 <div class="flex items-center justify-center gap-3 mb-2">
                     <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition">
                         <i class="fa-brands fa-whatsapp"></i>
@@ -386,13 +386,8 @@
         }
 
         window.sendCartToWhatsApp = function() {
-            if (cart.length === 0) {
-                alert("السلة فارغة!");
-                return;
-            }
-            const gamesText = cart.map((g, i) => `${i + 1}. ${g.title} (${g.platform})`).join('%0A');
-            const msg = `مرحباً متجر المدينة، أرغب بطلب الألعاب التالية:%0A${gamesText}`;
-            window.open(`https://wa.me/9647858858844?text=${msg}`, '_blank');
+            const msg = `السلام عليكم`;
+            window.open(`https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
         window.setPlatform = function(plat) {
@@ -601,7 +596,6 @@
             }
         }
 
-        // رفع وتغيير الشعار الفوري بدون الحاجة لـ Storage (باستخدام Base64 في فايربيس مباشرة)
         window.uploadAndSaveLogo = function() {
             const fileInput = document.getElementById('logo-file-input');
             if (!fileInput.files || fileInput.files.length === 0) {
@@ -669,7 +663,7 @@
                 document.getElementById('game-youtube').value = "";
                 loadGames();
             } catch (error) {
-                alert("خطأ أثناء النشر: تأكد من الصلاحيات أو اتصال الإنترنت. (" + error.message + ")");
+                alert("خطأ أثناء النشر: تأكد من إدخال روابط صحيحة. (" + error.message + ")");
             }
         };
 
