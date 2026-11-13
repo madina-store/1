@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر ألعاب مدينة - السحابي</title>
-    <!-- Tailwind CSS لتصميم عصري وسريع -->
+    <title>متجر ألعاب مدينة - النسخة السحابية المتقدمة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -24,17 +23,16 @@
 
     <!-- رأس المتجر -->
     <header class="bg-gray-900 border-b border-gray-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-lg">
-        <!-- الشعار مع ميزة الدخول الخفي للمدير (بالضغط عليه 3 مرات أو نقرة مطولة) -->
         <h1 id="secret-admin-trigger" class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 cursor-pointer select-none">
             🎮 متجر ألعاب مدينة
         </h1>
-        <div class="text-sm text-gray-400">النسخة السحابية المباشرة 🚀</div>
+        <div class="text-sm text-gray-400">النسخة السحابية المتقدمة 🚀</div>
     </header>
 
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto px-4 py-8 flex-grow">
         
-        <!-- شريط البحث المضيء (LED) -->
+        <!-- شريط البحث المضيء -->
         <div class="max-w-xl mx-auto mb-10">
             <div class="led-search rounded-full overflow-hidden flex items-center bg-gray-900 px-4 py-3">
                 <i class="fa-solid fa-search text-gray-400 ml-3"></i>
@@ -42,11 +40,10 @@
             </div>
         </div>
 
-        <!-- قسم عرض الألعاب (تظهر للجميع من السحاب) -->
+        <!-- قسم عرض الألعاب -->
         <section>
             <h2 class="text-xl font-bold mb-6 border-r-4 border-red-500 pr-3">الألعاب المتوفرة حالياً</h2>
             <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <!-- سيتم جلب الألعاب تلقائياً من قاعدة بيانات فايربيس -->
                 <div class="text-center text-gray-500 col-span-full py-10">جاري تحميل الألعاب من السحاب... ☁️</div>
             </div>
         </section>
@@ -57,35 +54,49 @@
                 <i class="fa-solid fa-shield-halved"></i> لوحة تحكم المدير السحابية
             </h3>
             
-            <!-- نموذج تسجيل دخول المدير -->
+            <!-- نموذج تسجيل الدخول -->
             <div id="admin-login-box" class="space-y-4 mb-6">
-                <p class="text-sm text-gray-400">يرجى تسجيل الدخول بحساب المدير لإضافة أو حذف الألعاب:</p>
-                <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+                <p class="text-sm text-gray-400">يرجى تسجيل الدخول بحساب المدير:</p>
+                <input type="email" id="admin-email" placeholder="البريد الإلكتروني" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
                 <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
                 <button onclick="loginAdmin()" class="bg-red-600 hover:bg-red-700 w-full py-3 rounded-lg font-bold transition">دخول المدير</button>
             </div>
 
-            <!-- نموذج إضافة لعبة جديدة (يظهر بعد تسجيل الدخول بنجاح) -->
+            <!-- لوحة إضافة لعبة بالتفاصيل الكاملة -->
             <div id="admin-dashboard" class="hidden space-y-4 border-t border-gray-800 pt-6">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-green-400 text-sm font-bold">🟢 متصل بصلاحيات المشرف</span>
                     <button onclick="logoutAdmin()" class="text-red-400 text-sm hover:underline">تسجيل خروج</button>
                 </div>
-                <h4 class="font-bold text-gray-200">إضافة لعبة جديدة للجميع:</h4>
+                <h4 class="font-bold text-gray-200">إضافة لعبة جديدة بالتفاصيل الكاملة:</h4>
+                
                 <input type="text" id="game-title" placeholder="اسم اللعبة" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
-                <input type="text" id="game-image" placeholder="رابط صورة اللعبة (URL)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+                
+                <select id="game-category" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+                    <option value="أكشن ومغامرات">أكشن ومغامرات</option>
+                    <option value="رياضة وسباقات">رياضة وسباقات</option>
+                    <option value="رعب وستوري">رعب وستوري</option>
+                    <option value="ألعاب أونلاين">ألعاب أونلاين</option>
+                </select>
+
                 <input type="text" id="game-price" placeholder="السعر (مثلاً: $10 أو مجاناً)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
-                <button onclick="addNewGame()" class="bg-green-600 hover:bg-green-700 w-full py-3 rounded-lg font-bold transition">نشر اللعبة للجميع 🚀</button>
+                <input type="text" id="game-image" placeholder="رابط الصورة الرئيسية (URL)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+                
+                <!-- حقول الصور الإضافية ورابط اليوتيوب -->
+                <input type="text" id="game-extra1" placeholder="رابط صورة إضافية 1 (اختياري)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+                <input type="text" id="game-extra2" placeholder="رابط صورة إضافية 2 (اختياري)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+                <input type="text" id="game-youtube" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white">
+
+                <button onclick="addNewGame()" class="bg-green-600 hover:bg-green-700 w-full py-3 rounded-lg font-bold transition">نشر اللعبة بالكل للسحاب 🚀</button>
             </div>
         </div>
 
     </main>
 
-    <!-- الفوتر مع إطار الدعم و WhatsApp الفخم -->
+    <!-- الفوتر -->
     <footer class="bg-gray-900 border-t border-gray-800 mt-12 py-6 px-4">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-gray-400 text-sm">© 2026 متجر ألعاب مدينة. جميع الحقوق محفوضة.</div>
-            <!-- إطار الواتساب عالي الجودة -->
             <a href="https://wa.me/964XXXXXXXXXX" target="_blank" class="flex items-center gap-3 bg-green-600/20 border border-green-500/50 hover:bg-green-600/30 px-5 py-2.5 rounded-full transition shadow-lg">
                 <i class="fa-brands fa-whatsapp text-green-400 text-2xl"></i>
                 <div class="text-right">
@@ -96,13 +107,12 @@
         </div>
     </footer>
 
-    <!-- سكربت فايربيس والمنطق البرمجي السحابي -->
+    <!-- سكربت فايربيس -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // إعدادات مشروعك السحابي
         const firebaseConfig = {
             apiKey: "AIzaSyDQTFgdCfoNjudmiz7N6NnZ6a48LGXN0YQ",
             authDomain: "madina-store-17e4e.firebaseapp.com",
@@ -117,7 +127,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // جلب وعرض الألعاب لكل الزبائن
         window.loadGames = async function() {
             const grid = document.getElementById('games-grid');
             try {
@@ -138,13 +147,14 @@
                             <div>
                                 <img src="${game.image || 'https://via.placeholder.com/400x200'}" alt="${game.title}" class="w-full h-48 object-cover">
                                 <div class="p-4">
-                                    <h3 class="font-bold text-lg mb-2">${game.title}</h3>
-                                    <div class="text-red-400 font-semibold">${game.price}</div>
+                                    <span class="text-xs bg-red-600/20 text-red-400 px-2.5 py-1 rounded-full font-semibold">${game.category || 'عام'}</span>
+                                    <h3 class="font-bold text-lg mt-2 mb-1">${game.title}</h3>
+                                    <div class="text-red-400 font-semibold mb-3">${game.price}</div>
+                                    ${game.youtube ? `<a href="${game.youtube}" target="_blank" class="inline-flex items-center gap-1 text-xs text-blue-400 hover:underline mb-2"><i class="fa-brands fa-youtube"></i> مشاهدة العرض بالفيديو</a>` : ''}
                                 </div>
                             </div>
                             <div class="p-4 pt-0 flex gap-2">
                                 <a href="https://wa.me/964XXXXXXXXXX?text=أريد شراء لعبة: ${encodeURIComponent(game.title)}" target="_blank" class="flex-1 bg-green-600 hover:bg-green-700 text-center py-2 rounded-lg text-sm font-bold transition">اطلب الآن</a>
-                                <!-- زر الحذف يظهر فقط إذا كان المدير مسجل دخول -->
                                 <button id="del-btn-${gameId}" onclick="deleteGame('${gameId}')" class="hidden bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg text-sm transition">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -152,20 +162,20 @@
                         </div>
                     `;
                 });
-                
-                // تحديث حالة ظهور أزرار الحذف حسب حالة تسجيل الدخول
                 checkAdminButtonsVisibility();
             } catch (error) {
-                console.error("خطأ في جلب الألعاب:", error);
-                grid.innerHTML = `<div class="text-center text-red-500 col-span-full py-10">حدث خطأ في تحميل الألعاب من السحاب.</div>`;
+                console.error("خطأ:", error);
             }
         };
 
-        // إضافة لعبة جديدة (للمدير فقط)
         window.addNewGame = async function() {
             const title = document.getElementById('game-title').value.trim();
-            const image = document.getElementById('game-image').value.trim();
+            const category = document.getElementById('game-category').value;
             const price = document.getElementById('game-price').value.trim();
+            const image = document.getElementById('game-image').value.trim();
+            const extra1 = document.getElementById('game-extra1').value.trim();
+            const extra2 = document.getElementById('game-extra2').value.trim();
+            const youtube = document.getElementById('game-youtube').value.trim();
 
             if (!title || !price) {
                 alert("يرجى إدخال اسم اللعبة والسعر على الأقل!");
@@ -174,59 +184,51 @@
 
             try {
                 await addDoc(collection(db, "games"), {
-                    title: title,
+                    title, category, price,
                     image: image || "https://via.placeholder.com/400x200",
-                    price: price,
+                    extra1, extra2, youtube,
                     createdAt: new Date()
                 });
                 alert("تمت إضافة اللعبة ونشرها للجميع بنجاح! 🚀");
                 document.getElementById('game-title').value = "";
-                document.getElementById('game-image').value = "";
                 document.getElementById('game-price').value = "";
+                document.getElementById('game-image').value = "";
+                document.getElementById('game-extra1').value = "";
+                document.getElementById('game-extra2').value = "";
+                document.getElementById('game-youtube').value = "";
                 loadGames();
             } catch (error) {
-                alert("فشل النشر: تأكد أنك مسجل دخول بحساب المدير الصالح.");
-                console.error(error);
+                alert("فشل النشر تأكد من الصلاحيات.");
             }
         };
 
-        // حذف لعبة (للمدير فقط)
         window.deleteGame = async function(gameId) {
-            if (confirm("هل أنت متأكد من حذف هذه اللعبة نهائياً من السحاب؟")) {
-                try {
-                    await deleteDoc(doc(db, "games", gameId));
-                    alert("تم الحذف بنجاح!");
-                    loadGames();
-                } catch (error) {
-                    alert("غير مسموح لك بالحذف، تأكد من تسجيل الدخول.");
-                }
+            if (confirm("هل أنت متأكد من حذف هذه اللعبة؟")) {
+                await deleteDoc(doc(db, "games", gameId));
+                loadGames();
             }
         };
 
-        // تسجيل دخول المدير
         window.loginAdmin = async function() {
             const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                alert("تم تسجيل الدخول بنجاح يا أسطورة! 👑");
+                alert("تم تسجيل الدخول بنجاح! 👑");
             } catch (error) {
                 alert("فشل تسجيل الدخول: تأكد من الإيميل وكلمة المرور.");
             }
         };
 
-        // تسجيل خروج
         window.logoutAdmin = async function() {
             await signOut(auth);
-            alert("تم تسجيل الخروج بنجاح.");
+            alert("تم تسجيل الخروج.");
         };
 
-        // مراقبة حالة تسجيل الدخول لتعديل الصلاحيات واظهار أزرار التحكم
         let isAdminLoggedIn = false;
         onAuthStateChanged(auth, (user) => {
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
-            
             if (user) {
                 isAdminLoggedIn = true;
                 loginBox.classList.add('hidden');
@@ -236,21 +238,16 @@
                 loginBox.classList.remove('hidden');
                 dashboard.classList.add('hidden');
             }
-            loadGames(); // إعادة تحميل الألعاب لتحديث ظهور أزرار الحذف
+            loadGames();
         });
 
         function checkAdminButtonsVisibility() {
-            // يمكننا التحكم بإظهار أزرار الحذف بناءً على حالة المشرف
             document.querySelectorAll('[id^="del-btn-"]').forEach(btn => {
-                if (isAdminLoggedIn) {
-                    btn.classList.remove('hidden');
-                } else {
-                    btn.classList.add('hidden');
-                }
+                if (isAdminLoggedIn) btn.classList.remove('hidden');
+                else btn.classList.add('hidden');
             });
         }
 
-        // تفعيل الدخول الخفي (بالضغط على الشعار 3 مرات متتالية)
         let clickCount = 0;
         document.getElementById('secret-admin-trigger').addEventListener('click', () => {
             clickCount++;
@@ -262,8 +259,8 @@
             }
         });
 
-        // تشغيل تحميل الألعاب عند فتح الصفحة
         loadGames();
     </script>
 </body>
 </html>
+
