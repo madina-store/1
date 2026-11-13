@@ -34,9 +34,44 @@
             background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
             color: #06131f;
         }
+        /* تنسيقات مؤشر التحميل */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #090d16;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            color: #06b6d4;
+            transition: opacity 0.4s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(6, 182, 212, 0.2);
+            border-top: 4px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+    <!-- مؤشر التحميل لتغطية التأخير الأولي -->
+    <div id="loading-spinner" class="spinner-overlay">
+        <div class="spinner"></div>
+        <p class="text-sm font-bold text-cyan-400">جاري تحضير متجر المدينة...</p>
+    </div>
 
     <!-- الهيدر -->
     <header class="bg-[#0b101b]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 sticky top-0 z-40">
@@ -68,13 +103,13 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث المضيء (LED المتحرك الأنيق) -->
+        <!-- شريط البحث المضيء -->
         <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- البنر الرئيسي (أضيف حديثاً) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-800 bg-[#111827] shadow-2xl">
             <div class="relative h-[370px] sm:h-[420px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500">
@@ -89,11 +124,8 @@
                     <p id="hero-desc" class="text-xs text-slate-300/90 max-w-lg line-clamp-2 mb-4 leading-relaxed"></p>
 
                     <div class="flex items-center gap-3 w-full max-w-md mb-4">
-                        <a id="hero-youtube-btn" href="#" target="_blank" class="flex-1 cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 hover:opacity-95 transition">
-                            <i class="fa-solid fa-play"></i> شاهد المقطع
-                        </a>
-                        <button id="hero-details-btn" class="flex-1 bg-slate-800/90 hover:bg-slate-700 border border-slate-600/70 text-white py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 backdrop-blur-sm transition">
-                            <i class="fa-solid fa-circle-info"></i> التفاصيل
+                        <button onclick="openHeroDetails()" class="flex-1 cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 hover:opacity-95 transition">
+                            <i class="fa-solid fa-circle-info"></i> التفاصيل الكاملة
                         </button>
                     </div>
 
@@ -109,19 +141,17 @@
             <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
         </section>
 
-        <!-- شريط الأقسام الـ 16 -->
+        <!-- شريط الأقسام -->
         <section>
             <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
 
         <!-- شبكة الألعاب -->
         <section>
-            <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-                <div class="col-span-full text-center py-12 text-slate-400 text-sm">جاري تحميل الألعاب من السحاب...</div>
-            </div>
+            <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
         </section>
 
-        <!-- لوحة التحكم السرية للمدير (3 نقرات على الشعار) -->
+        <!-- لوحة التحكم السرية للمدير -->
         <div id="admin-panel" class="hidden bg-[#101726] border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-black text-cyan-400 flex items-center gap-2">
@@ -130,21 +160,18 @@
                 <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="text-slate-400 hover:text-white text-sm">✕ إغلاق</button>
             </div>
             
-            <!-- تسجيل الدخول -->
             <div id="admin-login-box" class="space-y-3">
                 <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 <button onclick="loginAdmin()" class="cyan-gradient-btn w-full py-3 rounded-xl font-black text-sm">دخول الإدارة</button>
             </div>
 
-            <!-- لوحة التحكم -->
             <div id="admin-dashboard" class="hidden space-y-4 border-t border-slate-800 pt-4">
                 <div class="flex justify-between items-center">
                     <span class="text-emerald-400 text-xs font-bold">🟢 متصل بصلاحيات المشرف</span>
                     <button onclick="logoutAdmin()" class="text-red-400 text-xs hover:underline">تسجيل خروج</button>
                 </div>
 
-                <!-- تغيير شعار المتجر من استوديو الهاتف -->
                 <div class="bg-[#090d16] border border-slate-700/80 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-solid fa-image"></i> تغيير شعار المتجر (اختر صورة من استوديو الهاتف):
@@ -167,7 +194,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- الأقسام الـ 16 -->
                     <select id="game-category" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                         <option value="ألعاب الأكشن">ألعاب الأكشن</option>
                         <option value="ألعاب المغامرات">ألعاب المغامرات</option>
@@ -186,11 +212,9 @@
                         <option value="ألعاب العالم المفتوح">ألعاب العالم المفتوح</option>
                         <option value="ألعاب البطاقات">ألعاب البطاقات</option>
                     </select>
-
                     <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47 GB)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                 </div>
 
-                <!-- خيارات دعم اللغة العربية الثلاثة -->
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">حالة دعم اللغة العربية:</label>
                     <select id="game-arabic" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
@@ -202,13 +226,11 @@
 
                 <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white"></textarea>
 
-                <!-- رابط غلاف اللعبة الرئيسي (Textarea لتجنب تقييد الروابط الطويلة) -->
                 <div>
                     <label class="block text-xs font-bold text-cyan-400 mb-1">رابط غلاف اللعبة الرئيسي (Cover Image URL):</label>
                     <textarea id="game-cover-url" rows="2" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <!-- صور التفاصيل الأربعة منفصلة (Textarea) -->
                 <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-regular fa-images"></i> صور تفاصيل اللعبة (ضع 4 روابط صور، كل رابط في سطر):
@@ -228,16 +250,13 @@
     <!-- الفوتر -->
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl bg-[#101726] border border-slate-800 rounded-3xl p-6 text-center shadow-xl space-y-5">
-            
             <div class="w-16 h-16 mx-auto rounded-full cyan-gradient-btn flex items-center justify-center shadow-lg shadow-cyan-500/30">
                 <i class="fa-solid fa-gamepad text-slate-950 text-2xl"></i>
             </div>
-
             <div>
                 <h2 class="text-xl font-black text-white">متجر المدينة</h2>
                 <p class="text-xs text-slate-400 mt-1">الدعم الفني والاتصال عبر واتساب</p>
             </div>
-
             <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-4 transition group">
                 <div class="flex items-center justify-center gap-3 mb-2">
                     <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition">
@@ -249,40 +268,51 @@
                     هل تواجه مشكلة في تصفح الموقع، أو في إحدى الألعاب التي قمت بأخذها منا؟ تواصل معنا فوراً وسنكون في خدمتك لحلها!
                 </p>
             </a>
-
             <div class="pt-1">
                 <div class="text-xs text-slate-400 mb-1">العنوان</div>
                 <div class="text-base font-black text-white flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-location-dot text-cyan-400"></i> ذي قار - قضاء النصر
                 </div>
             </div>
-
             <a id="google-maps-link" href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-sm transition">
                 <i class="fa-solid fa-map-location-dot"></i> افتح في خرائط Google
             </a>
-
             <div class="text-[11px] text-slate-500 pt-2">
                 © متجر المدينة - جميع الحقوق محفوظة
             </div>
         </div>
     </footer>
 
-    <!-- نافذة التفاصيل -->
-    <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-[#101726] border border-slate-700 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 id="modal-title" class="text-lg font-black text-white"></h3>
-                <button onclick="closeDetailsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white">✕</button>
+    <!-- نافذة تفاصيل اللعبة المحدثة كلياً -->
+    <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
+            
+            <!-- زر الإغلاق -->
+            <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
+            
+            <h3 id="modal-title" class="text-lg font-black text-white pr-6"></h3>
+
+            <!-- 1. فيديو يوتيوب في الأعلى بشكل بارز -->
+            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-800 hidden">
+                <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
             </div>
-            <img id="modal-main-img" src="" class="w-full h-52 object-cover rounded-2xl border border-slate-800">
-            <div id="modal-gallery" class="grid grid-cols-4 gap-2"></div>
-            <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
-            <p id="modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+
+            <!-- 2. وصف اللعبة بحجم واضح وبارز -->
+            <div class="bg-slate-900/70 border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
+                <h4 class="text-xs font-bold text-cyan-400">نبذة عن اللعبة</h4>
+                <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
+            </div>
+
+            <!-- 3. الصور الأربعة بشكل عرضي قابل للتمرير والقلب -->
+            <div class="space-y-1.5">
+                <h4 class="text-xs font-bold text-cyan-400">معرض الصور</h4>
+                <div id="modal-gallery" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-2"></div>
+            </div>
+
+            <div id="modal-badges" class="flex flex-wrap gap-2 text-xs pt-1"></div>
+
             <div class="flex gap-2 pt-2">
-                <a id="modal-yt" href="#" target="_blank" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-youtube"></i> مشاهدة الفيديو
-                </a>
-                <button id="modal-add-cart" class="flex-1 cyan-gradient-btn py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2">
+                <button id="modal-add-cart" class="w-full cyan-gradient-btn py-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
                     <i class="fa-solid fa-plus"></i> أضف للسلة
                 </button>
             </div>
@@ -339,6 +369,14 @@
         let cart = JSON.parse(localStorage.getItem('madina_cart') || '[]');
         let isAdminLoggedIn = false;
 
+        function hideLoadingSpinner() {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                spinner.style.opacity = '0';
+                setTimeout(() => spinner.style.display = 'none', 400);
+            }
+        }
+
         function updateCartBadge() {
             document.getElementById('cart-badge').innerText = cart.length;
         }
@@ -386,7 +424,7 @@
         }
 
         window.sendCartToWhatsApp = function() {
-            const msg = `السلام عليكم`;
+            const msg = `السلام عليكم، أرغب بطلب الألعاب التالية من السلة`;
             window.open(`https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
@@ -441,16 +479,6 @@
             `;
             document.getElementById('hero-desc').innerText = current.desc || '';
 
-            const ytBtn = document.getElementById('hero-youtube-btn');
-            if (current.youtube) {
-                ytBtn.href = current.youtube;
-                ytBtn.classList.remove('hidden');
-            } else {
-                ytBtn.classList.add('hidden');
-            }
-
-            document.getElementById('hero-details-btn').onclick = () => openDetailsModal(current.id);
-
             const thumbs = document.getElementById('hero-thumbs');
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
@@ -464,34 +492,52 @@
             renderHero();
         };
 
+        window.openHeroDetails = function() {
+            const featuredGames = allGames.slice(0, 6);
+            if (featuredGames.length > 0) {
+                openDetailsModal(featuredGames[heroIndex].id);
+            }
+        };
+
+        // نافذة التفاصيل الجديدة بالترتيب المطلوب (فيديو في الأعلى، وصف بارز، صور عرضية)
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
-            const mainImg = game.coverImage || (game.images && game.images[0]) || 'https://via.placeholder.com/600x350';
-            const detailImgs = (game.images && game.images.length > 0) ? game.images : [mainImg];
 
             document.getElementById('modal-title').innerText = game.title;
-            document.getElementById('modal-main-img').src = mainImg;
-            document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف إضافي.';
+            document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
 
-            document.getElementById('modal-gallery').innerHTML = detailImgs.map(url => `
-                <img onclick="document.getElementById('modal-main-img').src='${url}'" src="${url}" class="w-full h-14 object-cover rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-400">
+            // إعداد الفيديو في الأعلى
+            const videoContainer = document.getElementById('modal-video-container');
+            const ytIframe = document.getElementById('modal-yt-iframe');
+            if (game.youtube) {
+                let embedUrl = game.youtube;
+                if (game.youtube.includes('watch?v=')) {
+                    embedUrl = game.youtube.replace('watch?v=', 'embed/');
+                } else if (game.youtube.includes('youtu.be/')) {
+                    embedUrl = game.youtube.replace('youtu.be/', 'www.youtube.com/embed/');
+                }
+                ytIframe.src = embedUrl;
+                videoContainer.classList.remove('hidden');
+            } else {
+                ytIframe.src = '';
+                videoContainer.classList.add('hidden');
+            }
+
+            // معرض الصور الأربعة بشكل عرضي قابل للتمرير
+            const galleryTrack = document.getElementById('modal-gallery');
+            const images = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
+            
+            galleryTrack.innerHTML = images.map((url, idx) => `
+                <img src="${url}" class="w-28 h-18 object-cover rounded-xl border-2 ${idx === 0 ? 'border-cyan-400 scale-105' : 'border-slate-700 opacity-70'} cursor-pointer hover:border-cyan-400 hover:opacity-100 flex-shrink-0 transition" onclick="selectModalImage(this, '${url}')">
             `).join('');
 
             document.getElementById('modal-badges').innerHTML = `
-                <span class="bg-slate-800 text-cyan-400 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
-                <span class="bg-slate-800 text-slate-200 px-2.5 py-1 rounded-lg">${game.category || ''}</span>
-                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg" dir="ltr">${game.size}</span>` : ''}
-                ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
+                <span class="bg-slate-800 text-cyan-400 px-3 py-1.5 rounded-xl font-bold">${game.platform || 'PS4'}</span>
+                <span class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl">${game.category || ''}</span>
+                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-3 py-1.5 rounded-xl" dir="ltr">${game.size}</span>` : ''}
+                ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-xl">✓ ${game.arabic}</span>` : ''}
             `;
-
-            const yt = document.getElementById('modal-yt');
-            if (game.youtube) {
-                yt.href = game.youtube;
-                yt.classList.remove('hidden');
-            } else {
-                yt.classList.add('hidden');
-            }
 
             document.getElementById('modal-add-cart').onclick = () => {
                 addToCart(game.id);
@@ -501,8 +547,18 @@
             document.getElementById('details-modal').classList.remove('hidden');
         };
 
+        window.selectModalImage = function(imgElement, url) {
+            document.querySelectorAll('#modal-gallery img').forEach(img => {
+                img.classList.remove('border-cyan-400', 'scale-105');
+                img.classList.add('border-slate-700', 'opacity-70');
+            });
+            imgElement.classList.remove('border-slate-700', 'opacity-70');
+            imgElement.classList.add('border-cyan-400', 'scale-105');
+        };
+
         window.closeDetailsModal = function() {
             document.getElementById('details-modal').classList.add('hidden');
+            document.getElementById('modal-yt-iframe').src = ''; // إيقاف الفيديو عند الإغلاق
         };
 
         window.filterAndRender = function() {
@@ -575,6 +631,8 @@
                 filterAndRender();
             } catch (error) {
                 console.error("خطأ في جلب الألعاب:", error);
+            } finally {
+                hideLoadingSpinner(); // إخفاء مؤشر التحميل فور اكتمال الجلب
             }
         };
 
