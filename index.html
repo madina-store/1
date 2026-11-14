@@ -18,26 +18,20 @@
         @keyframes neonRotateGlow {
             0% { 
                 border-color: #06b6d4; 
-                box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), 0 0 25px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
+                box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
             }
             33% { 
                 border-color: #38bdf8; 
-                box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 0 0 40px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.4); 
+                box-shadow: 0 0 22px rgba(56, 189, 248, 0.8), 0 0 45px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.4); 
             }
             66% { 
                 border-color: #818cf8; 
-                box-shadow: 0 0 20px rgba(129, 140, 248, 0.8), 0 0 40px rgba(129, 140, 248, 0.4), inset 0 0 15px rgba(129, 140, 248, 0.4); 
+                box-shadow: 0 0 22px rgba(129, 140, 248, 0.8), 0 0 45px rgba(129, 140, 248, 0.4), inset 0 0 15px rgba(129, 140, 248, 0.4); 
             }
             100% { 
                 border-color: #06b6d4; 
-                box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), 0 0 25px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
+                box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
             }
-        }
-
-        @keyframes beamTravel {
-            0% { transform: translate(-100%, -100%); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translate(100%, 100%); opacity: 0; }
         }
 
         .led-search-bar {
@@ -146,12 +140,18 @@
             <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- البنر الرئيسي -->
-        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl">
-            <div class="relative h-[320px] sm:h-[380px] w-full cursor-pointer" onclick="openHeroDetails()">
-                <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500">
+        <!-- البنر الرئيسي (الألعاب المضافة حديثاً) مع مؤشر تفاعلي للضغط -->
+        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
+            <div class="relative h-[320px] sm:h-[380px] w-full">
+                <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
                 
+                <!-- مؤشر تفاعلي يوضح للزبون إمكانية الضغط لرؤية التفاصيل -->
+                <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
+                    <i class="fa-solid fa-hand-pointer"></i>
+                    <span>اضغط لعرض التفاصيل واللقطات 🔍</span>
+                </div>
+
                 <div class="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
                     <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2 backdrop-blur-sm">
                         أضيف حديثاً ✨
@@ -271,7 +271,7 @@
         </div>
     </main>
 
-    <!-- الفوتر بإطار أسود نقي وإضاءة نيون دائرية متحركة -->
+    <!-- الفوتر مع زر واتساب تفاعلي وفخم يوضح للزبون إمكانية الضغط للمراسلة -->
     <footer class="bg-[#070a12] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl led-store-box rounded-3xl p-6 text-center shadow-xl space-y-4">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
@@ -285,15 +285,21 @@
                 <p class="text-xs text-cyan-400 font-bold mt-0.5">عالمك، مغامرتك، ألعابك</p>
                 <p class="text-[11px] text-slate-400 mt-1">الدعم الفني والخدمات السريعة</p>
             </div>
-            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#05070b] hover:bg-[#0b0f19] border border-slate-800 rounded-2xl p-3.5 transition group">
+            
+            <!-- زر واتساب فخم وتفاعلي مع شارة وضوح -->
+            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#05070b] hover:bg-[#0b0f19] border border-emerald-500/50 hover:border-emerald-400 rounded-2xl p-4 transition group shadow-[0_0_15px_rgba(16,185,129,0.15)]">
                 <div class="flex items-center justify-center gap-3 mb-1.5">
-                    <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-lg shadow-md group-hover:scale-105 transition">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition animate-bounce">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <span class="text-lg font-black text-white tracking-wider dir-ltr">07858858844</span>
+                    <span class="text-xl font-black text-white tracking-wider dir-ltr">07858858844</span>
                 </div>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    هل تواجه مشكلة؟ تواصل معنا عبر الواتساب وسنكون في خدمتك فوراً!
+                <!-- ششارة واضحة تدل الزبون على الضغط للمراسلة -->
+                <div class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-400/40 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full mt-1">
+                    <span>💬 اضغط هنا للمراسلة الفورية عبر واتساب</span>
+                </div>
+                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                    هل تواجه مشكلة أو ترغب بطلب لعبة؟ تواصل معنا وسنكون في خدمتك فوراً!
                 </p>
             </a>
 
