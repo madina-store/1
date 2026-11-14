@@ -23,10 +23,10 @@
             border: 2px solid #06b6d4;
             animation: superLedGlow 3s infinite ease-in-out;
         }
-        /* إطار ضوء ثابت وهادئ بدون تبطئ */
-        .static-glow-box {
-            border: 1px solid rgba(6, 182, 212, 0.4);
-            box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+        /* إطار هادئ ومتناسق بلون المتجر بدون إزعاج */
+        .store-border-box {
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            background: #101726;
         }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -67,7 +67,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* شريط الوقت للبنر */
         @keyframes progressAnimation {
             0% { width: 0%; }
             100% { width: 100%; }
@@ -121,7 +120,7 @@
             <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- البنر الرئيسي (أضيف حديثاً مع شريط وقت متحرك وبدون نبذة أو تفاصيل) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-800 bg-[#111827] shadow-2xl">
             <div class="relative h-[320px] sm:h-[380px] w-full cursor-pointer" onclick="openHeroDetails()">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500">
@@ -135,7 +134,6 @@
                     <div id="hero-thumbs" class="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full z-10" onclick="event.stopPropagation()"></div>
                 </div>
 
-                <!-- شريط الوقت المتلألئ في الأسفل -->
                 <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-800">
                     <div id="hero-timer-bar" class="hero-progress-bar h-full bg-cyan-400"></div>
                 </div>
@@ -206,7 +204,6 @@
                     </select>
                 </div>
 
-                <!-- اختيار أصناف متعددة (Checkbox) -->
                 <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3.5 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400 mb-1">
                         <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر):
@@ -246,15 +243,16 @@
         </div>
     </main>
 
-    <!-- الفوتر (مع تعديل الشرح واختصاره وإطار إضاءة ثابت هادئ) -->
+    <!-- الفوتر المرتب الجديد -->
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
-        <div class="container mx-auto max-w-xl bg-[#101726] static-glow-box rounded-3xl p-6 text-center shadow-xl space-y-4">
+        <div class="container mx-auto max-w-xl store-border-box rounded-3xl p-6 text-center shadow-xl space-y-4">
             <div class="w-14 h-14 mx-auto rounded-full cyan-gradient-btn flex items-center justify-center shadow-lg shadow-cyan-500/20">
                 <i class="fa-solid fa-gamepad text-slate-950 text-xl"></i>
             </div>
             <div>
                 <h2 class="text-lg font-black text-white">متجر المدينة</h2>
-                <p class="text-xs text-slate-400 mt-0.5">الدعم الفني والخدمات السريعة</p>
+                <p class="text-xs text-cyan-400 font-bold mt-0.5">عالمك، مغامرتك، ألعابك</p>
+                <p class="text-[11px] text-slate-400 mt-1">الدعم الفني والخدمات السريعة</p>
             </div>
             <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-3.5 transition group">
                 <div class="flex items-center justify-center gap-3 mb-1.5">
@@ -267,13 +265,19 @@
                     هل تواجه مشكلة؟ تواصل معنا عبر الواتساب وسنكون في خدمتك فوراً!
                 </p>
             </a>
+
+            <!-- زر خرائط جوجل -->
+            <a href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs transition">
+                <i class="fa-solid fa-map-location-dot"></i> موقعنا على خرائط جوجل (ذي قار - قضاء النصر)
+            </a>
+
             <div class="text-[11px] text-slate-500 pt-1">
-                © متجر المدينة - ذي قار - قضاء النصر
+                © متجر المدينة - جميع الحقوق محفوظة 2026
             </div>
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة -->
+    <!-- نافذة تفاصيل اللعبة مع معرض صور تفاعلي قابل للتنقل -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
@@ -292,9 +296,13 @@
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
 
+            <!-- لقطات الشاشة بشكل عرضي وتفاعلي يتيح تقليبها بالنقر -->
             <div class="space-y-2">
-                <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة</h4>
-                <div id="modal-gallery" class="space-y-3"></div>
+                <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة (انقر للتوسيع والتنقل)</h4>
+                <div id="modal-main-preview" class="w-full h-56 sm:h-64 rounded-2xl overflow-hidden border border-slate-700 bg-black mb-2">
+                    <img id="active-preview-img" src="" class="w-full h-full object-cover">
+                </div>
+                <div id="modal-gallery" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
             </div>
 
             <div class="pt-2">
@@ -420,7 +428,6 @@
             `).join('');
         }
 
-        // إرسال أسماء الألعاب فقط عبر واتساب بدون حجم أو تفاصيل
         window.sendCartToWhatsApp = function() {
             if (cart.length === 0) {
                 alert("السلة فارغة!");
@@ -469,7 +476,7 @@
                 return;
             }
             heroSection.classList.remove('hidden');
-            const featuredGames = allGames.slice(0, 5); // أحدث 5 ألعاب
+            const featuredGames = allGames.slice(0, 5);
             if (heroIndex >= featuredGames.length) heroIndex = 0;
             const current = featuredGames[heroIndex];
             const coverImg = current.coverImage || (current.images && current.images[0]) || current.image || 'https://via.placeholder.com/800x450';
@@ -477,10 +484,9 @@
             document.getElementById('hero-bg').src = coverImg;
             document.getElementById('hero-title').innerText = current.title;
 
-            // إعادة تشغيل شريط الوقت المتحرك
             const timerBar = document.getElementById('hero-timer-bar');
             timerBar.style.animation = 'none';
-            timerBar.offsetHeight; // trigger reflow
+            timerBar.offsetHeight;
             timerBar.style.animation = 'progressAnimation 5s linear infinite';
 
             const thumbs = document.getElementById('hero-thumbs');
@@ -505,7 +511,7 @@
                     heroIndex = (heroIndex + 1) % featuredGames.length;
                     renderHero();
                 }
-            }, 5000); // تقليب كل 5 ثواني تلقائياً
+            }, 5000);
         }
 
         window.openHeroDetails = function() {
@@ -546,13 +552,15 @@
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
-            const galleryTrack = document.getElementById('modal-gallery');
             const images = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             
-            galleryTrack.innerHTML = images.map(url => `
-                <div class="w-full rounded-2xl overflow-hidden border border-slate-800 bg-black/40">
-                    <img src="${url}" class="w-full h-auto object-cover max-h-80">
-                </div>
+            // ضبط الصورة الكبرى الافتراضية الأولى
+            document.getElementById('active-preview-img').src = images[0];
+
+            // عرض الصور المصغرة بحيث يضغط عليها الزبون لتتغير في المعرض الرئيسي
+            const galleryTrack = document.getElementById('modal-gallery');
+            galleryTrack.innerHTML = images.map((url, idx) => `
+                <img src="${url}" class="w-20 h-14 object-cover rounded-xl border-2 ${idx === 0 ? 'border-cyan-400' : 'border-slate-700 opacity-70'} cursor-pointer hover:opacity-100 flex-shrink-0 transition" onclick="switchMainPreview(this, '${url}')">
             `).join('');
 
             document.getElementById('modal-add-cart').onclick = () => {
@@ -561,6 +569,17 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
+        };
+
+        // دالة تبديل الصور في المعرض الرئيسي عند النقر
+        window.switchMainPreview = function(imgEl, url) {
+            document.getElementById('active-preview-img').src = url;
+            document.querySelectorAll('#modal-gallery img').forEach(img => {
+                img.classList.remove('border-cyan-400');
+                img.classList.add('border-slate-700', 'opacity-70');
+            });
+            imgEl.classList.remove('border-slate-700', 'opacity-70');
+            imgEl.classList.add('border-cyan-400');
         };
 
         window.closeDetailsModal = function() {
@@ -610,7 +629,7 @@
 
                             <div class="pt-1 border-t border-slate-800/80 flex items-center justify-between gap-1">
                                 <span class="text-[10px] font-semibold ${game.arabic && game.arabic.includes('لا تدعم') ? 'text-slate-400' : 'text-emerald-400'} truncate">
-                                    ${game.arabic && !game.arabic.includes('لا تدعم') ? '✓ ' + game.arabic : (game.arabic || '')}
+                                    ${game.arabic || ''}
                                 </span>
                                 ${isAdminLoggedIn ? `
                                     <div class="flex gap-1">
@@ -687,7 +706,6 @@
             reader.readAsDataURL(file);
         };
 
-        // دالة إضافة أو تحديث اللعبة (دعم ميزة التعديل الجديدة)
         window.addNewGame = async function() {
             const editingId = document.getElementById('editing-game-id').value;
             const title = document.getElementById('game-title').value.trim();
@@ -730,12 +748,10 @@
 
             try {
                 if (editingId) {
-                    // تحديث لعبة موجودة
                     await updateDoc(doc(db, "games", editingId), gameData);
                     alert("تم تعديل وحفظ اللعبة بنجاح 🌟");
                     resetAdminForm();
                 } else {
-                    // إضافة لعبة جديدة
                     gameData.createdAt = new Date();
                     await addDoc(collection(db, "games"), gameData);
                     alert("تم نشر اللعبة في السحاب بنجاح 🚀");
@@ -753,7 +769,6 @@
             }
         };
 
-        // فتح وضع التعديل للعبة
         window.editGame = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
@@ -768,7 +783,6 @@
             document.getElementById('game-images-box').value = (game.images || []).join('\n');
             document.getElementById('game-youtube').value = game.youtube || '';
 
-            // تفعيل الشيكبوكسز للأصناف الخاصة باللعبة
             const gameCats = game.categories || [game.category].filter(Boolean);
             document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => {
                 cb.checked = gameCats.includes(cb.value);
