@@ -23,7 +23,6 @@
             border: 2px solid #06b6d4;
             animation: superLedGlow 3s infinite ease-in-out;
         }
-        /* الإطار المضيء الناطع المطلوب للفوتر */
         .led-store-box {
             border: 2px solid #06b6d4;
             animation: superLedGlow 3s infinite ease-in-out;
@@ -281,7 +280,7 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة مع لقطات الشاشة عمودية وتكبير بالسهام -->
+    <!-- نافذة تفاصيل اللعبة -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
@@ -300,7 +299,6 @@
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
 
-            <!-- لقطات الشاشة واحدة تحت الأخرى (عمودية) -->
             <div class="space-y-3">
                 <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة (4)</h4>
                 <div id="modal-gallery-vertical" class="space-y-3"></div>
@@ -314,7 +312,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) مع أزرار السهام يميناً ويساراً -->
+    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         <button onclick="closeLightbox()" class="absolute top-5 left-5 w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center text-lg z-20 hover:bg-cyan-500 hover:text-slate-950 transition">✕</button>
         
@@ -368,11 +366,13 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // تم إضافة "ألعاب التسلل والتخفي" إلى القائمة
         const ALL_CATEGORIES = [
             "الكل", "ألعاب الأكشن", "ألعاب المغامرات", "ألعاب الحركة والمغامرات",
             "ألعاب تقمص الأدوار", "ألعاب الاستراتيجية", "ألعاب المحاكاة", "ألعاب إطلاق النار",
             "ألعاب الرياضة", "ألعاب السباقات", "ألعاب المنصات", "ألعاب الألغاز",
-            "ألعاب البقاء على قيد الحياة", "ألعاب الرعب", "ألعاب القتال", "ألعاب العالم المفتوح", "ألعاب البطاقات"
+            "ألعاب البقاء على قيد الحياة", "ألعاب الرعب", "ألعاب القتال", "ألعاب العالم المفتوح", 
+            "ألعاب البطاقات", "ألعاب التسلل والتخفي"
         ];
 
         let allGames = [];
@@ -383,7 +383,6 @@
         let cart = JSON.parse(localStorage.getItem('madina_cart') || '[]');
         let isAdminLoggedIn = false;
 
-        // متغيرات Lightbox للتكبير والتنقل بين الصور بالسهام
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
@@ -544,7 +543,6 @@
             }
         };
 
-        // فتح نافذة التفاصيل وعرض الصور عمودياً واحدة تحت الأخرى
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
@@ -576,7 +574,6 @@
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
-            // تخزين الصور لعرضها بالعمود وللتنقل بها بالسهام عند التكبير
             currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             
             document.getElementById('gallery-heading').innerText = `لقطات الشاشة (${currentLightboxImages.length})`;
@@ -596,7 +593,6 @@
             document.getElementById('details-modal').classList.remove('hidden');
         };
 
-        // دوال Lightbox للتكبير والتنقل بين الصور بالسهام
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
@@ -654,7 +650,6 @@
                         <div class="relative">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-36 sm:h-44 object-cover cursor-pointer group-hover:scale-105 transition duration-300">
                             
-                            <!-- زر الإضافة للسلة مكان المنصة فوق الصورة -->
                             <button onclick="event.stopPropagation(); addToCart('${game.id}')" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition">
                                 <i class="fa-solid fa-plus text-xs"></i>
                             </button>
@@ -715,14 +710,12 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     if (data.logoUrl) {
-                        // الهيدر
                         const img = document.getElementById('store-logo-img');
                         const fallback = document.getElementById('store-logo-fallback');
                         img.src = data.logoUrl;
                         img.classList.remove('hidden');
                         fallback.classList.add('hidden');
 
-                        // الفوتر السفلي
                         const footerImg = document.getElementById('footer-logo-img');
                         const footerFallback = document.getElementById('footer-logo-fallback');
                         footerImg.src = data.logoUrl;
