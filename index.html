@@ -13,21 +13,48 @@
             background-color: #090d16;
             color: #ffffff;
         }
-        /* إطار نيون أزرق متحرك وساحر ينساب بدوران وتدرج مذهل */
-        @keyframes pureBlueNeonGlow {
-            0% { border-color: #06b6d4; box-shadow: 0 0 12px rgba(6, 182, 212, 0.5), inset 0 0 8px rgba(6, 182, 212, 0.2); }
-            50% { border-color: #22d3ee; box-shadow: 0 0 25px rgba(34, 211, 238, 0.9), inset 0 0 15px rgba(34, 211, 238, 0.4); }
-            100% { border-color: #06b6d4; box-shadow: 0 0 12px rgba(6, 182, 212, 0.5), inset 0 0 8px rgba(6, 182, 212, 0.2); }
+        
+        /* تأثير النيون المتحرك والساطع للبحث والفوتر */
+        @keyframes neonPulseGlow {
+            0% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+            50% { border-color: #38bdf8; box-shadow: 0 0 30px rgba(56, 189, 248, 0.9), inset 0 0 20px rgba(56, 189, 248, 0.5); }
+            100% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.2); }
         }
+
+        @keyframes beamLightMove {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
         .led-search-bar {
+            position: relative;
+            overflow: hidden;
             border: 2px solid #06b6d4;
-            animation: pureBlueNeonGlow 2.5s infinite ease-in-out;
+            animation: neonPulseGlow 2.5s infinite ease-in-out;
         }
+        .led-search-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, #ffffff, #22d3ee, transparent);
+            animation: beamLightMove 2s infinite linear;
+        }
+
         .led-store-box {
+            position: relative;
+            overflow: hidden;
             border: 2px solid #06b6d4;
-            animation: pureBlueNeonGlow 2.5s infinite ease-in-out;
+            animation: neonPulseGlow 2.5s infinite ease-in-out;
             background: #101726;
         }
+        .led-store-box::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #22d3ee, #ffffff, #22d3ee, transparent);
+            animation: beamLightMove 2.5s infinite linear;
+        }
+
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -114,7 +141,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بالإطار النيون الأزرق المتحرك الساحر -->
+        <!-- شريط البحث بإطار النيون الساطع والمتحرك -->
         <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
@@ -155,7 +182,7 @@
         <!-- شبكة الألعاب -->
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
-            <!-- أزرار ترقيم الصفحات التلقائي (Pagination) -->
+            <!-- أزرار ترقيم الصفحات (8 ألعاب لكل صفحة) -->
             <div id="pagination-container" class="flex items-center justify-center gap-2 pt-4"></div>
         </section>
 
@@ -245,7 +272,7 @@
         </div>
     </main>
 
-    <!-- الفوتر مع إطار النيون الأزرق المتحرك الساحر وشعار المتجر -->
+    <!-- الفوتر مع إطار نيون ساطع ومتحرك وشعار المتجر -->
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl led-store-box rounded-3xl p-6 text-center shadow-xl space-y-4">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
@@ -380,7 +407,7 @@
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentPage = 1;
-        const gamesPerPage = 9; // عدد الألعاب في كل صفحة
+        const gamesPerPage = 8; // تم التعديل لتكون 8 ألعاب في كل صفحة بالضبط
 
         let heroIndex = 0;
         let heroInterval = null;
@@ -468,7 +495,7 @@
 
         window.setPlatform = function(plat) {
             selectedPlatform = plat;
-            currentPage = 1; // العودة للصفحة الأولى عند تغيير المنصة
+            currentPage = 1;
             document.querySelectorAll('.plat-btn').forEach(btn => {
                 btn.className = "plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition";
             });
@@ -478,13 +505,13 @@
 
         window.setCategory = function(cat) {
             selectedCategory = cat;
-            currentPage = 1; // العودة للصفحة الأولى عند تغيير القسم
+            currentPage = 1;
             renderCategoriesBar();
             filterAndRender();
         };
 
         window.handleSearchInput = function() {
-            currentPage = 1; // العودة للصفحة الأولى عند البحث
+            currentPage = 1;
             filterAndRender();
         };
 
@@ -671,7 +698,7 @@
                 return;
             }
 
-            // حساب تقسيم الصفحات (Pagination)
+            // تقسيم الصفحات (8 ألعاب لكل صفحة)
             const totalPages = Math.ceil(filtered.length / gamesPerPage);
             if (currentPage > totalPages) currentPage = totalPages;
             if (currentPage < 1) currentPage = 1;
@@ -722,13 +749,13 @@
                 `;
             }).join('');
 
-            // رسم أزرار الصفحات إذا كان هناك أكثر من صفحة واحدة
+            // رسم أزرار الترقيم
             if (totalPages > 1) {
                 let pagesHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
                     const isActive = i === currentPage;
                     const btnClass = isActive 
-                        ? "cyan-gradient-btn font-black shadow-[0_0_12px_rgba(6,182,212,0.6)]" 
+                        ? "cyan-gradient-btn font-black shadow-[0_0_15px_rgba(6,182,212,0.7)] scale-105" 
                         : "bg-[#131b2e] border border-slate-700 text-slate-300 hover:border-cyan-400 font-bold";
                     pagesHtml += `
                         <button onclick="changePage(${i})" class="${btnClass} w-9 h-9 rounded-xl text-xs flex items-center justify-center transition">
@@ -948,8 +975,8 @@
                 dashboard.classList.remove('hidden');
             } else {
                 isAdminLoggedIn = false;
-                loginBox.classList.add('hidden');
-                dashboard.classList.remove('hidden'); // ترك لوحة التحكم تظهر للدخول
+                loginBox.classList.remove('hidden');
+                dashboard.classList.remove('hidden');
                 resetAdminForm();
             }
             filterAndRender();
