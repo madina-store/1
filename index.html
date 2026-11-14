@@ -94,6 +94,15 @@
         .hero-progress-bar {
             animation: progressAnimation 5s linear infinite;
         }
+
+        /* إشعار الإضافة إلى السلة الفخم العائم */
+        @keyframes toastSlideUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .toast-notification {
+            animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
@@ -103,6 +112,9 @@
         <div class="spinner"></div>
         <p class="text-sm font-bold text-cyan-400">جاري تحضير متجر المدينة...</p>
     </div>
+
+    <!-- نظام الإشعار العائم الفخم للسلة -->
+    <div id="custom-toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-full max-w-sm px-4"></div>
 
     <!-- الهيدر -->
     <header class="bg-[#070a12]/95 backdrop-blur-md border-b border-slate-900 px-4 py-3 sticky top-0 z-40">
@@ -412,7 +424,7 @@
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentPage = 1;
-        const gamesPerPage = 8; // 8 ألعاب في كل صفحة بدقة
+        const gamesPerPage = 8;
 
         let heroIndex = 0;
         let heroInterval = null;
@@ -421,6 +433,49 @@
 
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
+
+        // دالة لتوليد تأثير صوتي تفاعلي ناعم عند الإضافة للسلة (بدون ملفات خارجية)
+        function playSuccessSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // نغمة D5
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // انتقال ناعم لـ A5
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch (e) {
+                // المتصفح يمنع التشغيل التلقائي أحياناً قبل أول تفاعل
+            }
+        }
+
+        // إشعار عائم فخم وذكي بدلاً من الـ alert العادي
+        function showToast(message) {
+            const container = document.getElementById('custom-toast-container');
+            const toast = document.createElement('div');
+            toast.className = "toast-notification bg-[#0b0f19] border border-cyan-400 text-white px-4 py-3 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-between gap-3 text-xs font-bold";
+            toast.innerHTML = `
+                <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </div>
+                    <span>${message}</span>
+                </div>
+                <span class="text-[10px] text-cyan-400 opacity-80">متجر المدينة</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
 
         function hideLoadingSpinner() {
             const spinner = document.getElementById('loading-spinner');
@@ -456,7 +511,8 @@
                 localStorage.setItem('madina_cart', JSON.stringify(cart));
                 updateCartBadge();
             }
-            alert(`تمت إضافة "${game.title}" إلى السلة ✅`);
+            playSuccessSound(); // تشغيل الصوت الفخم
+            showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`); // إشعار فخم بدل الـ alert القديم
         };
 
         window.removeFromCart = function(index) {
@@ -715,6 +771,19 @@
             grid.innerHTML = paginatedGames.map(game => {
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 const firstCat = (game.categories && game.categories[0]) || game.category || '';
+                
+                // تلوين وبروز شارة اللغة العربية حسب نوع الدعم
+                let arabicBadgeStyle = "text-slate-400";
+                if (game.arabic) {
+                    if (game.arabic.includes('دبلجة')) {
+                        arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(16,185,129,0.2)]";
+                    } else if (game.arabic.includes('ترجمة')) {
+                        arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(6,182,212,0.2)]";
+                    } else {
+                        arabicBadgeStyle = "bg-rose-500/10 text-rose-300/80 border border-rose-500/20 px-2 py-0.5 rounded-md";
+                    }
+                }
+
                 return `
                     <div class="bg-[#0b0f19] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
@@ -734,8 +803,8 @@
                                 </div>
                             </div>
 
-                            <div class="pt-1 border-t border-slate-800/80 flex items-center justify-between gap-1">
-                                <span class="text-[10px] font-semibold ${game.arabic && game.arabic.includes('لا تدعم') ? 'text-slate-400' : 'text-emerald-400'} truncate">
+                            <div class="pt-1.5 border-t border-slate-800/80 flex items-center justify-between gap-1">
+                                <span class="text-[10px] truncate ${arabicBadgeStyle}">
                                     ${game.arabic || ''}
                                 </span>
                                 ${isAdminLoggedIn ? `
