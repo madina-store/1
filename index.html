@@ -23,9 +23,10 @@
             border: 2px solid #06b6d4;
             animation: superLedGlow 3s infinite ease-in-out;
         }
-        /* إطار هادئ ومتناسق بلون المتجر بدون إزعاج */
-        .store-border-box {
-            border: 1px solid rgba(6, 182, 212, 0.3);
+        /* الإطار المضيء الناطع المطلوب للفوتر */
+        .led-store-box {
+            border: 2px solid #06b6d4;
+            animation: superLedGlow 3s infinite ease-in-out;
             background: #101726;
         }
         .no-scrollbar::-webkit-scrollbar {
@@ -243,11 +244,14 @@
         </div>
     </main>
 
-    <!-- الفوتر المرتب الجديد -->
+    <!-- الفوتر مع الإطار المضيء الناطع وشعار المتجر الحقيقي -->
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
-        <div class="container mx-auto max-w-xl store-border-box rounded-3xl p-6 text-center shadow-xl space-y-4">
-            <div class="w-14 h-14 mx-auto rounded-full cyan-gradient-btn flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                <i class="fa-solid fa-gamepad text-slate-950 text-xl"></i>
+        <div class="container mx-auto max-w-xl led-store-box rounded-3xl p-6 text-center shadow-xl space-y-4">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
+                <img id="footer-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[14px] hidden">
+                <div id="footer-logo-fallback" class="w-full h-full bg-[#0d1526] rounded-[14px] flex flex-col items-center justify-center">
+                    <i class="fa-solid fa-gamepad text-cyan-400 text-xl"></i>
+                </div>
             </div>
             <div>
                 <h2 class="text-lg font-black text-white">متجر المدينة</h2>
@@ -266,8 +270,8 @@
                 </p>
             </a>
 
-            <!-- زر خرائط جوجل -->
-            <a href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs transition">
+            <!-- زر خرائط جوجل مع الإطار المضيء -->
+            <a href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs transition">
                 <i class="fa-solid fa-map-location-dot"></i> موقعنا على خرائط جوجل (ذي قار - قضاء النصر)
             </a>
 
@@ -277,7 +281,7 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة مع معرض صور تفاعلي قابل للتنقل -->
+    <!-- نافذة تفاصيل اللعبة مع لقطات الشاشة عمودية وتكبير بالسهام -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
@@ -296,13 +300,10 @@
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
 
-            <!-- لقطات الشاشة بشكل عرضي وتفاعلي يتيح تقليبها بالنقر -->
-            <div class="space-y-2">
-                <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة (انقر للتوسيع والتنقل)</h4>
-                <div id="modal-main-preview" class="w-full h-56 sm:h-64 rounded-2xl overflow-hidden border border-slate-700 bg-black mb-2">
-                    <img id="active-preview-img" src="" class="w-full h-full object-cover">
-                </div>
-                <div id="modal-gallery" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+            <!-- لقطات الشاشة واحدة تحت الأخرى (عمودية) -->
+            <div class="space-y-3">
+                <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة (4)</h4>
+                <div id="modal-gallery-vertical" class="space-y-3"></div>
             </div>
 
             <div class="pt-2">
@@ -311,6 +312,24 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- نافذة تكبير الصورة (Lightbox) مع أزرار السهام يميناً ويساراً -->
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
+        <button onclick="closeLightbox()" class="absolute top-5 left-5 w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center text-lg z-20 hover:bg-cyan-500 hover:text-slate-950 transition">✕</button>
+        
+        <button onclick="prevLightboxImage()" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-xl z-20 hover:bg-cyan-500 hover:text-slate-950 transition">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div class="max-w-4xl max-h-[85vh] flex flex-col items-center justify-center relative p-2">
+            <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl border border-slate-700 shadow-2xl">
+            <div id="lightbox-counter" class="text-xs font-bold text-cyan-400 mt-3 bg-slate-900/80 px-4 py-1.5 rounded-full border border-slate-800"></div>
+        </div>
+
+        <button onclick="nextLightboxImage()" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-xl z-20 hover:bg-cyan-500 hover:text-slate-950 transition">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
     </div>
 
     <!-- نافذة السلة -->
@@ -363,6 +382,10 @@
         let heroInterval = null;
         let cart = JSON.parse(localStorage.getItem('madina_cart') || '[]');
         let isAdminLoggedIn = false;
+
+        // متغيرات Lightbox للتكبير والتنقل بين الصور بالسهام
+        let currentLightboxImages = [];
+        let currentLightboxIndex = 0;
 
         function hideLoadingSpinner() {
             const spinner = document.getElementById('loading-spinner');
@@ -521,6 +544,7 @@
             }
         };
 
+        // فتح نافذة التفاصيل وعرض الصور عمودياً واحدة تحت الأخرى
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
@@ -552,15 +576,16 @@
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
-            const images = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
+            // تخزين الصور لعرضها بالعمود وللتنقل بها بالسهام عند التكبير
+            currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             
-            // ضبط الصورة الكبرى الافتراضية الأولى
-            document.getElementById('active-preview-img').src = images[0];
+            document.getElementById('gallery-heading').innerText = `لقطات الشاشة (${currentLightboxImages.length})`;
 
-            // عرض الصور المصغرة بحيث يضغط عليها الزبون لتتغير في المعرض الرئيسي
-            const galleryTrack = document.getElementById('modal-gallery');
-            galleryTrack.innerHTML = images.map((url, idx) => `
-                <img src="${url}" class="w-20 h-14 object-cover rounded-xl border-2 ${idx === 0 ? 'border-cyan-400' : 'border-slate-700 opacity-70'} cursor-pointer hover:opacity-100 flex-shrink-0 transition" onclick="switchMainPreview(this, '${url}')">
+            const verticalGallery = document.getElementById('modal-gallery-vertical');
+            verticalGallery.innerHTML = currentLightboxImages.map((url, idx) => `
+                <div class="w-full rounded-2xl overflow-hidden border border-slate-800 bg-black cursor-pointer hover:border-cyan-400 transition" onclick="openLightbox(${idx})">
+                    <img src="${url}" class="w-full h-auto object-cover max-h-80">
+                </div>
             `).join('');
 
             document.getElementById('modal-add-cart').onclick = () => {
@@ -571,15 +596,32 @@
             document.getElementById('details-modal').classList.remove('hidden');
         };
 
-        // دالة تبديل الصور في المعرض الرئيسي عند النقر
-        window.switchMainPreview = function(imgEl, url) {
-            document.getElementById('active-preview-img').src = url;
-            document.querySelectorAll('#modal-gallery img').forEach(img => {
-                img.classList.remove('border-cyan-400');
-                img.classList.add('border-slate-700', 'opacity-70');
-            });
-            imgEl.classList.remove('border-slate-700', 'opacity-70');
-            imgEl.classList.add('border-cyan-400');
+        // دوال Lightbox للتكبير والتنقل بين الصور بالسهام
+        window.openLightbox = function(index) {
+            currentLightboxIndex = index;
+            updateLightboxImage();
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        };
+
+        window.closeLightbox = function() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        };
+
+        window.updateLightboxImage = function() {
+            const imgElem = document.getElementById('lightbox-img');
+            const counterElem = document.getElementById('lightbox-counter');
+            imgElem.src = currentLightboxImages[currentLightboxIndex];
+            counterElem.innerText = `صورة ${currentLightboxIndex + 1} من ${currentLightboxImages.length}`;
+        };
+
+        window.prevLightboxImage = function() {
+            currentLightboxIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
+            updateLightboxImage();
+        };
+
+        window.nextLightboxImage = function() {
+            currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
+            updateLightboxImage();
         };
 
         window.closeDetailsModal = function() {
@@ -673,11 +715,19 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     if (data.logoUrl) {
+                        // الهيدر
                         const img = document.getElementById('store-logo-img');
                         const fallback = document.getElementById('store-logo-fallback');
                         img.src = data.logoUrl;
                         img.classList.remove('hidden');
                         fallback.classList.add('hidden');
+
+                        // الفوتر السفلي
+                        const footerImg = document.getElementById('footer-logo-img');
+                        const footerFallback = document.getElementById('footer-logo-fallback');
+                        footerImg.src = data.logoUrl;
+                        footerImg.classList.remove('hidden');
+                        footerFallback.classList.add('hidden');
                     }
                 }
             } catch (error) {
