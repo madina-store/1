@@ -10,49 +10,48 @@
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #090d16;
+            background-color: #05070b;
             color: #ffffff;
         }
         
-        /* تأثير النيون المتحرك والساطع للبحث والفوتر */
-        @keyframes neonPulseGlow {
-            0% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.2); }
-            50% { border-color: #38bdf8; box-shadow: 0 0 30px rgba(56, 189, 248, 0.9), inset 0 0 20px rgba(56, 189, 248, 0.5); }
-            100% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+        /* تأثير النيون الدائرى المتحرك بالكامل حول الإطار */
+        @keyframes neonRotateGlow {
+            0% { 
+                border-color: #06b6d4; 
+                box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), 0 0 25px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
+            }
+            33% { 
+                border-color: #38bdf8; 
+                box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 0 0 40px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.4); 
+            }
+            66% { 
+                border-color: #818cf8; 
+                box-shadow: 0 0 20px rgba(129, 140, 248, 0.8), 0 0 40px rgba(129, 140, 248, 0.4), inset 0 0 15px rgba(129, 140, 248, 0.4); 
+            }
+            100% { 
+                border-color: #06b6d4; 
+                box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), 0 0 25px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
+            }
         }
 
-        @keyframes beamLightMove {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        @keyframes beamTravel {
+            0% { transform: translate(-100%, -100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(100%, 100%); opacity: 0; }
         }
 
         .led-search-bar {
             position: relative;
-            overflow: hidden;
+            background: #0b0f19;
             border: 2px solid #06b6d4;
-            animation: neonPulseGlow 2.5s infinite ease-in-out;
-        }
-        .led-search-bar::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #22d3ee, #ffffff, #22d3ee, transparent);
-            animation: beamLightMove 2s infinite linear;
+            animation: neonRotateGlow 4s infinite ease-in-out;
         }
 
         .led-store-box {
             position: relative;
-            overflow: hidden;
+            background: #0b0f19;
             border: 2px solid #06b6d4;
-            animation: neonPulseGlow 2.5s infinite ease-in-out;
-            background: #101726;
-        }
-        .led-store-box::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #22d3ee, #ffffff, #22d3ee, transparent);
-            animation: beamLightMove 2.5s infinite linear;
+            animation: neonRotateGlow 4s infinite ease-in-out;
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -63,8 +62,8 @@
             scrollbar-width: none;
         }
         .cyan-gradient-btn {
-            background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
-            color: #06131f;
+            background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
+            color: #05070b;
         }
         .spinner-overlay {
             position: fixed;
@@ -72,7 +71,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #090d16;
+            background: #05070b;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -112,12 +111,12 @@
     </div>
 
     <!-- الهيدر -->
-    <header class="bg-[#0b101b]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 sticky top-0 z-40">
+    <header class="bg-[#070a12]/95 backdrop-blur-md border-b border-slate-900 px-4 py-3 sticky top-0 z-40">
         <div class="container mx-auto max-w-4xl flex justify-between items-center">
             <div id="secret-admin-trigger" class="flex items-center gap-3 cursor-pointer select-none">
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center overflow-hidden">
                     <img id="store-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[10px] hidden">
-                    <div id="store-logo-fallback" class="w-full h-full bg-[#0d1526] rounded-[10px] flex flex-col items-center justify-center">
+                    <div id="store-logo-fallback" class="w-full h-full bg-[#0b0f19] rounded-[10px] flex flex-col items-center justify-center">
                         <i class="fa-solid fa-gamepad text-cyan-400 text-sm"></i>
                         <span class="text-[8px] font-black text-white leading-none mt-0.5">المدينة</span>
                     </div>
@@ -130,7 +129,7 @@
                 </div>
             </div>
 
-            <button onclick="toggleCartModal()" class="relative bg-[#131b2e] border border-slate-700/80 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
+            <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
                 <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
                 <span class="text-xs font-bold">السلة</span>
                 <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
@@ -141,17 +140,17 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بإطار النيون الساطع والمتحرك -->
-        <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
+        <!-- شريط البحث بإطار أسود داكن ونيون دائرى متحرك وساطع -->
+        <div class="led-search-bar rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
         <!-- البنر الرئيسي -->
-        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-800 bg-[#111827] shadow-2xl">
+        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl">
             <div class="relative h-[320px] sm:h-[380px] w-full cursor-pointer" onclick="openHeroDetails()">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0b101b] via-[#0b101b]/60 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
                 
                 <div class="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
                     <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2 backdrop-blur-sm">
@@ -161,7 +160,7 @@
                     <div id="hero-thumbs" class="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full z-10" onclick="event.stopPropagation()"></div>
                 </div>
 
-                <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-800">
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-900">
                     <div id="hero-timer-bar" class="hero-progress-bar h-full bg-cyan-400"></div>
                 </div>
             </div>
@@ -170,8 +169,8 @@
         <!-- أزرار المنصات -->
         <section class="grid grid-cols-3 gap-2.5">
             <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition">الكل</button>
-            <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS4</button>
-            <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
+            <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS4</button>
+            <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
         </section>
 
         <!-- شريط الأقسام -->
@@ -187,7 +186,7 @@
         </section>
 
         <!-- لوحة التحكم السرية للمدير -->
-        <div id="admin-panel" class="hidden bg-[#101726] border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
+        <div id="admin-panel" class="hidden bg-[#0b0f19] border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-black text-cyan-400 flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved"></i> إدارة متجر المدينة
@@ -196,26 +195,26 @@
             </div>
             
             <div id="admin-login-box" class="space-y-3">
-                <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
-                <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                 <button onclick="loginAdmin()" class="cyan-gradient-btn w-full py-3 rounded-xl font-black text-sm">دخول الإدارة</button>
             </div>
 
-            <div id="admin-dashboard" class="hidden space-y-4 border-t border-slate-800 pt-4">
+            <div id="admin-dashboard" class="hidden space-y-4 border-t border-slate-900 pt-4">
                 <div class="flex justify-between items-center">
                     <span class="text-emerald-400 text-xs font-bold">🟢 متصل بصلاحيات المشرف</span>
                     <button onclick="logoutAdmin()" class="text-red-400 text-xs hover:underline">تسجيل خروج</button>
                 </div>
 
-                <div class="bg-[#090d16] border border-slate-700/80 rounded-xl p-3 space-y-2">
+                <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-solid fa-image"></i> تغيير شعار المتجر (اختر صورة من استوديو الهاتف):
                     </label>
-                    <input type="file" id="logo-file-input" accept="image/*" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2 text-xs text-slate-300">
+                    <input type="file" id="logo-file-input" accept="image/*" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2 text-xs text-slate-300">
                     <button onclick="uploadAndSaveLogo()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 py-2 rounded-lg font-bold text-xs transition">حفظ الشعار للسحاب فورا 🌟</button>
                 </div>
 
-                <hr class="border-slate-800">
+                <hr class="border-slate-900">
 
                 <div class="flex justify-between items-center">
                     <h4 id="admin-form-title" class="font-bold text-sm text-white">إضافة لعبة جديدة:</h4>
@@ -225,45 +224,45 @@
                 <input type="hidden" id="editing-game-id" value="">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="game-title" placeholder="اسم اللعبة" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
-                    <select id="game-platform" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-title" placeholder="اسم اللعبة" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <select id="game-platform" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                         <option value="PS4">PS4</option>
                         <option value="PS5">PS5</option>
                         <option value="PS4 / PS5">PS4 / PS5</option>
                     </select>
                 </div>
 
-                <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3.5 space-y-2">
+                <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3.5 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400 mb-1">
                         <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر):
                     </label>
-                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#101726] rounded-lg text-xs"></div>
+                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#0b0f19] rounded-lg text-xs"></div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
-                    <select id="game-arabic" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <select id="game-arabic" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
                         <option value="تدعم اللغة العربية (ترجمة)">تدعم اللغة العربية (ترجمة)</option>
                         <option value="لا تدعم اللغة العربية">لا تدعم اللغة العربية</option>
                     </select>
                 </div>
 
-                <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white"></textarea>
+                <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white"></textarea>
 
                 <div>
                     <label class="block text-xs font-bold text-cyan-400 mb-1">رابط غلاف اللعبة الرئيسي (Cover Image URL):</label>
-                    <textarea id="game-cover-url" rows="2" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
+                    <textarea id="game-cover-url" rows="2" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <div class="bg-[#090d16] border border-slate-700 rounded-xl p-3 space-y-2">
+                <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة (ضع 4 روابط صور، كل رابط في سطر):
                     </label>
-                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#101726] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
+                <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
                 <button id="save-game-btn" onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
                     نشر اللعبة في المتجر 🚀
@@ -272,12 +271,12 @@
         </div>
     </main>
 
-    <!-- الفوتر مع إطار نيون ساطع ومتحرك وشعار المتجر -->
-    <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
+    <!-- الفوتر بإطار أسود نقي وإضاءة نيون دائرية متحركة -->
+    <footer class="bg-[#070a12] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl led-store-box rounded-3xl p-6 text-center shadow-xl space-y-4">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
                 <img id="footer-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[14px] hidden">
-                <div id="footer-logo-fallback" class="w-full h-full bg-[#0d1526] rounded-[14px] flex flex-col items-center justify-center">
+                <div id="footer-logo-fallback" class="w-full h-full bg-[#0b0f19] rounded-[14px] flex flex-col items-center justify-center">
                     <i class="fa-solid fa-gamepad text-cyan-400 text-xl"></i>
                 </div>
             </div>
@@ -286,7 +285,7 @@
                 <p class="text-xs text-cyan-400 font-bold mt-0.5">عالمك، مغامرتك، ألعابك</p>
                 <p class="text-[11px] text-slate-400 mt-1">الدعم الفني والخدمات السريعة</p>
             </div>
-            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-3.5 transition group">
+            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#05070b] hover:bg-[#0b0f19] border border-slate-800 rounded-2xl p-3.5 transition group">
                 <div class="flex items-center justify-center gap-3 mb-1.5">
                     <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-lg shadow-md group-hover:scale-105 transition">
                         <i class="fa-brands fa-whatsapp"></i>
@@ -311,10 +310,10 @@
 
     <!-- نافذة تفاصيل اللعبة -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
-            <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
+        <div class="bg-[#0b0f19] border border-slate-800 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
+            <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-900 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
             
-            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-800 hidden mt-2">
+            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-900 hidden mt-2">
                 <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
             </div>
 
@@ -323,7 +322,7 @@
                 <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
             </div>
 
-            <div class="bg-slate-900/70 border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
+            <div class="bg-[#05070b] border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
                 <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> عن اللعبة</h4>
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
@@ -343,15 +342,15 @@
 
     <!-- نافذة تكبير الصورة (Lightbox) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
-        <button onclick="closeLightbox()" class="absolute top-5 left-5 w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center text-lg z-20 hover:bg-cyan-500 hover:text-slate-950 transition">✕</button>
+        <button onclick="closeLightbox()" class="absolute top-5 left-5 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-lg z-20 hover:bg-cyan-500 hover:text-slate-950 transition">✕</button>
         
         <button onclick="prevLightboxImage()" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-xl z-20 hover:bg-cyan-500 hover:text-slate-950 transition">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
 
         <div class="max-w-4xl max-h-[85vh] flex flex-col items-center justify-center relative p-2">
-            <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl border border-slate-700 shadow-2xl">
-            <div id="lightbox-counter" class="text-xs font-bold text-cyan-400 mt-3 bg-slate-900/80 px-4 py-1.5 rounded-full border border-slate-800"></div>
+            <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl border border-slate-800 shadow-2xl">
+            <div id="lightbox-counter" class="text-xs font-bold text-cyan-400 mt-3 bg-[#0b0f19] px-4 py-1.5 rounded-full border border-slate-800"></div>
         </div>
 
         <button onclick="nextLightboxImage()" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-xl z-20 hover:bg-cyan-500 hover:text-slate-950 transition">
@@ -361,12 +360,12 @@
 
     <!-- نافذة السلة -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-[#101726] border border-slate-700 rounded-3xl max-w-md w-full p-5 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="bg-[#0b0f19] border border-slate-800 rounded-3xl max-w-md w-full p-5 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-900 pb-3">
                 <h3 class="text-base font-black text-cyan-400 flex items-center gap-2">
                     <i class="fa-solid fa-bag-shopping"></i> سلة الألعاب المختارة
                 </h3>
-                <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300">✕</button>
+                <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-900 text-slate-300">✕</button>
             </div>
             <div id="cart-items-list" class="space-y-2 max-h-60 overflow-y-auto text-sm"></div>
             <button onclick="sendCartToWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2">
@@ -407,7 +406,7 @@
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentPage = 1;
-        const gamesPerPage = 8; // تم التعديل لتكون 8 ألعاب في كل صفحة بالضبط
+        const gamesPerPage = 8; // 8 ألعاب في كل صفحة بدقة
 
         let heroIndex = 0;
         let heroInterval = null;
@@ -431,7 +430,7 @@
             const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
             container.innerHTML = subCategories.map(cat => `
                 <label class="flex items-center gap-2 cursor-pointer hover:text-cyan-400 select-none">
-                    <input type="checkbox" name="game-cat-checkbox" value="${cat}" class="rounded bg-[#090d16] border-slate-700 text-cyan-500 focus:ring-0">
+                    <input type="checkbox" name="game-cat-checkbox" value="${cat}" class="rounded bg-[#05070b] border-slate-800 text-cyan-500 focus:ring-0">
                     <span>${cat}</span>
                 </label>
             `).join('');
@@ -474,7 +473,7 @@
                 return;
             }
             list.innerHTML = cart.map((item, idx) => `
-                <div class="flex justify-between items-center bg-[#090d16] p-3 rounded-xl border border-slate-800">
+                <div class="flex justify-between items-center bg-[#05070b] p-3 rounded-xl border border-slate-800">
                     <div class="font-bold text-xs text-white">${item.title}</div>
                     <button onclick="removeFromCart(${idx})" class="text-red-400 hover:text-red-300 text-xs px-2">حذف</button>
                 </div>
@@ -497,7 +496,7 @@
             selectedPlatform = plat;
             currentPage = 1;
             document.querySelectorAll('.plat-btn').forEach(btn => {
-                btn.className = "plat-btn bg-[#131b2e] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition";
+                btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition";
             });
             document.getElementById(`plat-${plat}`).className = "plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition";
             filterAndRender();
@@ -525,7 +524,7 @@
             const bar = document.getElementById('categories-bar');
             bar.innerHTML = ALL_CATEGORIES.map(cat => {
                 const count = cat === "الكل" ? allGames.length : allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
-                const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black" : "bg-[#131b2e] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
+                const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black" : "bg-[#0b0f19] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
                 return `
                     <button onclick="setCategory('${cat}')" class="${activeClass} whitespace-nowrap px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
                         <span>${cat}</span>
@@ -558,7 +557,7 @@
             const thumbs = document.getElementById('hero-thumbs');
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
-                const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-700 opacity-60 hover:opacity-100';
+                const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-800 opacity-60 hover:opacity-100';
                 return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
         }
@@ -613,8 +612,8 @@
             const catsList = game.categories || [game.category].filter(Boolean);
             document.getElementById('modal-badges').innerHTML = `
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
-                ${catsList.map(c => `<span class="bg-slate-800 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-700">${c}</span>`).join('')}
-                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700" dir="ltr">${game.size} GB</span>` : ''}
+                ${catsList.map(c => `<span class="bg-slate-900 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-800">${c}</span>`).join('')}
+                ${game.size ? `<span class="bg-slate-900 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-800" dir="ltr">${game.size} GB</span>` : ''}
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
@@ -684,7 +683,7 @@
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#101726] shadow-[0_0_15px_rgba(6,182,212,0.2)] text-center space-y-3">
+                    <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_15px_rgba(6,182,212,0.2)] text-center space-y-3">
                         <div class="text-cyan-400 text-2xl animate-pulse">⚡</div>
                         <h3 class="text-cyan-300 font-bold text-sm">الاتصال ضعيف أو لم يتم تحميل الألعاب بعد</h3>
                         <p class="text-slate-400 text-xs leading-relaxed max-w-sm">إذا لم تظهر الألعاب بسبب ضعف الإنترنت أو بطء الجهاز، يرجى تحديث الصفحة لإعادة الاتصال بقاعدة البيانات.</p>
@@ -711,7 +710,7 @@
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 const firstCat = (game.categories && game.categories[0]) || game.category || '';
                 return `
-                    <div class="bg-[#111827] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
+                    <div class="bg-[#0b0f19] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
                             
@@ -756,7 +755,7 @@
                     const isActive = i === currentPage;
                     const btnClass = isActive 
                         ? "cyan-gradient-btn font-black shadow-[0_0_15px_rgba(6,182,212,0.7)] scale-105" 
-                        : "bg-[#131b2e] border border-slate-700 text-slate-300 hover:border-cyan-400 font-bold";
+                        : "bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400 font-bold";
                     pagesHtml += `
                         <button onclick="changePage(${i})" class="${btnClass} w-9 h-9 rounded-xl text-xs flex items-center justify-center transition">
                             ${i}
