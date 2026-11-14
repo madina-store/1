@@ -13,19 +13,19 @@
             background-color: #090d16;
             color: #ffffff;
         }
-        @keyframes superLedGlow {
-            0% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.6), inset 0 0 10px rgba(6, 182, 212, 0.2); }
-            33% { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.8), inset 0 0 15px rgba(59, 130, 246, 0.3); }
-            66% { border-color: #ec4899; box-shadow: 0 0 25px rgba(236, 72, 153, 0.8), inset 0 0 15px rgba(236, 72, 153, 0.3); }
-            100% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.6), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+        /* إطار نيون أزرق صافي وناعم يستدير بشكل جميل جداً */
+        @keyframes pureBlueNeonGlow {
+            0% { border-color: #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), inset 0 0 8px rgba(6, 182, 212, 0.1); }
+            50% { border-color: #22d3ee; box-shadow: 0 0 22px rgba(34, 211, 238, 0.8), inset 0 0 12px rgba(34, 211, 238, 0.3); }
+            100% { border-color: #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), inset 0 0 8px rgba(6, 182, 212, 0.1); }
         }
         .led-search-bar {
             border: 2px solid #06b6d4;
-            animation: superLedGlow 3s infinite ease-in-out;
+            animation: pureBlueNeonGlow 3s infinite ease-in-out;
         }
         .led-store-box {
             border: 2px solid #06b6d4;
-            animation: superLedGlow 3s infinite ease-in-out;
+            animation: pureBlueNeonGlow 3s infinite ease-in-out;
             background: #101726;
         }
         .no-scrollbar::-webkit-scrollbar {
@@ -114,7 +114,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث المضيء -->
+        <!-- شريط البحث بالإطار النيون الأزرق المتحرك -->
         <div class="led-search-bar bg-[#101726] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
@@ -243,7 +243,7 @@
         </div>
     </main>
 
-    <!-- الفوتر مع الإطار المضيء الناطع وشعار المتجر الحقيقي -->
+    <!-- الفوتر مع الإطار النيون الأزرق المتحرك وشعار المتجر الحقيقي -->
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl led-store-box rounded-3xl p-6 text-center shadow-xl space-y-4">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
@@ -269,7 +269,7 @@
                 </p>
             </a>
 
-            <!-- زر خرائط جوجل مع الإطار المضيء -->
+            <!-- زر خرائط جوجل -->
             <a href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs transition">
                 <i class="fa-solid fa-map-location-dot"></i> موقعنا على خرائط جوجل (ذي قار - قضاء النصر)
             </a>
@@ -647,7 +647,6 @@
                 return `
                     <div class="bg-[#111827] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
-                            <!-- تم تعديل قالب الصورة ليظهر بالكامل بدون أي قص وبأبعاد مريحة -->
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
                             
                             <button onclick="event.stopPropagation(); addToCart('${game.id}')" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition z-10">
@@ -839,7 +838,7 @@
             panel.scrollIntoView({ behavior: 'smooth' });
         };
 
-        window.resetAdminForm = function`() {
+        window.resetAdminForm = function() {
             document.getElementById('editing-game-id').value = "";
             document.getElementById('game-title').value = "";
             document.getElementById('game-size').value = "";
