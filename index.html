@@ -23,6 +23,11 @@
             border: 2px solid #06b6d4;
             animation: superLedGlow 3s infinite ease-in-out;
         }
+        /* إطار ضوء ثابت وهادئ بدون تبطئ */
+        .static-glow-box {
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -61,6 +66,14 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        /* شريط الوقت للبنر */
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .hero-progress-bar {
+            animation: progressAnimation 5s linear infinite;
         }
     </style>
 </head>
@@ -108,27 +121,23 @@
             <input type="text" id="search-input" oninput="filterAndRender()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- البنر الرئيسي -->
+        <!-- البنر الرئيسي (أضيف حديثاً مع شريط وقت متحرك وبدون نبذة أو تفاصيل) -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-800 bg-[#111827] shadow-2xl">
-            <div class="relative h-[370px] sm:h-[420px] w-full">
+            <div class="relative h-[320px] sm:h-[380px] w-full cursor-pointer" onclick="openHeroDetails()">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0b101b] via-[#0b101b]/75 to-black/20"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0b101b] via-[#0b101b]/60 to-transparent"></div>
                 
                 <div class="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
-                    <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2.5 backdrop-blur-sm">
-                        أضيف حديثاً
+                    <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2 backdrop-blur-sm">
+                        أضيف حديثاً ✨
                     </span>
-                    <h2 id="hero-title" class="text-2xl sm:text-3xl font-black text-white mb-1.5 drop-shadow"></h2>
-                    <div id="hero-meta" class="text-xs sm:text-sm text-slate-300 font-semibold mb-2 flex items-center gap-2 flex-wrap justify-center"></div>
-                    <p id="hero-desc" class="text-xs text-slate-300/90 max-w-lg line-clamp-2 mb-4 leading-relaxed"></p>
+                    <h2 id="hero-title" class="text-2xl sm:text-3xl font-black text-white mb-3 drop-shadow-md"></h2>
+                    <div id="hero-thumbs" class="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full z-10" onclick="event.stopPropagation()"></div>
+                </div>
 
-                    <div class="flex items-center gap-3 w-full max-w-md mb-4">
-                        <button onclick="openHeroDetails()" class="flex-1 cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 hover:opacity-95 transition">
-                            <i class="fa-solid fa-circle-info"></i> التفاصيل الكاملة
-                        </button>
-                    </div>
-
-                    <div id="hero-thumbs" class="flex items-center justify-center gap-2.5 overflow-x-auto no-scrollbar py-1 max-w-full"></div>
+                <!-- شريط الوقت المتلألئ في الأسفل -->
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-800">
+                    <div id="hero-timer-bar" class="hero-progress-bar h-full bg-cyan-400"></div>
                 </div>
             </div>
         </section>
@@ -181,7 +190,12 @@
 
                 <hr class="border-slate-800">
 
-                <h4 class="font-bold text-sm text-white">إضافة لعبة جديدة:</h4>
+                <div class="flex justify-between items-center">
+                    <h4 id="admin-form-title" class="font-bold text-sm text-white">إضافة لعبة جديدة:</h4>
+                    <button id="cancel-edit-btn" onclick="resetAdminForm()" class="hidden text-xs text-amber-400 hover:underline">إلغاء التعديل</button>
+                </div>
+                
+                <input type="hidden" id="editing-game-id" value="">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input type="text" id="game-title" placeholder="اسم اللعبة" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
@@ -197,13 +211,11 @@
                     <label class="block text-xs font-bold text-cyan-400 mb-1">
                         <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر):
                     </label>
-                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#101726] rounded-lg text-xs">
-                        <!-- سيتم تعبئتها تلقائياً عبر الجافاسكريبت -->
-                    </div>
+                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#101726] rounded-lg text-xs"></div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47 GB)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                     <select id="game-arabic" class="bg-[#090d16] border border-slate-700 rounded-xl p-3 text-sm text-white">
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
                         <option value="تدعم اللغة العربية (ترجمة)">تدعم اللغة العربية (ترجمة)</option>
@@ -227,80 +239,64 @@
 
                 <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#090d16] border border-slate-700 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
-                <button onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
+                <button id="save-game-btn" onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
                     نشر اللعبة في المتجر 🚀
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- الفوتر -->
+    <!-- الفوتر (مع تعديل الشرح واختصاره وإطار إضاءة ثابت هادئ) -->
     <footer class="bg-[#0b101b] border-t border-slate-800/80 mt-10 pt-8 pb-6 px-4">
-        <div class="container mx-auto max-w-xl bg-[#101726] border border-slate-800 rounded-3xl p-6 text-center shadow-xl space-y-5">
-            <div class="w-16 h-16 mx-auto rounded-full cyan-gradient-btn flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                <i class="fa-solid fa-gamepad text-slate-950 text-2xl"></i>
+        <div class="container mx-auto max-w-xl bg-[#101726] static-glow-box rounded-3xl p-6 text-center shadow-xl space-y-4">
+            <div class="w-14 h-14 mx-auto rounded-full cyan-gradient-btn flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <i class="fa-solid fa-gamepad text-slate-950 text-xl"></i>
             </div>
             <div>
-                <h2 class="text-xl font-black text-white">متجر المدينة</h2>
-                <p class="text-xs text-slate-400 mt-1">الدعم الفني والاتصال عبر واتساب</p>
+                <h2 class="text-lg font-black text-white">متجر المدينة</h2>
+                <p class="text-xs text-slate-400 mt-0.5">الدعم الفني والخدمات السريعة</p>
             </div>
-            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-4 transition group">
-                <div class="flex items-center justify-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition">
+            <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#141d30] hover:bg-[#18233a] border border-slate-700/80 rounded-2xl p-3.5 transition group">
+                <div class="flex items-center justify-center gap-3 mb-1.5">
+                    <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-lg shadow-md group-hover:scale-105 transition">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <span class="text-xl font-black text-white tracking-wider dir-ltr">07858858844</span>
+                    <span class="text-lg font-black text-white tracking-wider dir-ltr">07858858844</span>
                 </div>
-                <p class="text-xs text-slate-400 leading-relaxed">
-                    هل تواجه مشكلة في تصفح الموقع، أو في إحدى الألعاب التي قمت بأخذها منا؟ تواصل معنا فوراً وسنكون في خدمتك لحلها!
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    هل تواجه مشكلة؟ تواصل معنا عبر الواتساب وسنكون في خدمتك فوراً!
                 </p>
             </a>
-            <div class="pt-1">
-                <div class="text-xs text-slate-400 mb-1">العنوان</div>
-                <div class="text-base font-black text-white flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-location-dot text-cyan-400"></i> ذي قار - قضاء النصر
-                </div>
-            </div>
-            <a id="google-maps-link" href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-sm transition">
-                <i class="fa-solid fa-map-location-dot"></i> افتح في خرائط Google
-            </a>
-            <div class="text-[11px] text-slate-500 pt-2">
-                © متجر المدينة - جميع الحقوق محفوظة
+            <div class="text-[11px] text-slate-500 pt-1">
+                © متجر المدينة - ذي قار - قضاء النصر
             </div>
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة المحدثة تماماً حسب طلبك (فيديو أولاً، ثم العنوان والبادجز، ثم الوصف، ثم لقطات الشاشة) -->
+    <!-- نافذة تفاصيل اللعبة -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#101726] border border-slate-700/85 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
-            
-            <!-- زر الإغلاق -->
             <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
             
-            <!-- 1. فيديو يوتيوب في الأعلى بشكل بارز -->
             <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-800 hidden mt-2">
                 <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
             </div>
 
-            <!-- 2. عنوان اللعبة والبادجز (المنصة والأصناف المتعددة) -->
             <div class="space-y-2 pt-1">
                 <h3 id="modal-title" class="text-xl font-black text-white"></h3>
                 <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
             </div>
 
-            <!-- 3. نبذة عن اللعبة (الوصف البارز) -->
             <div class="bg-slate-900/70 border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
                 <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> عن اللعبة</h4>
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
 
-            <!-- 4. لقطات الشاشة (الصور) بشكل عمودي أو عرضي مرتب -->
             <div class="space-y-2">
                 <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة</h4>
                 <div id="modal-gallery" class="space-y-3"></div>
             </div>
 
-            <!-- زر أضف للسلة -->
             <div class="pt-2">
                 <button id="modal-add-cart" class="w-full cyan-gradient-btn py-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
                     <i class="fa-solid fa-plus"></i> أضف للسلة
@@ -328,7 +324,7 @@
     <!-- سكربت فايربيس والمنطق البرمجي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -356,6 +352,7 @@
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let heroIndex = 0;
+        let heroInterval = null;
         let cart = JSON.parse(localStorage.getItem('madina_cart') || '[]');
         let isAdminLoggedIn = false;
 
@@ -389,7 +386,7 @@
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
             if (!cart.some(item => item.id === gameId)) {
-                cart.push({ id: game.id, title: game.title, platform: game.platform || 'PS4' });
+                cart.push({ id: game.id, title: game.title });
                 localStorage.setItem('madina_cart', JSON.stringify(cart));
                 updateCartBadge();
             }
@@ -417,17 +414,22 @@
             }
             list.innerHTML = cart.map((item, idx) => `
                 <div class="flex justify-between items-center bg-[#090d16] p-3 rounded-xl border border-slate-800">
-                    <div>
-                        <div class="font-bold text-xs text-white">${item.title}</div>
-                        <div class="text-[10px] text-cyan-400">${item.platform}</div>
-                    </div>
+                    <div class="font-bold text-xs text-white">${item.title}</div>
                     <button onclick="removeFromCart(${idx})" class="text-red-400 hover:text-red-300 text-xs px-2">حذف</button>
                 </div>
             `).join('');
         }
 
+        // إرسال أسماء الألعاب فقط عبر واتساب بدون حجم أو تفاصيل
         window.sendCartToWhatsApp = function() {
-            const msg = `السلام عليكم، أرغب بطلب الألعاب التالية من السلة`;
+            if (cart.length === 0) {
+                alert("السلة فارغة!");
+                return;
+            }
+            let msg = "السلام عليكم، أرغب بطلب الألعاب التالية:\n";
+            cart.forEach((item, idx) => {
+                msg += `${idx + 1}- ${item.title}\n`;
+            });
             window.open(`https://wa.me/9647858858844?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
@@ -467,43 +469,52 @@
                 return;
             }
             heroSection.classList.remove('hidden');
-            const featuredGames = allGames.slice(0, 6);
+            const featuredGames = allGames.slice(0, 5); // أحدث 5 ألعاب
             if (heroIndex >= featuredGames.length) heroIndex = 0;
             const current = featuredGames[heroIndex];
             const coverImg = current.coverImage || (current.images && current.images[0]) || current.image || 'https://via.placeholder.com/800x450';
 
             document.getElementById('hero-bg').src = coverImg;
             document.getElementById('hero-title').innerText = current.title;
-            
-            const catsList = current.categories || [current.category].filter(Boolean);
-            document.getElementById('hero-meta').innerHTML = `
-                <span class="bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-md border border-cyan-500/30">${current.platform || 'PS4'}</span>
-                ${catsList.map(c => `<span class="bg-slate-800 text-slate-200 px-2 py-0.5 rounded-md border border-slate-700">${c}</span>`).join('')}
-                ${current.size ? `<span class="text-amber-300" dir="ltr">${current.size}</span>` : ''}
-            `;
-            document.getElementById('hero-desc').innerText = current.desc || '';
+
+            // إعادة تشغيل شريط الوقت المتحرك
+            const timerBar = document.getElementById('hero-timer-bar');
+            timerBar.style.animation = 'none';
+            timerBar.offsetHeight; // trigger reflow
+            timerBar.style.animation = 'progressAnimation 5s linear infinite';
 
             const thumbs = document.getElementById('hero-thumbs');
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
                 const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-700 opacity-60 hover:opacity-100';
-                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-12 h-12 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
+                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
         }
 
         window.selectHero = function(idx) {
             heroIndex = idx;
             renderHero();
+            resetHeroTimer();
         };
 
+        function resetHeroTimer() {
+            if (heroInterval) clearInterval(heroInterval);
+            heroInterval = setInterval(() => {
+                const featuredGames = allGames.slice(0, 5);
+                if (featuredGames.length > 0) {
+                    heroIndex = (heroIndex + 1) % featuredGames.length;
+                    renderHero();
+                }
+            }, 5000); // تقليب كل 5 ثواني تلقائياً
+        }
+
         window.openHeroDetails = function() {
-            const featuredGames = allGames.slice(0, 6);
+            const featuredGames = allGames.slice(0, 5);
             if (featuredGames.length > 0) {
                 openDetailsModal(featuredGames[heroIndex].id);
             }
         };
 
-        // نافذة التفاصيل بالترتيب المطلوب: فيديو بالاعلى -> العنوان والبادجز -> الوصف -> لقطات الشاشة
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
@@ -511,7 +522,6 @@
             document.getElementById('modal-title').innerText = game.title;
             document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
 
-            // 1. الفيديو في الأعلى
             const videoContainer = document.getElementById('modal-video-container');
             const ytIframe = document.getElementById('modal-yt-iframe');
             if (game.youtube) {
@@ -528,16 +538,14 @@
                 videoContainer.classList.add('hidden');
             }
 
-            // 2. البادجز (المنصة، التصنيفات المتعددة، الحجم، اللغة)
             const catsList = game.categories || [game.category].filter(Boolean);
             document.getElementById('modal-badges').innerHTML = `
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
                 ${catsList.map(c => `<span class="bg-slate-800 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-700">${c}</span>`).join('')}
-                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700" dir="ltr">${game.size}</span>` : ''}
+                ${game.size ? `<span class="bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700" dir="ltr">${game.size} GB</span>` : ''}
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
-            // 3. لقطات الشاشة بشكل عمودي أو عرضي مرتب
             const galleryTrack = document.getElementById('modal-gallery');
             const images = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             
@@ -585,11 +593,8 @@
                         <div class="relative">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-36 sm:h-44 object-cover cursor-pointer group-hover:scale-105 transition duration-300">
                             
-                            <span class="absolute top-2.5 right-2.5 bg-black/75 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md border border-white/10">
-                                ${game.platform || 'PS4'}
-                            </span>
-
-                            <button onclick="event.stopPropagation(); addToCart('${game.id}')" title="أضف إلى السلة" class="absolute top-2.5 left-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition">
+                            <!-- زر الإضافة للسلة مكان المنصة فوق الصورة -->
+                            <button onclick="event.stopPropagation(); addToCart('${game.id}')" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition">
                                 <i class="fa-solid fa-plus text-xs"></i>
                             </button>
                         </div>
@@ -598,8 +603,8 @@
                             <div>
                                 <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${game.title}</h3>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
-                                    <span class="truncate max-w-[65%]">${firstCat}</span>
-                                    ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size}</span>` : ''}
+                                    <span class="truncate max-w-[60%]">${firstCat}</span>
+                                    ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
                                 </div>
                             </div>
 
@@ -608,9 +613,14 @@
                                     ${game.arabic && !game.arabic.includes('لا تدعم') ? '✓ ' + game.arabic : (game.arabic || '')}
                                 </span>
                                 ${isAdminLoggedIn ? `
-                                    <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    <div class="flex gap-1">
+                                        <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل اللعبة">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف اللعبة">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
                                 ` : ''}
                             </div>
                         </div>
@@ -629,6 +639,7 @@
                 allGames.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 renderCategoriesBar();
                 renderHero();
+                resetHeroTimer();
                 filterAndRender();
             } catch (error) {
                 console.error("خطأ في جلب الألعاب:", error);
@@ -676,7 +687,9 @@
             reader.readAsDataURL(file);
         };
 
+        // دالة إضافة أو تحديث اللعبة (دعم ميزة التعديل الجديدة)
         window.addNewGame = async function() {
+            const editingId = document.getElementById('editing-game-id').value;
             const title = document.getElementById('game-title').value.trim();
             const platform = document.getElementById('game-platform').value;
             const size = document.getElementById('game-size').value.trim();
@@ -685,7 +698,6 @@
             const coverImage = document.getElementById('game-cover-url').value.trim();
             const youtube = document.getElementById('game-youtube').value.trim();
 
-            // جمع الأصناف المختارة (Checkboxes)
             const selectedCats = Array.from(document.querySelectorAll('input[name="game-cat-checkbox"]:checked'))
                 .map(cb => cb.value);
 
@@ -703,32 +715,86 @@
                 return;
             }
 
+            const gameData = {
+                title,
+                platform,
+                categories: selectedCats.length > 0 ? selectedCats : ["ألعاب الأكشن"],
+                category: selectedCats[0] || "ألعاب الأكشن",
+                size,
+                arabic,
+                desc,
+                coverImage: coverImage,
+                images: rawImages,
+                youtube
+            };
+
             try {
-                await addDoc(collection(db, "games"), {
-                    title,
-                    platform,
-                    categories: selectedCats.length > 0 ? selectedCats : ["ألعاب الأكشن"],
-                    category: selectedCats[0] || "ألعاب الأكشن",
-                    size,
-                    arabic,
-                    desc,
-                    coverImage: coverImage,
-                    images: rawImages,
-                    youtube,
-                    createdAt: new Date()
-                });
-                alert("تم نشر اللعبة في السحاب بنجاح 🚀");
-                document.getElementById('game-title').value = "";
-                document.getElementById('game-size').value = "";
-                document.getElementById('game-desc').value = "";
-                document.getElementById('game-cover-url').value = "";
-                document.getElementById('game-images-box').value = "";
-                document.getElementById('game-youtube').value = "";
-                document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
+                if (editingId) {
+                    // تحديث لعبة موجودة
+                    await updateDoc(doc(db, "games", editingId), gameData);
+                    alert("تم تعديل وحفظ اللعبة بنجاح 🌟");
+                    resetAdminForm();
+                } else {
+                    // إضافة لعبة جديدة
+                    gameData.createdAt = new Date();
+                    await addDoc(collection(db, "games"), gameData);
+                    alert("تم نشر اللعبة في السحاب بنجاح 🚀");
+                    document.getElementById('game-title').value = "";
+                    document.getElementById('game-size').value = "";
+                    document.getElementById('game-desc').value = "";
+                    document.getElementById('game-cover-url').value = "";
+                    document.getElementById('game-images-box').value = "";
+                    document.getElementById('game-youtube').value = "";
+                    document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
+                }
                 loadGames();
             } catch (error) {
-                alert("خطأ أثناء النشر: تأكد من إدخال روابط صحيحة. (" + error.message + ")");
+                alert("خطأ أثناء الحفظ: " + error.message);
             }
+        };
+
+        // فتح وضع التعديل للعبة
+        window.editGame = function(gameId) {
+            const game = allGames.find(g => g.id === gameId);
+            if (!game) return;
+
+            document.getElementById('editing-game-id').value = game.id;
+            document.getElementById('game-title').value = game.title || '';
+            document.getElementById('game-platform').value = game.platform || 'PS4';
+            document.getElementById('game-size').value = game.size || '';
+            document.getElementById('game-arabic').value = game.arabic || 'تدعم اللغة العربية (دبلجة)';
+            document.getElementById('game-desc').value = game.desc || '';
+            document.getElementById('game-cover-url').value = game.coverImage || game.image || '';
+            document.getElementById('game-images-box').value = (game.images || []).join('\n');
+            document.getElementById('game-youtube').value = game.youtube || '';
+
+            // تفعيل الشيكبوكسز للأصناف الخاصة باللعبة
+            const gameCats = game.categories || [game.category].filter(Boolean);
+            document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => {
+                cb.checked = gameCats.includes(cb.value);
+            });
+
+            document.getElementById('admin-form-title').innerText = "تعديل بيانات اللعبة:";
+            document.getElementById('save-game-btn').innerText = "حفظ التعديلات 💾";
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+            const panel = document.getElementById('admin-panel');
+            panel.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.resetAdminForm = function() {
+            document.getElementById('editing-game-id').value = "";
+            document.getElementById('game-title').value = "";
+            document.getElementById('game-size').value = "";
+            document.getElementById('game-desc').value = "";
+            document.getElementById('game-cover-url').value = "";
+            document.getElementById('game-images-box').value = "";
+            document.getElementById('game-youtube').value = "";
+            document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
+
+            document.getElementById('admin-form-title').innerText = "إضافة لعبة جديدة:";
+            document.getElementById('save-game-btn').innerText = "نشر اللعبة في المتجر 🚀";
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
         window.deleteGame = async function(gameId) {
@@ -737,7 +803,7 @@
                     await deleteDoc(doc(db, "games", gameId));
                     loadGames();
                 } catch (error) {
-                    alert("خطأ أثناء الحذف: " + error.message + ")");
+                    alert("خطأ أثناء الحذف: " + error.message);
                 }
             }
         };
@@ -769,6 +835,7 @@
                 isAdminLoggedIn = false;
                 loginBox.classList.remove('hidden');
                 dashboard.classList.add('hidden');
+                resetAdminForm();
             }
             filterAndRender();
         });
