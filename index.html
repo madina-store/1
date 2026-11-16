@@ -14,7 +14,6 @@
             color: #ffffff;
         }
         
-        /* تأثير النيون الدائرى المتحرك بالكامل حول الإطار */
         @keyframes neonRotateGlow {
             0% { 
                 border-color: #06b6d4; 
@@ -34,14 +33,7 @@
             }
         }
 
-        .led-search-bar {
-            position: relative;
-            background: #0b0f19;
-            border: 2px solid #06b6d4;
-            animation: neonRotateGlow 4s infinite ease-in-out;
-        }
-
-        .led-store-box {
+        .led-search-bar, .led-store-box {
             position: relative;
             background: #0b0f19;
             border: 2px solid #06b6d4;
@@ -59,29 +51,39 @@
             background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
             color: #05070b;
         }
+
+        /* شاشة التحقق الأمني الفخمة */
         .spinner-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #05070b;
+            background: radial-gradient(circle at center, #0b1324 0%, #05070b 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 99999;
-            color: #06b6d4;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.45s ease;
         }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(6, 182, 212, 0.2);
-            border-top: 4px solid #06b6d4;
+        .shield-ring {
+            position: relative;
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 15px;
+            border: 3px solid rgba(6, 182, 212, 0.15);
+            border-top: 3px solid #06b6d4;
+            border-bottom: 3px solid #38bdf8;
+            animation: spin 1.2s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .shield-ring.verified {
+            animation: none;
+            border-color: #10b981;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -94,8 +96,6 @@
         .hero-progress-bar {
             animation: progressAnimation 5s linear infinite;
         }
-
-        /* إشعار الإضافة إلى السلة الفخم العائم */
         @keyframes toastSlideUp {
             0% { transform: translateY(100px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
@@ -107,10 +107,18 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- مؤشر التحميل الأنيق -->
-    <div id="loading-spinner" class="spinner-overlay">
-        <div class="spinner"></div>
-        <p class="text-sm font-bold text-cyan-400">جاري تحضير متجر المدينة...</p>
+    <!-- شاشة التحقق الأمني العالمية -->
+    <div id="loading-spinner" class="spinner-overlay px-4 text-center">
+        <div class="relative flex items-center justify-center mb-5">
+            <div id="security-ring" class="shield-ring"></div>
+            <div id="security-icon-box" class="absolute inset-0 flex items-center justify-center text-cyan-400 text-3xl transition-all duration-300">
+                <i class="fa-solid fa-shield-halved animate-pulse"></i>
+            </div>
+        </div>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري التحقق من أمان الاتصال...</h2>
+        <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-lock text-[10px]"></i> اتصال مشفر ومؤمن بالكامل - متجر المدينة
+        </p>
     </div>
 
     <!-- نظام الإشعار العائم الفخم للسلة -->
@@ -146,19 +154,18 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بإطار أسود داكن ونيون دائرى متحرك وساطع -->
+        <!-- شريط البحث -->
         <div class="led-search-bar rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- البنر الرئيسي (الألعاب المضافة حديثاً) مع مؤشر تفاعلي للضغط -->
+        <!-- البنر الرئيسي (الألعاب المضافة حديثاً) -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
                 
-                <!-- مؤشر تفاعلي يوضح للزبون إمكانية الضغط لرؤية التفاصيل -->
                 <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
                     <i class="fa-solid fa-hand-pointer"></i>
                     <span>اضغط لعرض التفاصيل واللقطات 🔍</span>
@@ -193,7 +200,6 @@
         <!-- شبكة الألعاب -->
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
-            <!-- أزرار ترقيم الصفحات (8 ألعاب لكل صفحة) -->
             <div id="pagination-container" class="flex items-center justify-center gap-2 pt-4"></div>
         </section>
 
@@ -269,7 +275,7 @@
 
                 <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
-                        <i class="fa-regular fa-images"></i> لقطات الشاشة (ضع 4 روابط صور، كل رابط في سطر):
+                        <i class="fa-regular fa-images"></i> لقطات الشاشة (ضع روابط الصور، كل رابط في سطر):
                     </label>
                     <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
@@ -283,7 +289,7 @@
         </div>
     </main>
 
-    <!-- الفوتر مع زر واتساب تفاعلي وفخم يوضح للزبون إمكانية الضغط للمراسلة -->
+    <!-- الفوتر -->
     <footer class="bg-[#070a12] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl led-store-box rounded-3xl p-6 text-center shadow-xl space-y-4">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
@@ -298,7 +304,6 @@
                 <p class="text-[11px] text-slate-400 mt-1">الدعم الفني والخدمات السريعة</p>
             </div>
             
-            <!-- زر واتساب فخم وتفاعلي مع شارة وضوح -->
             <a href="https://wa.me/9647858858844?text=السلام عليكم" target="_blank" class="block bg-[#05070b] hover:bg-[#0b0f19] border border-emerald-500/50 hover:border-emerald-400 rounded-2xl p-4 transition group shadow-[0_0_15px_rgba(16,185,129,0.15)]">
                 <div class="flex items-center justify-center gap-3 mb-1.5">
                     <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition animate-bounce">
@@ -306,7 +311,6 @@
                     </div>
                     <span class="text-xl font-black text-white tracking-wider dir-ltr">07858858844</span>
                 </div>
-                <!-- ششارة واضحة تدل الزبون على الضغط للمراسلة -->
                 <div class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-400/40 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full mt-1">
                     <span>💬 اضغط هنا للمراسلة الفورية عبر واتساب</span>
                 </div>
@@ -315,7 +319,6 @@
                 </p>
             </a>
 
-            <!-- زر خرائط جوجل -->
             <a href="https://www.google.com/maps/search/?api=1&query=ذي+قار+قضاء+النصر" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs transition">
                 <i class="fa-solid fa-map-location-dot"></i> موقعنا على خرائط جوجل (ذي قار - قضاء النصر)
             </a>
@@ -346,7 +349,14 @@
             </div>
 
             <div class="space-y-3">
-                <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-regular fa-images"></i> لقطات الشاشة (4)</h4>
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+                        <i class="fa-regular fa-images"></i> لقطات الشاشة
+                    </h4>
+                    <span class="text-[11px] text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> اضغط على الصورة للتكبير
+                    </span>
+                </div>
                 <div id="modal-gallery-vertical" class="space-y-3"></div>
             </div>
 
@@ -434,27 +444,82 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // دالة لتوليد تأثير صوتي تفاعلي ناعم عند الإضافة للسلة (بدون ملفات خارجية)
+        // ---------------------------------------------------------
+        // نظام إدارة زر الرجوع في الهاتف (History API)
+        // ---------------------------------------------------------
+        window.addEventListener('popstate', () => {
+            const lightbox = document.getElementById('lightbox-modal');
+            const details = document.getElementById('details-modal');
+            const cartModal = document.getElementById('cart-modal');
+
+            // إذا كانت نافذة تكبير الصورة مفتوحة، أغلقها أولاً
+            if (!lightbox.classList.contains('hidden')) {
+                lightbox.classList.add('hidden');
+                return;
+            }
+            // إذا كانت نافذة تفاصيل اللعبة مفتوحة، أغلقها وأوقف الفيديو
+            if (!details.classList.contains('hidden')) {
+                details.classList.add('hidden');
+                document.getElementById('modal-yt-iframe').src = '';
+                return;
+            }
+            // إذا كانت نافذة السلة مفتوحة، أغلقها
+            if (!cartModal.classList.contains('hidden')) {
+                cartModal.classList.add('hidden');
+                return;
+            }
+        });
+
+        function pushModalState(modalName) {
+            if (window.location.hash !== `#${modalName}`) {
+                history.pushState({ modal: modalName }, "", `#${modalName}`);
+            }
+        }
+
+        // ---------------------------------------------------------
+        // شاشة التحقق الأمني العالمية
+        // ---------------------------------------------------------
+        function completeSecurityCheck() {
+            const spinner = document.getElementById('loading-spinner');
+            const ring = document.getElementById('security-ring');
+            const iconBox = document.getElementById('security-icon-box');
+            const title = document.getElementById('security-title');
+            const subtitle = document.getElementById('security-subtitle');
+
+            if (ring && iconBox && title) {
+                ring.classList.add('verified');
+                iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
+                iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                title.innerText = "تم التحقق من الأمان بنجاح ✓";
+                title.classList.replace('text-white', 'text-emerald-400');
+                subtitle.innerHTML = '<i class="fa-solid fa-shield-check text-emerald-400"></i> تم تأمين الجلسة بنجاح، مرحباً بك';
+            }
+
+            setTimeout(() => {
+                if (spinner) {
+                    spinner.style.opacity = '0';
+                    setTimeout(() => spinner.style.display = 'none', 450);
+                }
+            }, 650);
+        }
+
         function playSuccessSound() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // نغمة D5
-                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // انتقال ناعم لـ A5
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.2);
-            } catch (e) {
-                // المتصفح يمنع التشغيل التلقائي أحياناً قبل أول تفاعل
-            }
+            } catch (e) {}
         }
 
-        // إشعار عائم فخم وذكي بدلاً من الـ alert العادي
         function showToast(message) {
             const container = document.getElementById('custom-toast-container');
             const toast = document.createElement('div');
@@ -475,14 +540,6 @@
                 toast.style.transition = 'all 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, 2500);
-        }
-
-        function hideLoadingSpinner() {
-            const spinner = document.getElementById('loading-spinner');
-            if (spinner) {
-                spinner.style.opacity = '0';
-                setTimeout(() => spinner.style.display = 'none', 400);
-            }
         }
 
         function renderAdminCheckboxes() {
@@ -511,8 +568,8 @@
                 localStorage.setItem('madina_cart', JSON.stringify(cart));
                 updateCartBadge();
             }
-            playSuccessSound(); // تشغيل الصوت الفخم
-            showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`); // إشعار فخم بدل الـ alert القديم
+            playSuccessSound();
+            showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`);
         };
 
         window.removeFromCart = function(index) {
@@ -524,8 +581,18 @@
 
         window.toggleCartModal = function() {
             const modal = document.getElementById('cart-modal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) renderCartItems();
+            const isHidden = modal.classList.contains('hidden');
+            if (isHidden) {
+                modal.classList.remove('hidden');
+                renderCartItems();
+                pushModalState('cart');
+            } else {
+                if (window.location.hash === '#cart') {
+                    history.back();
+                } else {
+                    modal.classList.add('hidden');
+                }
+            }
         };
 
         function renderCartItems() {
@@ -681,12 +748,16 @@
 
             currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             
-            document.getElementById('gallery-heading').innerText = `لقطات الشاشة (${currentLightboxImages.length})`;
+            document.getElementById('gallery-heading').innerHTML = `<i class="fa-regular fa-images"></i> لقطات الشاشة (${currentLightboxImages.length})`;
 
             const verticalGallery = document.getElementById('modal-gallery-vertical');
             verticalGallery.innerHTML = currentLightboxImages.map((url, idx) => `
-                <div class="w-full rounded-2xl overflow-hidden border border-slate-800 bg-black cursor-pointer hover:border-cyan-400 transition" onclick="openLightbox(${idx})">
-                    <img src="${url}" class="w-full h-auto object-cover max-h-80">
+                <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-black cursor-pointer hover:border-cyan-400 transition group" onclick="openLightbox(${idx})">
+                    <img src="${url}" class="w-full h-auto object-cover max-h-80 group-hover:opacity-90 transition">
+                    <div class="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-md border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-xl flex items-center gap-1.5 shadow-lg">
+                        <i class="fa-solid fa-expand"></i>
+                        <span>اضغط لتوسيع الصورة</span>
+                    </div>
                 </div>
             `).join('');
 
@@ -696,16 +767,22 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
+            pushModalState('details');
         };
 
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox-modal').classList.remove('hidden');
+            pushModalState('lightbox');
         };
 
         window.closeLightbox = function() {
-            document.getElementById('lightbox-modal').classList.add('hidden');
+            if (window.location.hash === '#lightbox') {
+                history.back();
+            } else {
+                document.getElementById('lightbox-modal').classList.add('hidden');
+            }
         };
 
         window.updateLightboxImage = function() {
@@ -726,8 +803,12 @@
         };
 
         window.closeDetailsModal = function() {
-            document.getElementById('details-modal').classList.add('hidden');
-            document.getElementById('modal-yt-iframe').src = '';
+            if (window.location.hash === '#details') {
+                history.back();
+            } else {
+                document.getElementById('details-modal').classList.add('hidden');
+                document.getElementById('modal-yt-iframe').src = '';
+            }
         };
 
         window.filterAndRender = function() {
@@ -746,12 +827,12 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_15px_rgba(6,182,212,0.2)] text-center space-y-3">
-                        <div class="text-cyan-400 text-2xl animate-pulse">⚡</div>
-                        <h3 class="text-cyan-300 font-bold text-sm">الاتصال ضعيف أو لم يتم تحميل الألعاب بعد</h3>
-                        <p class="text-slate-400 text-xs leading-relaxed max-w-sm">إذا لم تظهر الألعاب بسبب ضعف الإنترنت أو بطء الجهاز، يرجى تحديث الصفحة لإعادة الاتصال بقاعدة البيانات.</p>
+                        <div class="text-cyan-400 text-2xl animate-pulse">🛡️</div>
+                        <h3 class="text-cyan-300 font-bold text-sm">جاري مزامنة البيانات أو الاتصال ضعيف</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed max-w-sm">إذا لم تظهر الألعاب بسبب ضعف الشبكة، يرجى إعادة تنشيط الاتصال بالسيرفر الآمن.</p>
                         <button onclick="window.location.reload();" class="px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-xs font-bold transition flex items-center gap-2 shadow-[0_0_10px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.6)]">
-                            <span>🔄</span>
-                            <span>تحديث الصفحة</span>
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>إعادة تنشيط الاتصال</span>
                         </button>
                     </div>
                 `;
@@ -759,7 +840,6 @@
                 return;
             }
 
-            // تقسيم الصفحات (8 ألعاب لكل صفحة)
             const totalPages = Math.ceil(filtered.length / gamesPerPage);
             if (currentPage > totalPages) currentPage = totalPages;
             if (currentPage < 1) currentPage = 1;
@@ -772,7 +852,6 @@
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 const firstCat = (game.categories && game.categories[0]) || game.category || '';
                 
-                // تلوين وبروز شارة اللغة العربية حسب نوع الدعم
                 let arabicBadgeStyle = "text-slate-400";
                 if (game.arabic) {
                     if (game.arabic.includes('دبلجة')) {
@@ -823,7 +902,6 @@
                 `;
             }).join('');
 
-            // رسم أزرار الترقيم
             if (totalPages > 1) {
                 let pagesHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
@@ -859,7 +937,7 @@
                 console.error("خطأ في جلب الألعاب:", error);
                 filterAndRender();
             } finally {
-                hideLoadingSpinner();
+                completeSecurityCheck();
             }
         };
 
@@ -1050,7 +1128,7 @@
             } else {
                 isAdminLoggedIn = false;
                 loginBox.classList.remove('hidden');
-                dashboard.classList.remove('hidden');
+                dashboard.classList.add('hidden');
                 resetAdminForm();
             }
             filterAndRender();
