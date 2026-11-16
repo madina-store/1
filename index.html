@@ -143,12 +143,6 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <!-- زر التحكم السريع للمدير (يظهر عند تسجيل الدخول) -->
-                <button id="quick-admin-btn" onclick="toggleAdminPanel()" class="hidden bg-cyan-500/10 border border-cyan-400/50 hover:bg-cyan-500/20 text-cyan-300 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    <span>الإدارة</span>
-                </button>
-
                 <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
                     <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
                     <span class="text-xs font-bold">السلة</span>
@@ -204,7 +198,7 @@
             <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
 
-        <!-- شبكة الألعاب (مرفق معها مرساة التمرير للبحث) -->
+        <!-- شبكة الألعاب -->
         <div id="games-anchor"></div>
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
@@ -432,7 +426,7 @@
 
         const ALL_CATEGORIES = [
             "الكل", "ألعاب الأكشن", "ألعاب المغامرات", "ألعاب الحركة والمغامرات",
-            "ألعاب تقمص الأدوار", "ألعاب الاستراتيجية", "ألعاب المحاكاة", "ألعاب إطلاق النار",
+            "ألعاب التصويب والتكتيكي (Sniper)", "ألعاب تقمص الأدوار", "ألعاب الاستراتيجية", "ألعاب المحاكاة", "ألعاب إطلاق النار",
             "ألعاب الرياضة", "ألعاب السباقات", "ألعاب المنصات", "ألعاب الألغاز",
             "ألعاب البقاء على قيد الحياة", "ألعاب الرعب", "ألعاب القتال", "ألعاب العالم المفتوح", 
             "ألعاب البطاقات", "ألعاب التسلل والتخفي"
@@ -452,10 +446,11 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        window.addEventListener('popstate', () => {
+        window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
             const cartModal = document.getElementById('cart-modal');
+            const searchInput = document.getElementById('search-input');
 
             if (!lightbox.classList.contains('hidden')) {
                 lightbox.classList.add('hidden');
@@ -468,6 +463,12 @@
             }
             if (!cartModal.classList.contains('hidden')) {
                 cartModal.classList.add('hidden');
+                return;
+            }
+            // إذا كان هناك بحث نشط وزر الرجوع تم الضغط عليه، نمسح البحث ونعيد عرض القائمة الكاملة
+            if (searchInput && searchInput.value.trim() !== '') {
+                searchInput.value = '';
+                filterAndRender();
                 return;
             }
         });
@@ -639,8 +640,11 @@
 
         window.handleSearchInput = function() {
             currentPage = 1;
+            const searchVal = document.getElementById('search-input').value.trim();
+            if (searchVal.length > 0) {
+                history.pushState({ search: searchVal }, "", "#search");
+            }
             filterAndRender();
-            // التمرير التلقائي الفوري لشبكة الألعاب عند البحث
             const anchor = document.getElementById('games-anchor');
             if (anchor) {
                 anchor.scrollIntoView({ behavior: 'smooth' });
@@ -1135,18 +1139,15 @@
         onAuthStateChanged(auth, (user) => {
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
-            const quickAdminBtn = document.getElementById('quick-admin-btn');
             
             if (user) {
                 isAdminLoggedIn = true;
                 loginBox.classList.add('hidden');
                 dashboard.classList.remove('hidden');
-                quickAdminBtn.classList.remove('hidden');
             } else {
                 isAdminLoggedIn = false;
-                loginBox.classList.remove('hidden');
+                loginBox.classList.add('hidden');
                 dashboard.classList.add('hidden');
-                quickAdminBtn.classList.add('hidden');
                 resetAdminForm();
             }
             filterAndRender();
