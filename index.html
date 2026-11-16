@@ -52,7 +52,6 @@
             color: #05070b;
         }
 
-        /* شاشة التحقق الأمني الفخمة */
         .spinner-overlay {
             position: fixed;
             top: 0;
@@ -107,7 +106,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة التحقق الأمني العالمية -->
+    <!-- شاشة التحقق الأمني -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -121,7 +120,7 @@
         </p>
     </div>
 
-    <!-- نظام الإشعار العائم الفخم للسلة -->
+    <!-- نظام الإشعار العائم الفخم -->
     <div id="custom-toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-full max-w-sm px-4"></div>
 
     <!-- الهيدر -->
@@ -143,11 +142,19 @@
                 </div>
             </div>
 
-            <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
-                <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
-                <span class="text-xs font-bold">السلة</span>
-                <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- زر التحكم السريع للمدير (يظهر عند تسجيل الدخول) -->
+                <button id="quick-admin-btn" onclick="toggleAdminPanel()" class="hidden bg-cyan-500/10 border border-cyan-400/50 hover:bg-cyan-500/20 text-cyan-300 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>الإدارة</span>
+                </button>
+
+                <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
+                    <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
+                    <span class="text-xs font-bold">السلة</span>
+                    <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -155,12 +162,12 @@
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
         <!-- شريط البحث -->
-        <div class="led-search-bar rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
+        <div id="search-bar-container" class="led-search-bar rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
             <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- البنر الرئيسي (الألعاب المضافة حديثاً) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
@@ -197,13 +204,14 @@
             <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
 
-        <!-- شبكة الألعاب -->
+        <!-- شبكة الألعاب (مرفق معها مرساة التمرير للبحث) -->
+        <div id="games-anchor"></div>
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
             <div id="pagination-container" class="flex items-center justify-center gap-2 pt-4"></div>
         </section>
 
-        <!-- لوحة التحكم السرية للمدير -->
+        <!-- لوحة التحكم للمدير -->
         <div id="admin-panel" class="hidden bg-[#0b0f19] border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-black text-cyan-400 flex items-center gap-2">
@@ -226,7 +234,7 @@
 
                 <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
-                        <i class="fa-solid fa-image"></i> تغيير شعار المتجر (اختر صورة من استوديو الهاتف):
+                        <i class="fa-solid fa-image"></i> تغيير شعار المتجر:
                     </label>
                     <input type="file" id="logo-file-input" accept="image/*" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2 text-xs text-slate-300">
                     <button onclick="uploadAndSaveLogo()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 py-2 rounded-lg font-bold text-xs transition">حفظ الشعار للسحاب فورا 🌟</button>
@@ -277,7 +285,7 @@
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة (ضع روابط الصور، كل رابط في سطر):
                     </label>
-                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg&#10;https://img3.jpg&#10;https://img4.jpg" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
                 <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
@@ -444,26 +452,20 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // ---------------------------------------------------------
-        // نظام إدارة زر الرجوع في الهاتف (History API)
-        // ---------------------------------------------------------
         window.addEventListener('popstate', () => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
             const cartModal = document.getElementById('cart-modal');
 
-            // إذا كانت نافذة تكبير الصورة مفتوحة، أغلقها أولاً
             if (!lightbox.classList.contains('hidden')) {
                 lightbox.classList.add('hidden');
                 return;
             }
-            // إذا كانت نافذة تفاصيل اللعبة مفتوحة، أغلقها وأوقف الفيديو
             if (!details.classList.contains('hidden')) {
                 details.classList.add('hidden');
                 document.getElementById('modal-yt-iframe').src = '';
                 return;
             }
-            // إذا كانت نافذة السلة مفتوحة، أغلقها
             if (!cartModal.classList.contains('hidden')) {
                 cartModal.classList.add('hidden');
                 return;
@@ -476,9 +478,6 @@
             }
         }
 
-        // ---------------------------------------------------------
-        // شاشة التحقق الأمني العالمية
-        // ---------------------------------------------------------
         function completeSecurityCheck() {
             const spinner = document.getElementById('loading-spinner');
             const ring = document.getElementById('security-ring');
@@ -611,7 +610,7 @@
 
         window.sendCartToWhatsApp = function() {
             if (cart.length === 0) {
-                alert("السلة فارغة!");
+                showToast("السلة فارغة!");
                 return;
             }
             let msg = "السلام عليكم، أرغب بطلب الألعاب التالية:\n";
@@ -641,6 +640,11 @@
         window.handleSearchInput = function() {
             currentPage = 1;
             filterAndRender();
+            // التمرير التلقائي الفوري لشبكة الألعاب عند البحث
+            const anchor = document.getElementById('games-anchor');
+            if (anchor) {
+                anchor.scrollIntoView({ behavior: 'smooth' });
+            }
         };
 
         window.changePage = function(page) {
@@ -968,7 +972,7 @@
         window.uploadAndSaveLogo = function() {
             const fileInput = document.getElementById('logo-file-input');
             if (!fileInput.files || fileInput.files.length === 0) {
-                alert("يرجى اختيار صورة أولاً من الاستوديو!");
+                showToast("يرجى اختيار صورة أولاً من الاستوديو!");
                 return;
             }
             const file = fileInput.files[0];
@@ -977,10 +981,10 @@
                 const base64String = e.target.result;
                 try {
                     await setDoc(doc(db, "settings", "general"), { logoUrl: base64String }, { merge: true });
-                    alert("تم حفظ وتحديث شعار المتجر في السحاب بنجاح تام! 🌟");
+                    showToast("تم حفظ وتحديث شعار المتجر في السحاب بنجاح 🌟");
                     loadStoreSettings();
                 } catch (error) {
-                    alert("خطأ أثناء حفظ الشعار: " + error.message);
+                    showToast("خطأ أثناء حفظ الشعار");
                 }
             };
             reader.readAsDataURL(file);
@@ -1005,11 +1009,11 @@
                 .filter(line => line.length > 0);
 
             if (!title) {
-                alert("يرجى كتابة اسم اللعبة!");
+                showToast("يرجى كتابة اسم اللعبة!");
                 return;
             }
             if (!coverImage) {
-                alert("يرجى إدخال رابط غلاف اللعبة الرئيسي!");
+                showToast("يرجى إدخال رابط غلاف اللعبة الرئيسي!");
                 return;
             }
 
@@ -1029,12 +1033,12 @@
             try {
                 if (editingId) {
                     await updateDoc(doc(db, "games", editingId), gameData);
-                    alert("تم تعديل وحفظ اللعبة بنجاح 🌟");
+                    showToast("تم تعديل وحفظ اللعبة بنجاح 🌟");
                     resetAdminForm();
                 } else {
                     gameData.createdAt = new Date();
                     await addDoc(collection(db, "games"), gameData);
-                    alert("تم نشر اللعبة في السحاب بنجاح 🚀");
+                    showToast("تم نشر اللعبة في السحاب بنجاح 🚀");
                     document.getElementById('game-title').value = "";
                     document.getElementById('game-size').value = "";
                     document.getElementById('game-desc').value = "";
@@ -1045,7 +1049,7 @@
                 }
                 loadGames();
             } catch (error) {
-                alert("خطأ أثناء الحفظ: " + error.message);
+                showToast("خطأ أثناء الحفظ");
             }
         };
 
@@ -1073,6 +1077,7 @@
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
             const panel = document.getElementById('admin-panel');
+            panel.classList.remove('hidden');
             panel.scrollIntoView({ behavior: 'smooth' });
         };
 
@@ -1095,9 +1100,10 @@
             if (confirm("هل أنت متأكد من حذف هذه اللعبة نهائياً من السحاب؟")) {
                 try {
                     await deleteDoc(doc(db, "games", gameId));
+                    showToast("تم حذف اللعبة بنجاح 🗑️");
                     loadGames();
                 } catch (error) {
-                    alert("خطأ أثناء الحذف: " + error.message);
+                    showToast("خطأ أثناء الحذف");
                 }
             }
         };
@@ -1107,28 +1113,40 @@
             const password = document.getElementById('admin-password').value;
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                alert("تم تسجيل الدخول بنجاح يا أسطورة! 👑");
+                showToast("تم تسجيل الدخول بنجاح يا أسطورة! 👑");
             } catch (error) {
-                alert("فشل تسجيل الدخول: تأكد من الإيميل وكلمة المرور.");
+                showToast("فشل تسجيل الدخول: تأكد من البيانات.");
             }
         };
 
         window.logoutAdmin = async function() {
             await signOut(auth);
-            alert("تم تسجيل الخروج.");
+            showToast("تم تسجيل الخروج.");
+        };
+
+        window.toggleAdminPanel = function() {
+            const panel = document.getElementById('admin-panel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                panel.scrollIntoView({ behavior: 'smooth' });
+            }
         };
 
         onAuthStateChanged(auth, (user) => {
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
+            const quickAdminBtn = document.getElementById('quick-admin-btn');
+            
             if (user) {
                 isAdminLoggedIn = true;
                 loginBox.classList.add('hidden');
                 dashboard.classList.remove('hidden');
+                quickAdminBtn.classList.remove('hidden');
             } else {
                 isAdminLoggedIn = false;
                 loginBox.classList.remove('hidden');
                 dashboard.classList.add('hidden');
+                quickAdminBtn.classList.add('hidden');
                 resetAdminForm();
             }
             filterAndRender();
@@ -1138,9 +1156,7 @@
         document.getElementById('secret-admin-trigger').addEventListener('click', () => {
             clickCount++;
             if (clickCount >= 3) {
-                const panel = document.getElementById('admin-panel');
-                panel.classList.toggle('hidden');
-                panel.scrollIntoView({ behavior: 'smooth' });
+                toggleAdminPanel();
                 clickCount = 0;
             }
         });
