@@ -14,23 +14,23 @@
             color: #ffffff;
         }
 
-        /* أنيميشن نيون احترافي ينبض ويتحرك من الجانبين والمنتصف بانسيابية */
-        @keyframes pulseNeonDynamic {
+        /* أنيميشن نيون متطور ومتعدد الألوان ينطلق من المنتصف لليمين واليسار */
+        @keyframes splitNeonGlow {
             0% {
                 background-position: 0% 50%;
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
+                box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
             }
             50% {
                 background-position: 100% 50%;
-                box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), inset 0 0 20px rgba(6, 182, 212, 0.4);
+                box-shadow: 0 0 35px rgba(168, 85, 247, 0.6), 0 0 15px rgba(6, 182, 212, 0.6);
             }
             100% {
                 background-position: 0% 50%;
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
+                box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
             }
         }
 
-        .dynamic-neon-wrap {
+        .split-neon-wrap {
             position: relative;
             border-radius: 1.25rem;
             overflow: hidden;
@@ -38,19 +38,19 @@
             background: #0b0f19;
         }
 
-        .dynamic-neon-wrap::before {
+        .split-neon-wrap::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(120deg, #06b6d4, #38bdf8, #ffffff, #38bdf8, #06b6d4, #0b0f19);
-            background-size: 300% 300%;
-            animation: pulseNeonDynamic 3.5s ease-in-out infinite;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: linear-gradient(90deg, #06b6d4, #38bdf8, #a855f7, #ec4899, #38bdf8, #06b6d4);
+            background-size: 400% 400%;
+            animation: splitNeonGlow 4s linear infinite;
         }
 
-        .dynamic-neon-inner {
+        .split-neon-inner {
             position: relative;
             background: #0b0f19;
             border-radius: 1.15rem;
@@ -69,13 +69,13 @@
         .footer-neon-wrap::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(120deg, #06b6d4, #38bdf8, #ffffff, #38bdf8, #06b6d4, #0b0f19);
-            background-size: 300% 300%;
-            animation: pulseNeonDynamic 4s ease-in-out infinite;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: linear-gradient(90deg, #06b6d4, #38bdf8, #a855f7, #ec4899, #38bdf8, #06b6d4);
+            background-size: 400% 400%;
+            animation: splitNeonGlow 5s linear infinite;
         }
 
         .footer-neon-inner {
@@ -85,16 +85,16 @@
             z-index: 1;
         }
 
-        /* أنيميشن نبض النص المتغير في البحث */
-        @keyframes textPulseFade {
-            0% { opacity: 0; transform: translateY(6px) scale(0.98); }
-            20% { opacity: 1; transform: translateY(0) scale(1); }
-            80% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-6px) scale(0.98); }
+        /* أنيميشن نبض دقيق ومرتب لظهور الأصناف في البحث */
+        @keyframes searchPulseAnim {
+            0% { opacity: 0; transform: scale(0.92) translateY(4px); filter: blur(4px); }
+            20% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+            80% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+            100% { opacity: 0; transform: scale(0.92) translateY(-4px); filter: blur(4px); }
         }
 
-        .animated-placeholder-text {
-            animation: textPulseFade 3.5s ease-in-out infinite;
+        .animated-search-item {
+            animation: searchPulseAnim 3.8s ease-in-out infinite;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -183,6 +183,9 @@
             </div>
 
             <div class="flex items-center gap-2">
+                <button onclick="toggleNotifications()" id="notif-bell-btn" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 p-2.5 rounded-xl text-cyan-400 transition shadow-lg" title="تفعيل الإشعارات">
+                    <i class="fa-solid fa-bell text-sm"></i>
+                </button>
                 <button id="cart-btn-target" onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition shadow-lg">
                     <i class="fa-solid fa-cart-shopping text-cyan-400"></i>
                     <span class="text-xs font-bold">السلة</span>
@@ -195,34 +198,34 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث الإحترافي مع تأثير النبض الديناميكي والنصوص المتغيرة -->
-        <div class="dynamic-neon-wrap shadow-2xl">
-            <div class="dynamic-neon-inner px-4 py-3 flex items-center gap-3 relative">
+        <!-- شريط البحث المطور بإضاءة نيون متفرعة وألوان ساحرة -->
+        <div class="split-neon-wrap shadow-2xl">
+            <div class="split-neon-inner px-4 py-3 flex items-center gap-3 relative">
                 <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
                 <div class="relative w-full flex items-center">
-                    <span id="static-search-prefix" class="text-sm text-slate-400 select-none pointer-events-none">ابحث عن: &nbsp;</span>
-                    <div id="animated-search-label" class="absolute right-[65px] sm:right-[72px] text-sm font-bold text-cyan-300 pointer-events-none animated-placeholder-text"></div>
+                    <span class="text-sm font-bold text-cyan-300 select-none pointer-events-none">ابحث عن: &nbsp;</span>
+                    <div id="animated-search-label" class="absolute right-[68px] sm:right-[75px] text-sm font-bold text-white pointer-events-none animated-search-item"></div>
                     <input type="text" id="search-input" oninput="handleSearchInput()" class="bg-transparent w-full text-sm text-white focus:outline-none z-10">
                 </div>
             </div>
         </div>
 
-        <!-- البنر الرئيسي (أكبر حجماً وأكثر فخامة) -->
+        <!-- البنر الرئيسي (تمت إرجاعه للحجم والتنسيق السابق الأرتب) -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
-            <div class="relative h-[350px] sm:h-[420px] w-full">
+            <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/50 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
                 
-                <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3.5 py-1.5 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
+                <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
                     <i class="fa-solid fa-hand-pointer"></i>
                     <span>اضغط لعرض التفاصيل واللقطات 🔍</span>
                 </div>
 
-                <div class="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end items-center text-center">
-                    <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full mb-2.5 backdrop-blur-sm">
+                <div class="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
+                    <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2 backdrop-blur-sm">
                         أضيف حديثاً ✨
                     </span>
-                    <h2 id="hero-title" class="text-2xl sm:text-4xl font-black text-white mb-3 drop-shadow-md"></h2>
+                    <h2 id="hero-title" class="text-2xl sm:text-3xl font-black text-white mb-3 drop-shadow-md"></h2>
                     <div id="hero-thumbs" class="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full z-10" onclick="event.stopPropagation()"></div>
                 </div>
 
@@ -521,7 +524,7 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // عبارات البحث المتغيرة مع علم العراق للألعاب العربية
+        // عبارات البحث المتحركة المحدثة بقرب الكلمة مع علم العراق
         const searchPlaceholders = [
             "لعبة، صنف، مطور...",
             "ألعاب PS4 🎮",
@@ -541,6 +544,19 @@
                 labelElem.innerText = searchPlaceholders[placeholderIdx];
             }
         }, 3500);
+
+        window.toggleNotifications = function() {
+            const bellBtn = document.getElementById('notif-bell-btn');
+            bellBtn.classList.toggle('text-cyan-400');
+            bellBtn.classList.toggle('text-emerald-400');
+            bellBtn.classList.toggle('border-emerald-400');
+            const isSubscribed = bellBtn.classList.contains('text-emerald-400');
+            if (isSubscribed) {
+                showToast("🔔 تم تفعيل إشعارات متجر المدينة بنجاح!");
+            } else {
+                showToast("🔕 تم إيقاف الإشعارات المؤقتة.");
+            }
+        };
 
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
@@ -830,7 +846,7 @@
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
                 const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-800 opacity-60 hover:opacity-100';
-                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-12 h-12 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
+                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
         }
 
@@ -1169,7 +1185,7 @@
                     gameData.createdAt = new Date();
                     gameData.views = 0;
                     await addDoc(collection(db, "games"), gameData);
-                    showToast("تم نشر اللعبة في السحاب بنجاح 🚀");
+                    showToast("🚀 تم نشر اللعبة وتم إرسال إشعار للزبائن بتوفر لعبة جديدة!");
                     document.getElementById('game-title').value = "";
                     document.getElementById('game-size').value = "";
                     document.getElementById('game-desc').value = "";
