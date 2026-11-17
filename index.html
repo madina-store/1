@@ -160,13 +160,16 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes progressAnimation { 0% { width: 0%; } 100% { width: 100%; } }
         .hero-progress-bar { animation: progressAnimation 5s linear infinite; }
-        @keyframes toastSlideUp { 0% { transform: translateY(100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-        .toast-notification { animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes floatCart {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8deg) rotate(-5deg); }
+        }
+        .floating-sad-cart { animation: floatCart 3s ease-in-out infinite; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة التحقق الأمني واتصال السيرفر السريع -->
+    <!-- شاشة فحص الأمان الذكية -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -174,14 +177,11 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال السريع بسيرفر السحاب...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والتحقق من التشفير...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-bolt text-[10px]"></i> مزامنة فائقة السرعة - متجر المدينة
+            <i class="fa-solid fa-lock text-[10px]"></i> اتصال آمن ومحمي - متجر المدينة
         </p>
     </div>
-
-    <!-- نظام الإشعار العائم -->
-    <div id="custom-toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-full max-w-sm px-4"></div>
 
     <!-- الهيدر -->
     <header class="bg-[#070a12]/95 backdrop-blur-md border-b border-slate-900 px-4 py-3 sticky top-0 z-40">
@@ -215,7 +215,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث الدائري بحزمة الليد النيون -->
+        <!-- شريط البحث الدائري -->
         <div class="search-led-container shadow-lg">
             <div class="search-led-inner px-5 py-3 flex items-center gap-3 relative">
                 <i class="fa-solid fa-magnifying-glass text-slate-400 text-base"></i>
@@ -357,7 +357,7 @@
         </div>
     </main>
 
-    <!-- الفوتر (بدون سنة الحقوق) -->
+    <!-- الفوتر -->
     <footer class="bg-[#05070b] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl footer-neon-wrap shadow-2xl">
             <div class="footer-neon-inner p-6 text-center space-y-4">
@@ -443,7 +443,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) -->
+    <!-- نافذة تكبير الصورة -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         <button onclick="closeLightbox()" class="absolute top-5 left-5 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-lg z-20 hover:bg-cyan-500 hover:text-slate-950 transition">✕</button>
         
@@ -461,7 +461,7 @@
         </button>
     </div>
 
-    <!-- نافذة السلة -->
+    <!-- نافذة السلة الفخمة -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.4)]">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -476,11 +476,7 @@
             
             <div id="cart-items-list" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
 
-            <div class="pt-2 space-y-2 border-t border-slate-800">
-                <button onclick="sendCartToWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> إرسال الطلب عبر واتساب
-                </button>
-            </div>
+            <div id="cart-actions-box" class="pt-2 space-y-2 border-t border-slate-800"></div>
         </div>
     </div>
 
@@ -600,9 +596,9 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-                title.innerText = "متصل بالسيرفر بنجاح ✓";
+                title.innerText = "تم التحقق والأمان بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-bolt text-emerald-400"></i> تم تحميل بيانات المتجر والألعاب فوراً';
+                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة المشفر والمؤمن';
             }
 
             setTimeout(() => {
@@ -631,13 +627,19 @@
         }
 
         window.showToast = function(message) {
-            const container = document.getElementById('custom-toast-container');
+            const container = document.getElementById('custom-toast-container') || (() => {
+                const div = document.createElement('div');
+                div.id = 'custom-toast-container';
+                div.className = "fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-full max-w-sm px-4";
+                document.body.appendChild(div);
+                return div;
+            })();
             const toast = document.createElement('div');
-            toast.className = "toast-notification bg-[#0b0f19] border border-cyan-400 text-white px-4 py-3 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-between gap-3 text-xs font-bold";
+            toast.className = "toast-notification bg-[#0b0f19] border border-cyan-400 text-white px-4 py-3 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-between gap-3 text-xs font-bold pointer-events-auto";
             toast.innerHTML = `
                 <div class="flex items-center gap-2.5">
                     <div class="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300">
-                        <i class="fa-solid fa-bell text-xs animate-bounce"></i>
+                        <i class="fa-solid fa-gamepad text-xs"></i>
                     </div>
                     <span>${message}</span>
                 </div>
@@ -746,15 +748,30 @@
 
         function renderCartItems() {
             const list = document.getElementById('cart-items-list');
+            const actionsBox = document.getElementById('cart-actions-box');
+
             if (cart.length === 0) {
                 list.innerHTML = `
-                    <div class="text-center py-10 space-y-2">
-                        <div class="text-cyan-400 text-3xl opacity-60"><i class="fa-solid fa-cart-shopping"></i></div>
-                        <p class="text-slate-400 text-xs">سلة الألعاب فارغة حالياً.</p>
+                    <div class="text-center py-8 space-y-3">
+                        <div class="w-16 h-16 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 text-2xl floating-sad-cart shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+                            <i class="fa-solid fa-cart-arrow-down"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-cyan-300 font-black text-sm">سلتك تشعر بالوحدة! 😢</h4>
+                            <p class="text-slate-400 text-xs leading-relaxed max-w-xs mx-auto">
+                                لدينا الكثير من الألعاب الفخمة بانتظارك، وأنت لم تضف أي لعبة للسلة حتى الآن. تصفح المتجر واختر مغامرتك القادمة! 🎮✨
+                            </p>
+                        </div>
                     </div>
+                `;
+                actionsBox.innerHTML = `
+                    <button onclick="toggleCartModal()" class="w-full bg-[#05070b] hover:bg-slate-900 border border-slate-800 text-slate-300 py-3 rounded-xl font-bold text-xs transition">
+                        تصفح الألعاب الآن 🚀
+                    </button>
                 `;
                 return;
             }
+
             list.innerHTML = cart.map((item, idx) => `
                 <div class="flex items-center justify-between bg-[#05070b] p-3 rounded-2xl border border-slate-800 gap-3">
                     <div class="flex items-center gap-3">
@@ -772,13 +789,16 @@
                     </button>
                 </div>
             `).join('');
+
+            actionsBox.innerHTML = `
+                <button onclick="sendCartToWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> إرسال الطلب عبر واتساب
+                </button>
+            `;
         }
 
         window.sendCartToWhatsApp = function() {
-            if (cart.length === 0) {
-                showToast("السلة فارغة!");
-                return;
-            }
+            if (cart.length === 0) return;
             let msg = "السلام عليكم، أرغب بطلب الألعاب التالية من متجر المدينة:\n";
             cart.forEach((item, idx) => {
                 msg += `${idx + 1}- ${item.title} (${item.platform})\n`;
@@ -989,7 +1009,7 @@
         };
 
         window.reloadStoreData = function() {
-            showToast("🔄 جاري إعادة الاتصال وجلب الألعاب...");
+            showToast("🔄 جاري إعادة تحديث الصفحة والاتصال...");
             window.location.reload();
         };
 
@@ -1007,14 +1027,15 @@
             });
 
             if (filtered.length === 0) {
+                // التصحيح: التركيز فقط على رسالة النت الضعيف أو عدم توفر اتصال بالشبكة
                 grid.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_20px_rgba(6,182,212,0.25)] text-center space-y-4">
                         <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xl animate-pulse">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <div class="space-y-1">
-                            <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، لا توجد ألعاب مطابقة أو يبدو أن الاتصال بالإنترنت ضعيف!</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed max-w-sm">تحقق من اتصالك بالشبكة أو قم بإعادة تحديث الصفحة لجلب أحدث الألعاب من السيرفر.</p>
+                            <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، يبدو أن الاتصال بالإنترنت ضعيف أو منقطع!</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed max-w-sm">تحقق من شبكتك أو قم بإعادة تحديث الصفحة لجلب أحدث البيانات.</p>
                         </div>
                         <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
                             <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والاتصال
@@ -1115,7 +1136,7 @@
                 await loadStoreSettings();
                 initRealtimeGamesListener();
             } catch (error) {
-                console.error("خطأ في بدء الاتصال بالسيرفر:", error);
+                console.error("خطأ في بدء الاتصال:", error);
                 completeSecurityCheck();
             }
         }
@@ -1146,8 +1167,6 @@
 
         function initRealtimeGamesListener() {
             const gamesRef = collection(db, "games");
-            let isFirstLoad = true;
-
             onSnapshot(gamesRef, (snapshot) => {
                 const newGamesList = [];
                 snapshot.forEach((docSnap) => {
@@ -1156,14 +1175,13 @@
                 newGamesList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
                 allGames = newGamesList;
-                isFirstLoad = false;
                 renderCategoriesBar();
                 renderHero();
                 resetHeroTimer();
                 filterAndRender();
                 completeSecurityCheck();
             }, (error) => {
-                console.error("خطأ في المزامنة الحية:", error);
+                console.error("خطأ في المزامنة:", error);
                 completeSecurityCheck();
             });
         }
@@ -1171,7 +1189,7 @@
         window.uploadAndSaveLogo = function() {
             const fileInput = document.getElementById('logo-file-input');
             if (!fileInput.files || fileInput.files.length === 0) {
-                showToast("يرجى اختيار صورة أولاً من الاستوديو!");
+                showToast("يرجى اختيار صورة أولاً!");
                 return;
             }
             const file = fileInput.files[0];
@@ -1180,7 +1198,7 @@
                 const base64String = e.target.result;
                 try {
                     await setDoc(doc(db, "settings", "general"), { logoUrl: base64String }, { merge: true });
-                    showToast("تم حفظ وتحديث شعار المتجر في السحاب بنجاح 🌟");
+                    showToast("تم حفظ وتحديث شعار المتجر بنجاح 🌟");
                     loadStoreSettings();
                 } catch (error) {
                     showToast("خطأ أثناء حفظ الشعار");
@@ -1301,7 +1319,7 @@
         };
 
         window.deleteGame = async function(gameId) {
-            if (confirm("هل أنت متأكد من حذف هذه اللعبة نهائياً من السحاب؟")) {
+            if (confirm("هل أنت متأكد من حذف هذه اللعبة نهائياً؟")) {
                 try {
                     await deleteDoc(doc(db, "games", gameId));
                     showToast("تم حذف اللعبة بنجاح 🗑️");
