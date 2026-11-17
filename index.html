@@ -14,47 +14,56 @@
             color: #ffffff;
         }
 
-        /* إضاءة نيون دائرية متحركة متصلة 100% بدون أي تقطيع أو وقفة */
-        @keyframes continuousNeonSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* أنيميشن نيون احترافي ينبض ويتحرك من الجانبين والمنتصف بانسيابية */
+        @keyframes pulseNeonDynamic {
+            0% {
+                background-position: 0% 50%;
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
+            }
+            50% {
+                background-position: 100% 50%;
+                box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), inset 0 0 20px rgba(6, 182, 212, 0.4);
+            }
+            100% {
+                background-position: 0% 50%;
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
+            }
         }
 
-        .continuous-neon-wrap {
+        .dynamic-neon-wrap {
             position: relative;
             border-radius: 1.25rem;
             overflow: hidden;
             padding: 2.5px;
             background: #0b0f19;
-            box-shadow: 0 0 35px rgba(6, 182, 212, 0.35);
         }
 
-        .continuous-neon-wrap::before {
+        .dynamic-neon-wrap::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 0deg at 50% 50%, #06b6d4 0deg, #38bdf8 90deg, #ffffff 180deg, #38bdf8 270deg, #06b6d4 360deg);
-            animation: continuousNeonSpin 3s linear infinite;
+            background: linear-gradient(120deg, #06b6d4, #38bdf8, #ffffff, #38bdf8, #06b6d4, #0b0f19);
+            background-size: 300% 300%;
+            animation: pulseNeonDynamic 3.5s ease-in-out infinite;
         }
 
-        .continuous-neon-inner {
+        .dynamic-neon-inner {
             position: relative;
             background: #0b0f19;
             border-radius: 1.15rem;
             z-index: 1;
         }
 
-        /* تطبيق نفس النيون المستمر على صندوق الفوتر السفلي الكبير */
+        /* نيون الفوتر السفلي */
         .footer-neon-wrap {
             position: relative;
             border-radius: 1.75rem;
             overflow: hidden;
             padding: 3px;
             background: #0b0f19;
-            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
         }
 
         .footer-neon-wrap::before {
@@ -64,8 +73,9 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 0deg at 50% 50%, #06b6d4 0deg, #38bdf8 90deg, #ffffff 180deg, #38bdf8 270deg, #06b6d4 360deg);
-            animation: continuousNeonSpin 4s linear infinite;
+            background: linear-gradient(120deg, #06b6d4, #38bdf8, #ffffff, #38bdf8, #06b6d4, #0b0f19);
+            background-size: 300% 300%;
+            animation: pulseNeonDynamic 4s ease-in-out infinite;
         }
 
         .footer-neon-inner {
@@ -75,6 +85,18 @@
             z-index: 1;
         }
 
+        /* أنيميشن نبض النص المتغير في البحث */
+        @keyframes textPulseFade {
+            0% { opacity: 0; transform: translateY(6px) scale(0.98); }
+            20% { opacity: 1; transform: translateY(0) scale(1); }
+            80% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-6px) scale(0.98); }
+        }
+
+        .animated-placeholder-text {
+            animation: textPulseFade 3.5s ease-in-out infinite;
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .cyan-gradient-btn {
@@ -82,7 +104,7 @@
             color: #05070b;
         }
 
-        /* أنيميشن طيران العنصر للسلة بسلاسة */
+        /* أنيميشن طيران العنصر للسلة */
         @keyframes flyToCart {
             0% { opacity: 1; transform: translate(0, 0) scale(1); }
             50% { opacity: 0.85; transform: translate(var(--dx), var(--dy)) scale(0.45) rotate(20deg); }
@@ -173,30 +195,34 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بإضاءة نيون مستمرة ومتصلة مع عبارات متغيرة -->
-        <div class="continuous-neon-wrap shadow-2xl">
-            <div class="continuous-neon-inner px-4 py-3 flex items-center gap-3">
+        <!-- شريط البحث الإحترافي مع تأثير النبض الديناميكي والنصوص المتغيرة -->
+        <div class="dynamic-neon-wrap shadow-2xl">
+            <div class="dynamic-neon-inner px-4 py-3 flex items-center gap-3 relative">
                 <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
-                <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
+                <div class="relative w-full flex items-center">
+                    <span id="static-search-prefix" class="text-sm text-slate-400 select-none pointer-events-none">ابحث عن: &nbsp;</span>
+                    <div id="animated-search-label" class="absolute right-[65px] sm:right-[72px] text-sm font-bold text-cyan-300 pointer-events-none animated-placeholder-text"></div>
+                    <input type="text" id="search-input" oninput="handleSearchInput()" class="bg-transparent w-full text-sm text-white focus:outline-none z-10">
+                </div>
             </div>
         </div>
 
-        <!-- البنر الرئيسي -->
+        <!-- البنر الرئيسي (أكبر حجماً وأكثر فخامة) -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
-            <div class="relative h-[320px] sm:h-[380px] w-full">
+            <div class="relative h-[350px] sm:h-[420px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/50 to-transparent"></div>
                 
-                <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
+                <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3.5 py-1.5 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
                     <i class="fa-solid fa-hand-pointer"></i>
                     <span>اضغط لعرض التفاصيل واللقطات 🔍</span>
                 </div>
 
-                <div class="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
-                    <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-3.5 py-1 rounded-full mb-2 backdrop-blur-sm">
+                <div class="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end items-center text-center">
+                    <span class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full mb-2.5 backdrop-blur-sm">
                         أضيف حديثاً ✨
                     </span>
-                    <h2 id="hero-title" class="text-2xl sm:text-3xl font-black text-white mb-3 drop-shadow-md"></h2>
+                    <h2 id="hero-title" class="text-2xl sm:text-4xl font-black text-white mb-3 drop-shadow-md"></h2>
                     <div id="hero-thumbs" class="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full z-10" onclick="event.stopPropagation()"></div>
                 </div>
 
@@ -311,7 +337,7 @@
         </div>
     </main>
 
-    <!-- الفوتر مع إطار النيون المستمر والمتصل -->
+    <!-- الفوتر مع إطار نيون متصل -->
     <footer class="bg-[#05070b] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl footer-neon-wrap shadow-2xl">
             <div class="footer-neon-inner p-6 text-center space-y-4">
@@ -363,7 +389,12 @@
             </div>
 
             <div class="space-y-2 pt-1">
-                <h3 id="modal-title" class="text-xl font-black text-white"></h3>
+                <div class="flex justify-between items-start">
+                    <h3 id="modal-title" class="text-xl font-black text-white"></h3>
+                    <span id="modal-views-badge" class="bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye text-xs"></i> <span id="modal-views-count">0</span> مشاهدة
+                    </span>
+                </div>
                 <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
             </div>
 
@@ -436,7 +467,7 @@
     <!-- سكربت فايربيس والمنطق البرمجي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -453,7 +484,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // الأصناف المطابقة للصورة تماماً
+        // قائمة الأصناف الدقيقة للمتجر
         const ALL_CATEGORIES = [
             "الكل",
             "ألعاب الأكشن",
@@ -490,23 +521,24 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // عبارات البحث المتحركة المتنوعة مع علم العراق للألعاب العربية
+        // عبارات البحث المتغيرة مع علم العراق للألعاب العربية
         const searchPlaceholders = [
-            "ابحث عن لعبة، صنف، مطور...",
-            "هل تبحث عن ألعاب PS4؟ 🎮",
-            "هل تبحث عن ألعاب PS5؟ ⚡",
-            "هل تبحث عن ألعاب تدعم اللغة العربية 🇮🇶؟",
-            "هل تبحث عن ألعاب الأكشن؟ 🔥",
-            "هل تبحث عن ألعاب المغامرات؟ 🌍",
-            "هل تبحث عن ألعاب العالم المفتوح؟ 🏙️",
-            "هل تبحث عن ألعاب الرعب والبقاء؟ 🧟"
+            "لعبة، صنف، مطور...",
+            "ألعاب PS4 🎮",
+            "ألعاب PS5 ⚡",
+            "ألعاب تدعم اللغة العربية 🇮🇶",
+            "ألعاب الأكشن 🔥",
+            "ألعاب المغامرات 🌍",
+            "ألعاب العالم المفتوح 🏙️",
+            "ألعاب الرعب والبقاء 🧟"
         ];
         let placeholderIdx = 0;
         setInterval(() => {
+            const labelElem = document.getElementById('animated-search-label');
             const searchInput = document.getElementById('search-input');
-            if (searchInput && document.activeElement !== searchInput && !searchInput.value) {
+            if (labelElem && searchInput && document.activeElement !== searchInput && !searchInput.value) {
                 placeholderIdx = (placeholderIdx + 1) % searchPlaceholders.length;
-                searchInput.placeholder = searchPlaceholders[placeholderIdx];
+                labelElem.innerText = searchPlaceholders[placeholderIdx];
             }
         }, 3500);
 
@@ -745,6 +777,10 @@
         window.handleSearchInput = function() {
             currentPage = 1;
             const searchVal = document.getElementById('search-input').value.trim();
+            const labelElem = document.getElementById('animated-search-label');
+            if (labelElem) {
+                labelElem.style.display = searchVal.length > 0 ? 'none' : 'block';
+            }
             if (searchVal.length > 0) {
                 history.pushState({ search: searchVal }, "", "#search");
             }
@@ -794,7 +830,7 @@
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
                 const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-800 opacity-60 hover:opacity-100';
-                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
+                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-12 h-12 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
         }
 
@@ -820,12 +856,22 @@
             if (featuredGames.length > 0) { openDetailsModal(featuredGames[heroIndex].id); }
         };
 
-        window.openDetailsModal = function(gameId) {
+        window.openDetailsModal = async function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
 
+            // تحديث عدد المشاهدات في فايربيس
+            try {
+                const gameRef = doc(db, "games", gameId);
+                await updateDoc(gameRef, { views: increment(1) });
+                game.views = (game.views || 0) + 1;
+            } catch (e) {
+                console.error("خطأ في تحديث المشاهدات:", e);
+            }
+
             document.getElementById('modal-title').innerText = game.title;
             document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
+            document.getElementById('modal-views-count').innerText = game.views || 1;
 
             const videoContainer = document.getElementById('modal-video-container');
             const ytIframe = document.getElementById('modal-yt-iframe');
@@ -961,6 +1007,10 @@
                             <button onclick="addToCart('${game.id}', event)" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition z-10">
                                 <i class="fa-solid fa-plus text-xs pointer-events-none"></i>
                             </button>
+
+                            <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md border border-slate-800 text-[10px] text-cyan-300 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-eye text-[9px]"></i> <span>${game.views || 0}</span>
+                            </div>
                         </div>
 
                         <div class="p-3 space-y-2 flex-grow flex flex-col justify-between">
@@ -1117,6 +1167,7 @@
                     resetAdminForm();
                 } else {
                     gameData.createdAt = new Date();
+                    gameData.views = 0;
                     await addDoc(collection(db, "games"), gameData);
                     showToast("تم نشر اللعبة في السحاب بنجاح 🚀");
                     document.getElementById('game-title').value = "";
@@ -1128,8 +1179,9 @@
                     document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
                 }
                 
-                // إغلاق لوحة الإدارة تلقائياً بعد النشر الناجح
+                // إغلاق لوحة الإدارة تلقائياً والصعود إلى أعلى الصفحة
                 document.getElementById('admin-panel').classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 loadGames();
             } catch (error) {
