@@ -13,44 +13,44 @@
             background-color: #05070b;
             color: #ffffff;
         }
-        
-        @keyframes neonRotateGlow {
-            0% { 
-                border-color: #06b6d4; 
-                box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.3); 
-            }
-            50% { 
-                border-color: #38bdf8; 
-                box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), inset 0 0 15px rgba(56, 189, 248, 0.5); 
-            }
-            100% { 
-                border-color: #06b6d4; 
-                box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.3); 
-            }
+
+        /* تأثير أفعى النيون المتحركة والدورانية على شريط البحث */
+        @keyframes snakeNeonSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* حركة إضاءة نيون متحركة ودورانية سريعة لشريط البحث */
-        @keyframes searchGlowAnim {
-            0% {
-                border-color: #06b6d4;
-                box-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 25px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.3);
-            }
-            50% {
-                border-color: #38bdf8;
-                box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), 0 0 45px rgba(56, 189, 248, 0.5), inset 0 0 15px rgba(56, 189, 248, 0.5);
-            }
-            100% {
-                border-color: #06b6d4;
-                box-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 25px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.3);
-            }
+        .snake-search-container {
+            position: relative;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            padding: 2.5px; /* سمك خط النيون المتحرك */
+            background: #0b0f19;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.25);
         }
 
-        .led-search-box-animated {
+        .snake-search-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent 0%, transparent 70%, #06b6d4 85%, #38bdf8 95%, #ffffff 100%);
+            animation: snakeNeonSpin 3s linear infinite;
+        }
+
+        .snake-search-inner {
             position: relative;
             background: #0b0f19;
-            border: 2.5px solid #06b6d4;
-            border-radius: 1.25rem;
-            animation: searchGlowAnim 1.8s infinite ease-in-out;
+            border-radius: 1.15rem;
+            z-index: 1;
+        }
+
+        @keyframes neonRotateGlow {
+            0% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+            50% { border-color: #38bdf8; box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); }
+            100% { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
         }
 
         .led-store-box {
@@ -60,13 +60,8 @@
             animation: neonRotateGlow 3s infinite ease-in-out;
         }
 
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .cyan-gradient-btn {
             background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
             color: #05070b;
@@ -74,54 +69,22 @@
 
         .spinner-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #0b1324 0%, #05070b 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            transition: opacity 0.45s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 99999; transition: opacity 0.45s ease;
         }
         .shield-ring {
-            position: relative;
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            border: 3px solid rgba(6, 182, 212, 0.15);
-            border-top: 3px solid #06b6d4;
-            border-bottom: 3px solid #38bdf8;
-            animation: spin 1.2s linear infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; width: 85px; height: 85px; border-radius: 50%;
+            border: 3px solid rgba(6, 182, 212, 0.15); border-top: 3px solid #06b6d4; border-bottom: 3px solid #38bdf8;
+            animation: spin 1.2s linear infinite; display: flex; align-items: center; justify-content: center;
         }
-        .shield-ring.verified {
-            animation: none;
-            border-color: #10b981;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes progressAnimation {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        .hero-progress-bar {
-            animation: progressAnimation 5s linear infinite;
-        }
-        @keyframes toastSlideUp {
-            0% { transform: translateY(100px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        .toast-notification {
-            animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .shield-ring.verified { animation: none; border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.5); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes progressAnimation { 0% { width: 0%; } 100% { width: 100%; } }
+        .hero-progress-bar { animation: progressAnimation 5s linear infinite; }
+        @keyframes toastSlideUp { 0% { transform: translateY(100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        .toast-notification { animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
@@ -140,7 +103,7 @@
         </p>
     </div>
 
-    <!-- نظام الإشعار العائم الفخم -->
+    <!-- نظام الإشعار العائم -->
     <div id="custom-toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-full max-w-sm px-4"></div>
 
     <!-- الهيدر -->
@@ -163,10 +126,10 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition">
-                    <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
+                <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition shadow-lg">
+                    <i class="fa-solid fa-cart-shopping text-cyan-400"></i>
                     <span class="text-xs font-bold">السلة</span>
-                    <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                    <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
                 </button>
             </div>
         </div>
@@ -175,10 +138,12 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بإضاءة نيون متحركة وسريعة -->
-        <div class="led-search-box-animated px-4 py-3 flex items-center gap-3 shadow-2xl">
-            <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
-            <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
+        <!-- شريط البحث بإضاءة أفعى النيون المتحركة والدورانية -->
+        <div class="snake-search-container shadow-2xl">
+            <div class="snake-search-inner px-4 py-3 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
+                <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
+            </div>
         </div>
 
         <!-- البنر الرئيسي -->
@@ -408,13 +373,13 @@
         </button>
     </div>
 
-    <!-- نافذة السلة الفخمة والمصممة خصيصاً لعرض الألعاب بالداخل -->
+    <!-- نافذة السلة الفخمة والمحدثة كلياً -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.4)]">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-sm">
-                        <i class="fa-solid fa-bag-shopping"></i>
+                        <i class="fa-solid fa-cart-shopping"></i>
                     </div>
                     <h3 class="text-base font-black text-cyan-300">سلة الألعاب المختارة</h3>
                 </div>
@@ -479,24 +444,10 @@
             const cartModal = document.getElementById('cart-modal');
             const searchInput = document.getElementById('search-input');
 
-            if (!lightbox.classList.contains('hidden')) {
-                lightbox.classList.add('hidden');
-                return;
-            }
-            if (!details.classList.contains('hidden')) {
-                details.classList.add('hidden');
-                document.getElementById('modal-yt-iframe').src = '';
-                return;
-            }
-            if (!cartModal.classList.contains('hidden')) {
-                cartModal.classList.add('hidden');
-                return;
-            }
-            if (searchInput && searchInput.value.trim() !== '') {
-                searchInput.value = '';
-                filterAndRender();
-                return;
-            }
+            if (!lightbox.classList.contains('hidden')) { lightbox.classList.add('hidden'); return; }
+            if (!details.classList.contains('hidden')) { details.classList.add('hidden'); document.getElementById('modal-yt-iframe').src = ''; return; }
+            if (!cartModal.classList.contains('hidden')) { cartModal.classList.add('hidden'); return; }
+            if (searchInput && searchInput.value.trim() !== '') { searchInput.value = ''; filterAndRender(); return; }
         });
 
         function pushModalState(modalName) {
@@ -632,7 +583,7 @@
             if (cart.length === 0) {
                 list.innerHTML = `
                     <div class="text-center py-10 space-y-2">
-                        <div class="text-cyan-400 text-3xl opacity-60"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <div class="text-cyan-400 text-3xl opacity-60"><i class="fa-solid fa-cart-shopping"></i></div>
                         <p class="text-slate-400 text-xs">سلة الألعاب فارغة حالياً.</p>
                     </div>
                 `;
@@ -694,9 +645,7 @@
             }
             filterAndRender();
             const anchor = document.getElementById('games-anchor');
-            if (anchor) {
-                anchor.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (anchor) { anchor.scrollIntoView({ behavior: 'smooth' }); }
         };
 
         window.changePage = function(page) {
@@ -721,10 +670,7 @@
 
         function renderHero() {
             const heroSection = document.getElementById('hero-section');
-            if (allGames.length === 0) {
-                heroSection.classList.add('hidden');
-                return;
-            }
+            if (allGames.length === 0) { heroSection.classList.add('hidden'); return; }
             heroSection.classList.remove('hidden');
             const featuredGames = allGames.slice(0, 5);
             if (heroIndex >= featuredGames.length) heroIndex = 0;
@@ -766,9 +712,7 @@
 
         window.openHeroDetails = function() {
             const featuredGames = allGames.slice(0, 5);
-            if (featuredGames.length > 0) {
-                openDetailsModal(featuredGames[heroIndex].id);
-            }
+            if (featuredGames.length > 0) { openDetailsModal(featuredGames[heroIndex].id); }
         };
 
         window.openDetailsModal = function(gameId) {
@@ -782,11 +726,8 @@
             const ytIframe = document.getElementById('modal-yt-iframe');
             if (game.youtube) {
                 let embedUrl = game.youtube;
-                if (game.youtube.includes('watch?v=')) {
-                    embedUrl = game.youtube.replace('watch?v=', 'embed/');
-                } else if (game.youtube.includes('youtu.be/')) {
-                    embedUrl = game.youtube.replace('youtu.be/', 'www.youtube.com/embed/');
-                }
+                if (game.youtube.includes('watch?v=')) { embedUrl = game.youtube.replace('watch?v=', 'embed/'); }
+                else if (game.youtube.includes('youtu.be/')) { embedUrl = game.youtube.replace('youtu.be/', 'www.youtube.com/embed/'); }
                 ytIframe.src = embedUrl;
                 videoContainer.classList.remove('hidden');
             } else {
@@ -803,7 +744,6 @@
             `;
 
             currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
-            
             document.getElementById('gallery-heading').innerHTML = `<i class="fa-regular fa-images"></i> لقطات الشاشة (${currentLightboxImages.length})`;
 
             const verticalGallery = document.getElementById('modal-gallery-vertical');
@@ -834,11 +774,8 @@
         };
 
         window.closeLightbox = function() {
-            if (window.location.hash === '#lightbox') {
-                history.back();
-            } else {
-                document.getElementById('lightbox-modal').classList.add('hidden');
-            }
+            if (window.location.hash === '#lightbox') { history.back(); }
+            else { document.getElementById('lightbox-modal').classList.add('hidden'); }
         };
 
         window.updateLightboxImage = function() {
@@ -859,12 +796,8 @@
         };
 
         window.closeDetailsModal = function() {
-            if (window.location.hash === '#details') {
-                history.back();
-            } else {
-                document.getElementById('details-modal').classList.add('hidden');
-                document.getElementById('modal-yt-iframe').src = '';
-            }
+            if (window.location.hash === '#details') { history.back(); }
+            else { document.getElementById('details-modal').classList.add('hidden'); document.getElementById('modal-yt-iframe').src = ''; }
         };
 
         window.filterAndRender = function() {
@@ -886,7 +819,7 @@
                         <div class="text-cyan-400 text-2xl animate-pulse">🛡️</div>
                         <h3 class="text-cyan-300 font-bold text-sm">جاري مزامنة البيانات أو الاتصال ضعيف</h3>
                         <p class="text-slate-400 text-xs leading-relaxed max-w-sm">إذا لم تظهر الألعاب بسبب ضعف الشبكة، يرجى إعادة تنشيط الاتصال بالسيرفر الآمن.</p>
-                        <button onclick="window.location.reload();" class="px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-xs font-bold transition flex items-center gap-2 shadow-[0_0_10px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.6)]">
+                        <button onclick="window.location.reload();" class="px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-xs font-bold transition flex items-center gap-2 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
                             <i class="fa-solid fa-rotate-right"></i>
                             <span>إعادة تنشيط الاتصال</span>
                         </button>
@@ -910,13 +843,9 @@
                 
                 let arabicBadgeStyle = "text-slate-400";
                 if (game.arabic) {
-                    if (game.arabic.includes('دبلجة')) {
-                        arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(16,185,129,0.2)]";
-                    } else if (game.arabic.includes('ترجمة')) {
-                        arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(6,182,212,0.2)]";
-                    } else {
-                        arabicBadgeStyle = "bg-rose-500/10 text-rose-300/80 border border-rose-500/20 px-2 py-0.5 rounded-md";
-                    }
+                    if (game.arabic.includes('دبلجة')) { arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(16,185,129,0.2)]"; }
+                    else if (game.arabic.includes('ترجمة')) { arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(6,182,212,0.2)]"; }
+                    else { arabicBadgeStyle = "bg-rose-500/10 text-rose-300/80 border border-rose-500/20 px-2 py-0.5 rounded-md"; }
                 }
 
                 return `
@@ -1019,7 +948,7 @@
             } catch (error) {
                 console.error("خطأ في جلب الشعار:", error);
             }
-        }
+        };
 
         window.uploadAndSaveLogo = function() {
             const fileInput = document.getElementById('logo-file-input');
@@ -1060,14 +989,8 @@
                 .map(line => line.trim())
                 .filter(line => line.length > 0);
 
-            if (!title) {
-                showToast("يرجى كتابة اسم اللعبة!");
-                return;
-            }
-            if (!coverImage) {
-                showToast("يرجى إدخال رابط غلاف اللعبة الرئيسي!");
-                return;
-            }
+            if (!title) { showToast("يرجى كتابة اسم اللعبة!"); return; }
+            if (!coverImage) { showToast("يرجى إدخال رابط غلاف اللعبة الرئيسي!"); return; }
 
             const gameData = {
                 title,
@@ -1179,9 +1102,7 @@
         window.toggleAdminPanel = function() {
             const panel = document.getElementById('admin-panel');
             panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
-                panel.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (!panel.classList.contains('hidden')) { panel.scrollIntoView({ behavior: 'smooth' }); }
         };
 
         onAuthStateChanged(auth, (user) => {
