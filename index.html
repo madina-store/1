@@ -17,45 +17,47 @@
         @keyframes neonRotateGlow {
             0% { 
                 border-color: #06b6d4; 
-                box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
+                box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.3); 
             }
             50% { 
                 border-color: #38bdf8; 
-                box-shadow: 0 0 22px rgba(56, 189, 248, 0.8), 0 0 45px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.4); 
+                box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), inset 0 0 15px rgba(56, 189, 248, 0.5); 
             }
             100% { 
                 border-color: #06b6d4; 
-                box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 30px rgba(6, 182, 212, 0.2), inset 0 0 10px rgba(6, 182, 212, 0.2); 
+                box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.3); 
             }
         }
 
-        /* حركة إضاءة نيون انسيابية متحركة لشريط البحث */
-        @keyframes searchNeonFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* حركة إضاءة نيون متحركة ودورانية سريعة لشريط البحث */
+        @keyframes searchGlowAnim {
+            0% {
+                border-color: #06b6d4;
+                box-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 25px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.3);
+            }
+            50% {
+                border-color: #38bdf8;
+                box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), 0 0 45px rgba(56, 189, 248, 0.5), inset 0 0 15px rgba(56, 189, 248, 0.5);
+            }
+            100% {
+                border-color: #06b6d4;
+                box-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 25px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.3);
+            }
         }
 
-        .led-search-wrapper {
+        .led-search-box-animated {
             position: relative;
-            border-radius: 1.25rem;
-            padding: 2.5px;
-            background: linear-gradient(90deg, #06b6d4, #38bdf8, #818cf8, #0284c7, #06b6d4);
-            background-size: 300% 300%;
-            animation: searchNeonFlow 3s linear infinite;
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
-        }
-
-        .led-search-inner {
             background: #0b0f19;
-            border-radius: 1.2rem;
+            border: 2.5px solid #06b6d4;
+            border-radius: 1.25rem;
+            animation: searchGlowAnim 1.8s infinite ease-in-out;
         }
 
         .led-store-box {
             position: relative;
             background: #0b0f19;
             border: 2px solid #06b6d4;
-            animation: neonRotateGlow 4s infinite ease-in-out;
+            animation: neonRotateGlow 3s infinite ease-in-out;
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -173,12 +175,10 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بإضاءة نيون متحركة سريعة وانسيابية -->
-        <div class="led-search-wrapper">
-            <div class="led-search-inner px-4 py-3 flex items-center gap-3">
-                <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
-                <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
-            </div>
+        <!-- شريط البحث بإضاءة نيون متحركة وسريعة -->
+        <div class="led-search-box-animated px-4 py-3 flex items-center gap-3 shadow-2xl">
+            <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
+            <input type="text" id="search-input" oninput="handleSearchInput()" placeholder="ابحث عن لعبة، صنف، مطور..." class="bg-transparent w-full text-sm text-white placeholder-slate-400 focus:outline-none">
         </div>
 
         <!-- البنر الرئيسي -->
@@ -408,9 +408,9 @@
         </button>
     </div>
 
-    <!-- نافذة السلة الفخمة جداً (بتصميم أسطوري يظهر الألعاب بالداخل) -->
+    <!-- نافذة السلة الفخمة والمصممة خصيصاً لعرض الألعاب بالداخل -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-[#0b0f19] border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.35)]">
+        <div class="bg-[#0b0f19] border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.4)]">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-sm">
