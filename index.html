@@ -14,8 +14,8 @@
             color: #ffffff;
         }
 
-        /* تأثير أفعى النيون المتحركة والدورانية على شريط البحث */
-        @keyframes snakeNeonSpin {
+        /* تحسين إضاءة أفعى النيون لتكون ناعمة ومتصلة وأطول بدون تقطيع */
+        @keyframes smoothSnakeSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
@@ -24,20 +24,20 @@
             position: relative;
             border-radius: 1.25rem;
             overflow: hidden;
-            padding: 2.5px; /* سمك خط النيون المتحرك */
+            padding: 2.5px;
             background: #0b0f19;
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.25);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
         }
 
         .snake-search-container::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent 0%, transparent 70%, #06b6d4 85%, #38bdf8 95%, #ffffff 100%);
-            animation: snakeNeonSpin 3s linear infinite;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: conic-gradient(from 0deg, transparent 50%, rgba(6, 182, 212, 0.2) 70%, #06b6d4 85%, #38bdf8 95%, #ffffff 100%);
+            animation: smoothSnakeSpin 4s linear infinite;
         }
 
         .snake-search-inner {
@@ -65,6 +65,35 @@
         .cyan-gradient-btn {
             background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
             color: #05070b;
+        }
+
+        /* أنيميشن طيران العنصر للسلة */
+        @keyframes flyToCart {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(var(--dx), var(--dy)) scale(0.5) rotate(15deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) scale(0.1);
+            }
+        }
+
+        .flying-item {
+            position: fixed;
+            z-index: 99999;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #06b6d4;
+            box-shadow: 0 0 20px #06b6d4;
+            pointer-events: none;
+            animation: flyToCart 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .spinner-overlay {
@@ -126,7 +155,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition shadow-lg">
+                <button id="cart-btn-target" onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition shadow-lg">
                     <i class="fa-solid fa-cart-shopping text-cyan-400"></i>
                     <span class="text-xs font-bold">السلة</span>
                     <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
@@ -138,7 +167,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث بإضاءة أفعى النيون المتحركة والدورانية -->
+        <!-- شريط البحث بإضاءة أفعى النيون الناعمة والمتصلة -->
         <div class="snake-search-container shadow-2xl">
             <div class="snake-search-inner px-4 py-3 flex items-center gap-3">
                 <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
@@ -519,6 +548,37 @@
             }, 2500);
         }
 
+        // دالة طيران العنصر إلى السلة
+        window.triggerFlyToCart = function(event, imgUrl) {
+            const cartBtn = document.getElementById('cart-btn-target');
+            if (!cartBtn) return;
+
+            const cartRect = cartBtn.getBoundingClientRect();
+            const startRect = event.target.getBoundingClientRect();
+
+            const flyer = document.createElement('img');
+            flyer.src = imgUrl || 'https://via.placeholder.com/80';
+            flyer.className = 'flying-item';
+            
+            flyer.style.left = `${startRect.left + (startRect.width / 2) - 25}px`;
+            flyer.style.top = `${startRect.top + (startRect.height / 2) - 25}px`;
+
+            const dx = (cartRect.left + cartRect.width / 2) - (startRect.left + startRect.width / 2);
+            const dy = (cartRect.top + cartRect.height / 2) - (startRect.top + startRect.height / 2);
+
+            flyer.style.setProperty('--dx', `${dx}px`);
+            flyer.style.setProperty('--dy', `${dy}px`);
+
+            document.body.appendChild(flyer);
+
+            setTimeout(() => {
+                flyer.remove();
+                // اهتزاز خفيف لأيقونة السلة عند الوصول
+                cartBtn.classList.add('scale-125', 'border-cyan-400');
+                setTimeout(() => cartBtn.classList.remove('scale-125'), 250);
+            }, 800);
+        };
+
         function renderAdminCheckboxes() {
             const container = document.getElementById('admin-categories-checkboxes');
             if (!container) return;
@@ -537,14 +597,21 @@
         }
         updateCartBadge();
 
-        window.addToCart = function(gameId) {
+        window.addToCart = function(gameId, event) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
+            
+            const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || '';
+
+            if (event) {
+                triggerFlyToCart(event, coverImg);
+            }
+
             if (!cart.some(item => item.id === gameId)) {
                 cart.push({ 
                     id: game.id, 
                     title: game.title, 
-                    cover: game.coverImage || (game.images && game.images[0]) || game.image || '',
+                    cover: coverImg,
                     platform: game.platform || 'PS4',
                     size: game.size || ''
                 });
@@ -570,11 +637,8 @@
                 renderCartItems();
                 pushModalState('cart');
             } else {
-                if (window.location.hash === '#cart') {
-                    history.back();
-                } else {
-                    modal.classList.add('hidden');
-                }
+                if (window.location.hash === '#cart') { history.back(); }
+                else { modal.classList.add('hidden'); }
             }
         };
 
@@ -757,8 +821,8 @@
                 </div>
             `).join('');
 
-            document.getElementById('modal-add-cart').onclick = () => {
-                addToCart(game.id);
+            document.getElementById('modal-add-cart').onclick = (e) => {
+                addToCart(game.id, e);
                 closeDetailsModal();
             };
 
@@ -853,8 +917,8 @@
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
                             
-                            <button onclick="event.stopPropagation(); addToCart('${game.id}')" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition z-10">
-                                <i class="fa-solid fa-plus text-xs"></i>
+                            <button onclick="addToCart('${game.id}', event)" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition z-10">
+                                <i class="fa-solid fa-plus text-xs pointer-events-none"></i>
                             </button>
                         </div>
 
@@ -948,7 +1012,7 @@
             } catch (error) {
                 console.error("خطأ في جلب الشعار:", error);
             }
-        };
+        }
 
         window.uploadAndSaveLogo = function() {
             const fileInput = document.getElementById('logo-file-input');
