@@ -14,72 +14,126 @@
             color: #ffffff;
         }
 
-        /* أنيميشن النوع الأول: النبض والانطلاق من المنتصف للأطراف بألوان متعددة */
-        @keyframes centerSplitPulse {
+        /* حزمة ضوء ليد رفيعة تلتف على الحافة الخارجية من المنتصف لليسار ثم من المنتصف لليمين */
+        @keyframes ledEdgeSweep {
             0% {
-                background-position: 50% 50%;
-                box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+                transform: rotate(0deg);
+                opacity: 0;
             }
-            30% {
-                background-position: 100% 50%;
-                box-shadow: 0 0 30px rgba(168, 85, 247, 0.7), 0 0 15px rgba(56, 189, 248, 0.5);
+            10% {
+                opacity: 1;
             }
-            70% {
-                background-position: 0% 50%;
-                box-shadow: 0 0 30px rgba(236, 72, 153, 0.7), 0 0 15px rgba(6, 182, 212, 0.5);
+            45% {
+                transform: rotate(170deg);
+                opacity: 1;
+            }
+            50% {
+                transform: rotate(180deg);
+                opacity: 0;
+            }
+            55% {
+                transform: rotate(0deg);
+                opacity: 0;
+            }
+            65% {
+                opacity: 1;
+            }
+            95% {
+                transform: rotate(-170deg);
+                opacity: 1;
             }
             100% {
-                background-position: 50% 50%;
-                box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+                transform: rotate(-180deg);
+                opacity: 0;
             }
         }
 
-        .center-split-neon-wrap {
+        .search-led-container {
             position: relative;
-            border-radius: 1.25rem;
+            border-radius: 9999px;
+            padding: 2px;
+            background: #141b2d;
             overflow: hidden;
-            padding: 2.5px;
-            background: #0b0f19;
         }
 
-        .center-split-neon-wrap::before {
+        .search-led-container::before {
             content: '';
             position: absolute;
-            top: -60%;
-            left: -60%;
-            width: 220%;
-            height: 220%;
-            background: radial-gradient(circle, #38bdf8 0%, #06b6d4 30%, #a855f7 60%, #ec4899 90%, transparent 100%);
-            background-size: 200% 200%;
-            animation: centerSplitPulse 4s ease-in-out infinite;
+            top: -150%;
+            left: -25%;
+            width: 150%;
+            height: 400%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg,
+                #06b6d4 15deg,
+                #38bdf8 30deg,
+                #a855f7 45deg,
+                #ec4899 55deg,
+                transparent 70deg,
+                transparent 360deg
+            );
+            animation: ledEdgeSweep 5.5s ease-in-out infinite;
         }
 
-        .center-split-neon-inner {
+        .search-led-inner {
             position: relative;
-            background: #0b0f19;
-            border-radius: 1.15rem;
+            background: #090d16;
+            border-radius: 9999px;
             z-index: 1;
         }
 
+        /* أنماط حركة متنوعة لظهور الأصناف بجانب "ابحث عن" */
+        @keyframes animStylePulse {
+            0% { opacity: 0; transform: scale(0.88); }
+            15% { opacity: 1; transform: scale(1.03); }
+            25% { transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.92); }
+        }
+
+        @keyframes animStyleSlideUp {
+            0% { opacity: 0; transform: translateY(10px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @keyframes animStyleGlowSlide {
+            0% { opacity: 0; transform: translateX(-12px); filter: blur(3px); }
+            20% { opacity: 1; transform: translateX(0); filter: blur(0); }
+            80% { opacity: 1; transform: translateX(0); filter: blur(0); }
+            100% { opacity: 0; transform: translateX(12px); filter: blur(3px); }
+        }
+
+        .search-anim-pulse { animation: animStylePulse 3.2s ease-in-out forwards; }
+        .search-anim-slide { animation: animStyleSlideUp 3.2s ease-in-out forwards; }
+        .search-anim-glow { animation: animStyleGlowSlide 3.2s ease-in-out forwards; }
+
         /* نيون الفوتر السفلي */
+        @keyframes footerGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
         .footer-neon-wrap {
             position: relative;
             border-radius: 1.75rem;
             overflow: hidden;
-            padding: 3px;
+            padding: 2.5px;
             background: #0b0f19;
         }
 
         .footer-neon-wrap::before {
             content: '';
             position: absolute;
-            top: -60%;
-            left: -60%;
-            width: 220%;
-            height: 220%;
-            background: radial-gradient(circle, #38bdf8 0%, #06b6d4 30%, #a855f7 60%, #ec4899 90%, transparent 100%);
-            background-size: 200% 200%;
-            animation: centerSplitPulse 5s ease-in-out infinite;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(120deg, #06b6d4, #38bdf8, #a855f7, #06b6d4);
+            background-size: 300% 300%;
+            animation: footerGlow 5s ease infinite;
         }
 
         .footer-neon-inner {
@@ -87,18 +141,6 @@
             background: #070a12;
             border-radius: 1.6rem;
             z-index: 1;
-        }
-
-        /* أنيميشن نبض دقيق ومرتب لظهور الأصناف في البحث */
-        @keyframes searchPulseAnim {
-            0% { opacity: 0; transform: scale(0.92) translateY(4px); filter: blur(4px); }
-            20% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-            80% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-            100% { opacity: 0; transform: scale(0.92) translateY(-4px); filter: blur(4px); }
-        }
-
-        .animated-search-item {
-            animation: searchPulseAnim 3.8s ease-in-out infinite;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -202,19 +244,19 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث (النوع الأول: نبض من المنتصف للأطراف بألوان متعددة) -->
-        <div class="center-split-neon-wrap shadow-2xl">
-            <div class="center-split-neon-inner px-4 py-3 flex items-center gap-3 relative">
-                <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
-                <div class="relative w-full flex items-center">
-                    <span class="text-sm font-bold text-cyan-300 select-none pointer-events-none">ابحث عن: &nbsp;</span>
-                    <div id="animated-search-label" class="absolute right-[68px] sm:right-[75px] text-sm font-bold text-white pointer-events-none animated-search-item"></div>
-                    <input type="text" id="search-input" oninput="handleSearchInput()" class="bg-transparent w-full text-sm text-white focus:outline-none z-10">
+        <!-- شريط البحث الدائري بحزمة الليد النيون على الإطار الخارجي فقط -->
+        <div class="search-led-container shadow-lg">
+            <div class="search-led-inner px-5 py-3 flex items-center gap-3 relative">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 text-base"></i>
+                <div id="search-placeholder-wrapper" class="flex items-center gap-1.5 pointer-events-none select-none overflow-hidden">
+                    <span class="text-sm font-semibold text-slate-400 whitespace-nowrap">ابحث عن</span>
+                    <span id="animated-search-label" class="text-sm font-bold text-cyan-400 whitespace-nowrap search-anim-pulse">ألعاب PS4 🎮</span>
                 </div>
+                <input type="text" id="search-input" oninput="handleSearchInput()" onfocus="togglePlaceholderVisibility()" onblur="togglePlaceholderVisibility()" class="bg-transparent absolute inset-0 w-full h-full pr-12 pl-5 text-sm text-white focus:outline-none z-10">
             </div>
         </div>
 
-        <!-- البنر الرئيسي (الحجم السابق الأرتب) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
@@ -344,7 +386,7 @@
         </div>
     </main>
 
-    <!-- الفوتر مع إطار نيون متصل -->
+    <!-- الفوتر -->
     <footer class="bg-[#05070b] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl footer-neon-wrap shadow-2xl">
             <div class="footer-neon-inner p-6 text-center space-y-4">
@@ -448,7 +490,7 @@
         </button>
     </div>
 
-    <!-- نافذة السلة الفخمة والمحدثة كلياً -->
+    <!-- نافذة السلة -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.4)]">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -491,7 +533,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // قائمة الأصناف الدقيقة للمتجر
         const ALL_CATEGORIES = [
             "الكل",
             "ألعاب الأكشن",
@@ -529,26 +570,36 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // عبارات البحث المتحركة المحدثة بقرب الكلمة مع علم العراق
-        const searchPlaceholders = [
-            "لعبة، صنف، مطور...",
+        // قائمة البحث المتحركة: تبدأ بـ PS4 و PS5 والعربية، ثم تتنقل بين أصناف المتجر بدون عبارة مطور
+        const searchItemsList = [
             "ألعاب PS4 🎮",
             "ألعاب PS5 ⚡",
             "ألعاب تدعم اللغة العربية 🇮🇶",
-            "ألعاب الأكشن 🔥",
-            "ألعاب المغامرات 🌍",
-            "ألعاب العالم المفتوح 🏙️",
-            "ألعاب الرعب والبقاء 🧟"
+            ...ALL_CATEGORIES.filter(c => c !== "الكل")
         ];
-        let placeholderIdx = 0;
+        const animClasses = ["search-anim-pulse", "search-anim-slide", "search-anim-glow"];
+        let searchItemIdx = 0;
+
         setInterval(() => {
             const labelElem = document.getElementById('animated-search-label');
             const searchInput = document.getElementById('search-input');
-            if (labelElem && searchInput && document.activeElement !== searchInput && !searchInput.value) {
-                placeholderIdx = (placeholderIdx + 1) % searchPlaceholders.length;
-                labelElem.innerText = searchPlaceholders[placeholderIdx];
+            if (labelElem && searchInput && !searchInput.value) {
+                searchItemIdx = (searchItemIdx + 1) % searchItemsList.length;
+                const randomAnim = animClasses[searchItemIdx % animClasses.length];
+                labelElem.className = "text-sm font-bold text-cyan-400 whitespace-nowrap";
+                void labelElem.offsetWidth; // إعادة تفعيل الأنيميشن بسلاسة
+                labelElem.innerText = searchItemsList[searchItemIdx];
+                labelElem.classList.add(randomAnim);
             }
-        }, 3500);
+        }, 3200);
+
+        window.togglePlaceholderVisibility = function() {
+            const searchInput = document.getElementById('search-input');
+            const wrapper = document.getElementById('search-placeholder-wrapper');
+            if (wrapper && searchInput) {
+                wrapper.style.display = (searchInput.value.length > 0 || document.activeElement === searchInput) ? 'none' : 'flex';
+            }
+        };
 
         window.toggleNotifications = function() {
             const bellBtn = document.getElementById('notif-bell-btn');
@@ -572,7 +623,7 @@
             if (!lightbox.classList.contains('hidden')) { lightbox.classList.add('hidden'); return; }
             if (!details.classList.contains('hidden')) { details.classList.add('hidden'); document.getElementById('modal-yt-iframe').src = ''; return; }
             if (!cartModal.classList.contains('hidden')) { cartModal.classList.add('hidden'); return; }
-            if (searchInput && searchInput.value.trim() !== '') { searchInput.value = ''; filterAndRender(); return; }
+            if (searchInput && searchInput.value.trim() !== '') { searchInput.value = ''; togglePlaceholderVisibility(); filterAndRender(); return; }
         });
 
         function pushModalState(modalName) {
@@ -797,11 +848,8 @@
 
         window.handleSearchInput = function() {
             currentPage = 1;
+            togglePlaceholderVisibility();
             const searchVal = document.getElementById('search-input').value.trim();
-            const labelElem = document.getElementById('animated-search-label');
-            if (labelElem) {
-                labelElem.style.display = searchVal.length > 0 ? 'none' : 'block';
-            }
             if (searchVal.length > 0) {
                 history.pushState({ search: searchVal }, "", "#search");
             }
@@ -881,7 +929,6 @@
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
 
-            // احتساب المشاهدة مرة واحدة فقط لكل زبون بناءً على جهازه/متصفحه
             if (!viewedGamesSession.includes(gameId)) {
                 viewedGamesSession.push(gameId);
                 localStorage.setItem('madina_viewed_games', JSON.stringify(viewedGamesSession));
@@ -1194,7 +1241,7 @@
                     gameData.createdAt = new Date();
                     gameData.views = 0;
                     await addDoc(collection(db, "games"), gameData);
-                    showToast("🚀 تم نشر اللعبة وتم إرسال إشعار للزبائن بتوفر لعبة جديدة!");
+                    showToast("🚀 تم نشر اللعبة بنجاح!");
                     document.getElementById('game-title').value = "";
                     document.getElementById('game-size').value = "";
                     document.getElementById('game-desc').value = "";
@@ -1204,7 +1251,6 @@
                     document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
                 }
                 
-                // إغلاق لوحة الإدارة تلقائياً والصعود إلى أعلى الصفحة
                 document.getElementById('admin-panel').classList.add('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
