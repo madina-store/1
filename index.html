@@ -16,36 +16,14 @@
 
         /* حزمة ضوء ليد رفيعة تلتف على الحافة الخارجية من المنتصف لليسار ثم من المنتصف لليمين */
         @keyframes ledEdgeSweep {
-            0% {
-                transform: rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            45% {
-                transform: rotate(170deg);
-                opacity: 1;
-            }
-            50% {
-                transform: rotate(180deg);
-                opacity: 0;
-            }
-            55% {
-                transform: rotate(0deg);
-                opacity: 0;
-            }
-            65% {
-                opacity: 1;
-            }
-            95% {
-                transform: rotate(-170deg);
-                opacity: 1;
-            }
-            100% {
-                transform: rotate(-180deg);
-                opacity: 0;
-            }
+            0% { transform: rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            45% { transform: rotate(170deg); opacity: 1; }
+            50% { transform: rotate(180deg); opacity: 0; }
+            55% { transform: rotate(0deg); opacity: 0; }
+            65% { opacity: 1; }
+            95% { transform: rotate(-170deg); opacity: 1; }
+            100% { transform: rotate(-180deg); opacity: 0; }
         }
 
         .search-led-container {
@@ -150,7 +128,6 @@
             color: #05070b;
         }
 
-        /* أنيميشن طيران العنصر للسلة */
         @keyframes flyToCart {
             0% { opacity: 1; transform: translate(0, 0) scale(1); }
             50% { opacity: 0.85; transform: translate(var(--dx), var(--dy)) scale(0.45) rotate(20deg); }
@@ -200,7 +177,7 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري التحقق من أمان الاتصال...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال بالسيرفر الآمن...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-lock text-[10px]"></i> اتصال مشفر ومؤمن بالكامل - متجر المدينة
         </p>
@@ -244,7 +221,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث الدائري بحزمة الليد النيون على الإطار الخارجي فقط -->
+        <!-- شريط البحث الدائري بحزمة الليد النيون -->
         <div class="search-led-container shadow-lg">
             <div class="search-led-inner px-5 py-3 flex items-center gap-3 relative">
                 <i class="fa-solid fa-magnifying-glass text-slate-400 text-base"></i>
@@ -440,7 +417,8 @@
             <div class="space-y-2 pt-1">
                 <div class="flex justify-between items-start">
                     <h3 id="modal-title" class="text-xl font-black text-white"></h3>
-                    <span id="modal-views-badge" class="bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <!-- عداد المشاهدات في النافذة يظهر فقط لحساب الإدارة المشرف -->
+                    <span id="modal-views-badge" class="hidden bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full items-center gap-1.5">
                         <i class="fa-solid fa-eye text-xs"></i> <span id="modal-views-count">0</span> مشاهدة
                     </span>
                 </div>
@@ -516,7 +494,7 @@
     <!-- سكربت فايربيس والمنطق البرمجي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -570,7 +548,30 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // قائمة البحث المتحركة: تبدأ بـ PS4 و PS5 والعربية، ثم تتنقل بين أصناف المتجر بدون عبارة مطور
+        let isNotificationsEnabled = localStorage.getItem('madina_notif_enabled') === 'true';
+        window.addEventListener('DOMContentLoaded', () => {
+            const bellBtn = document.getElementById('notif-bell-btn');
+            if (bellBtn && isNotificationsEnabled) {
+                bellBtn.classList.remove('text-cyan-400');
+                bellBtn.classList.add('text-emerald-400', 'border-emerald-400');
+            }
+        });
+
+        window.toggleNotifications = function() {
+            const bellBtn = document.getElementById('notif-bell-btn');
+            bellBtn.classList.toggle('text-cyan-400');
+            bellBtn.classList.toggle('text-emerald-400');
+            bellBtn.classList.toggle('border-emerald-400');
+            isNotificationsEnabled = bellBtn.classList.contains('text-emerald-400');
+            localStorage.setItem('madina_notif_enabled', isNotificationsEnabled);
+
+            if (isNotificationsEnabled) {
+                showToast("🔔 تم تفعيل إشعارات متجر المدينة بنجاح!");
+            } else {
+                showToast("🔕 تم إيقاف الإشعارات المؤقتة.");
+            }
+        };
+
         const searchItemsList = [
             "ألعاب PS4 🎮",
             "ألعاب PS5 ⚡",
@@ -587,7 +588,7 @@
                 searchItemIdx = (searchItemIdx + 1) % searchItemsList.length;
                 const randomAnim = animClasses[searchItemIdx % animClasses.length];
                 labelElem.className = "text-sm font-bold text-cyan-400 whitespace-nowrap";
-                void labelElem.offsetWidth; // إعادة تفعيل الأنيميشن بسلاسة
+                void labelElem.offsetWidth;
                 labelElem.innerText = searchItemsList[searchItemIdx];
                 labelElem.classList.add(randomAnim);
             }
@@ -598,19 +599,6 @@
             const wrapper = document.getElementById('search-placeholder-wrapper');
             if (wrapper && searchInput) {
                 wrapper.style.display = (searchInput.value.length > 0 || document.activeElement === searchInput) ? 'none' : 'flex';
-            }
-        };
-
-        window.toggleNotifications = function() {
-            const bellBtn = document.getElementById('notif-bell-btn');
-            bellBtn.classList.toggle('text-cyan-400');
-            bellBtn.classList.toggle('text-emerald-400');
-            bellBtn.classList.toggle('border-emerald-400');
-            const isSubscribed = bellBtn.classList.contains('text-emerald-400');
-            if (isSubscribed) {
-                showToast("🔔 تم تفعيل إشعارات متجر المدينة بنجاح!");
-            } else {
-                showToast("🔕 تم إيقاف الإشعارات المؤقتة.");
             }
         };
 
@@ -643,9 +631,9 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-                title.innerText = "تم التحقق من الأمان بنجاح ✓";
+                title.innerText = "تم الاتصال بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-shield-check text-emerald-400"></i> تم تأمين الجلسة بنجاح، مرحباً بك';
+                subtitle.innerHTML = '<i class="fa-solid fa-shield-check text-emerald-400"></i> متجر المدينة جاهز للعمل';
             }
 
             setTimeout(() => {
@@ -653,7 +641,7 @@
                     spinner.style.opacity = '0';
                     setTimeout(() => spinner.style.display = 'none', 450);
                 }
-            }, 650);
+            }, 500);
         }
 
         function playSuccessSound() {
@@ -680,7 +668,7 @@
             toast.innerHTML = `
                 <div class="flex items-center gap-2.5">
                     <div class="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300">
-                        <i class="fa-solid fa-check text-xs"></i>
+                        <i class="fa-solid fa-bell text-xs animate-bounce"></i>
                     </div>
                     <span>${message}</span>
                 </div>
@@ -692,7 +680,7 @@
                 toast.style.transform = 'translateY(20px)';
                 toast.style.transition = 'all 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
-            }, 2500);
+            }, 3000);
         }
 
         window.triggerFlyToCart = function(event, imgUrl) {
@@ -929,6 +917,7 @@
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
 
+            // احتساب المشاهدة مرة واحدة فقط لكل جهاز
             if (!viewedGamesSession.includes(gameId)) {
                 viewedGamesSession.push(gameId);
                 localStorage.setItem('madina_viewed_games', JSON.stringify(viewedGamesSession));
@@ -944,6 +933,16 @@
             document.getElementById('modal-title').innerText = game.title;
             document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
             document.getElementById('modal-views-count').innerText = game.views || 1;
+
+            // إظهار عداد المشاهدات (العين) في النافذة حصرياً إذا كان المدير مسجلاً دخوله
+            const viewsBadge = document.getElementById('modal-views-badge');
+            if (isAdminLoggedIn) {
+                viewsBadge.classList.remove('hidden');
+                viewsBadge.classList.add('flex');
+            } else {
+                viewsBadge.classList.add('hidden');
+                viewsBadge.classList.remove('flex');
+            }
 
             const videoContainer = document.getElementById('modal-video-container');
             const ytIframe = document.getElementById('modal-yt-iframe');
@@ -980,9 +979,9 @@
                 </div>
             `).join('');
 
+            // يبقى الزبون في نفس نافذة تفاصيل اللعبة عند الضغط على أضف للسلة
             document.getElementById('modal-add-cart').onclick = (e) => {
                 addToCart(game.id, e);
-                closeDetailsModal();
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
@@ -1040,12 +1039,8 @@
                 grid.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_15px_rgba(6,182,212,0.2)] text-center space-y-3">
                         <div class="text-cyan-400 text-2xl animate-pulse">🛡️</div>
-                        <h3 class="text-cyan-300 font-bold text-sm">جاري مزامنة البيانات أو الاتصال ضعيف</h3>
-                        <p class="text-slate-400 text-xs leading-relaxed max-w-sm">إذا لم تظهر الألعاب بسبب ضعف الشبكة، يرجى إعادة تنشيط الاتصال بالسيرفر الآمن.</p>
-                        <button onclick="window.location.reload();" class="px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-xs font-bold transition flex items-center gap-2 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
-                            <i class="fa-solid fa-rotate-right"></i>
-                            <span>إعادة تنشيط الاتصال</span>
-                        </button>
+                        <h3 class="text-cyan-300 font-bold text-sm">لا توجد ألعاب مطابقة للبحث</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed max-w-sm">جرب البحث باسم لعبة أخرى أو اختر تصنيفاً مختلفاً.</p>
                     </div>
                 `;
                 paginationContainer.innerHTML = '';
@@ -1071,6 +1066,13 @@
                     else { arabicBadgeStyle = "bg-rose-500/10 text-rose-300/80 border border-rose-500/20 px-2 py-0.5 rounded-md"; }
                 }
 
+                // عرض شارة العين (المشاهدات) على الكارت حصرياً للمدير المشرف فقط
+                const adminViewsBadgeHtml = isAdminLoggedIn ? `
+                    <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md border border-slate-800 text-[10px] text-cyan-300 px-2.5 py-0.5 rounded-lg flex items-center gap-1 shadow">
+                        <i class="fa-solid fa-eye text-[9px]"></i> <span>${game.views || 0}</span>
+                    </div>
+                ` : '';
+
                 return `
                     <div class="bg-[#0b0f19] border border-slate-800/90 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
@@ -1080,9 +1082,7 @@
                                 <i class="fa-solid fa-plus text-xs pointer-events-none"></i>
                             </button>
 
-                            <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md border border-slate-800 text-[10px] text-cyan-300 px-2 py-0.5 rounded-lg flex items-center gap-1">
-                                <i class="fa-solid fa-eye text-[9px]"></i> <span>${game.views || 0}</span>
-                            </div>
+                            ${adminViewsBadgeHtml}
                         </div>
 
                         <div class="p-3 space-y-2 flex-grow flex flex-col justify-between">
@@ -1103,7 +1103,7 @@
                                         <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل اللعبة">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
-                                        <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف اللعبة">
+                                        <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -1133,25 +1133,41 @@
             }
         };
 
-        window.loadGames = async function() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "games"));
-                allGames = [];
-                querySnapshot.forEach((docSnap) => {
-                    allGames.push({ id: docSnap.id, ...docSnap.data() });
+        function initRealtimeGamesListener() {
+            const gamesRef = collection(db, "games");
+            let isFirstLoad = true;
+
+            onSnapshot(gamesRef, (snapshot) => {
+                const newGamesList = [];
+                snapshot.forEach((docSnap) => {
+                    newGamesList.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                allGames.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                newGamesList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                if (!isFirstLoad) {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const addedGame = change.doc.data();
+                            if (isNotificationsEnabled) {
+                                showToast(`🎮 تمت إضافة لعبة جديدة: "${addedGame.title}"`);
+                                playSuccessSound();
+                            }
+                        }
+                    });
+                }
+
+                allGames = newGamesList;
+                isFirstLoad = false;
                 renderCategoriesBar();
                 renderHero();
                 resetHeroTimer();
                 filterAndRender();
-            } catch (error) {
-                console.error("خطأ في جلب الألعاب:", error);
-                filterAndRender();
-            } finally {
                 completeSecurityCheck();
-            }
-        };
+            }, (error) => {
+                console.error("خطأ في المزامنة الحية:", error);
+                completeSecurityCheck();
+            });
+        }
 
         async function loadStoreSettings() {
             try {
@@ -1199,6 +1215,7 @@
         };
 
         window.addNewGame = async function() {
+            const saveBtn = document.getElementById('save-game-btn');
             const editingId = document.getElementById('editing-game-id').value;
             const title = document.getElementById('game-title').value.trim();
             const platform = document.getElementById('game-platform').value;
@@ -1218,6 +1235,9 @@
 
             if (!title) { showToast("يرجى كتابة اسم اللعبة!"); return; }
             if (!coverImage) { showToast("يرجى إدخال رابط غلاف اللعبة الرئيسي!"); return; }
+
+            saveBtn.disabled = true;
+            saveBtn.innerText = "جاري النشر الفوري للسحاب... ⏳";
 
             const gameData = {
                 title,
@@ -1241,7 +1261,7 @@
                     gameData.createdAt = new Date();
                     gameData.views = 0;
                     await addDoc(collection(db, "games"), gameData);
-                    showToast("🚀 تم نشر اللعبة بنجاح!");
+                    showToast("🚀 تم نشر اللعبة بنجاح ووصل الإشعار للجميع!");
                     document.getElementById('game-title').value = "";
                     document.getElementById('game-size').value = "";
                     document.getElementById('game-desc').value = "";
@@ -1253,10 +1273,12 @@
                 
                 document.getElementById('admin-panel').classList.add('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                loadGames();
             } catch (error) {
-                showToast("خطأ أثناء الحفظ");
+                console.error("خطأ النشر:", error);
+                showToast("حدث خطأ في الاتصال، حاول مرة أخرى.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "نشر اللعبة في المتجر 🚀";
             }
         };
 
@@ -1308,7 +1330,6 @@
                 try {
                     await deleteDoc(doc(db, "games", gameId));
                     showToast("تم حذف اللعبة بنجاح 🗑️");
-                    loadGames();
                 } catch (error) {
                     showToast("خطأ أثناء الحذف");
                 }
@@ -1364,7 +1385,7 @@
         });
 
         loadStoreSettings();
-        loadGames();
+        initRealtimeGamesListener();
     </script>
 </body>
 </html>
