@@ -183,7 +183,7 @@
         </p>
     </div>
 
-    <!-- الهيدر -->
+    <!-- الهيدر النظيف والمستقر -->
     <header class="bg-[#070a12]/95 backdrop-blur-md border-b border-slate-900 px-4 py-3 sticky top-0 z-40">
         <div class="container mx-auto max-w-4xl flex justify-between items-center">
             <div id="secret-admin-trigger" class="flex items-center gap-3 cursor-pointer select-none">
@@ -196,9 +196,8 @@
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 leading-tight drop-shadow-[0_0_10px_rgba(6,182,212,0.4)]">متجر المدينة</h1>
-                    <!-- التحية الذكية التلقائية -->
-                    <p id="dynamic-greeting-text" class="text-[10px] text-cyan-400 font-bold tracking-wider flex items-center gap-1">
-                        <i class="fa-solid fa-bolt text-[9px] animate-pulse"></i> <span>جاري التحميل...</span>
+                    <p class="text-[10px] text-cyan-400 font-bold tracking-wider flex items-center gap-1">
+                        <i class="fa-solid fa-bolt text-[9px] text-cyan-400 animate-pulse"></i> <span>البوابة الرقمية للألعاب</span>
                     </p>
                 </div>
             </div>
@@ -253,11 +252,24 @@
             </div>
         </section>
 
-        <!-- أزرار المنصات -->
-        <section class="grid grid-cols-3 gap-2.5">
-            <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition">الكل</button>
-            <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS4</button>
-            <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
+        <!-- أزرار المنصات وقائمة الترتيب الاحترافية -->
+        <section class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="grid grid-cols-3 gap-2.5 w-full sm:w-auto">
+                <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition">الكل</button>
+                <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition">PS4</button>
+                <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition">PS5</button>
+            </div>
+
+            <!-- قائمة الترتيب المضافة حديثاً -->
+            <div class="w-full sm:w-auto flex items-center gap-2 bg-[#0b0f19] border border-slate-800 rounded-xl px-3 py-2 shadow">
+                <i class="fa-solid fa-arrow-down-wide-short text-cyan-400 text-xs"></i>
+                <span class="text-xs text-slate-400 font-bold whitespace-nowrap">ترتيب حسب:</span>
+                <select id="sort-select" onchange="handleSortChange()" class="bg-transparent text-xs text-cyan-300 font-bold focus:outline-none cursor-pointer w-full">
+                    <option value="newest" class="bg-[#0b0f19] text-white">الأحدث إضافتاً</option>
+                    <option value="popular" class="bg-[#0b0f19] text-white">الأكثر مشاهدة 🔥</option>
+                    <option value="alpha" class="bg-[#0b0f19] text-white">الأبجدية (أ-ي)</option>
+                </select>
+            </div>
         </section>
 
         <!-- شريط الأقسام -->
@@ -357,6 +369,11 @@
             </div>
         </div>
     </main>
+
+    <!-- زر العودة السريعة للأعلى (الميزة الثالثة المضافة) -->
+    <button id="scroll-top-btn" onclick="scrollToTop()" class="hidden fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-[#0b0f19] border border-cyan-400 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)] flex items-center justify-center text-sm transition hover:bg-cyan-500 hover:text-slate-950 hover:scale-110">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
     <!-- الفوتر -->
     <footer class="bg-[#05070b] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
@@ -528,6 +545,7 @@
         let allGames = [];
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
+        let currentSort = "newest";
         let currentPage = 1;
         const gamesPerPage = 8;
 
@@ -540,20 +558,21 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // دالة التحية التلقائية الذكية حسب الوقت (تعمل فوراً بدقة عالية)
-        function updateDynamicGreeting() {
-            const greetingElem = document.getElementById('dynamic-greeting-text');
-            if (!greetingElem) return;
-            const hour = new Date().getHours();
-            if (hour >= 4 && hour < 12) {
-                greetingElem.innerHTML = '<i class="fa-solid fa-sun text-amber-400"></i> صباح المغامرة والحماس ☀️';
-            } else if (hour >= 12 && hour < 18) {
-                greetingElem.innerHTML = '<i class="fa-solid fa-bolt text-cyan-400"></i> طاقة عالية وألعاب حماسية ⚡';
-            } else {
-                greetingElem.innerHTML = '<i class="fa-solid fa-moon text-indigo-400"></i> مساء الإثارة والألعاب 🌙';
+        // مبيّت زر الصعود للأعلى
+        window.addEventListener('scroll', () => {
+            const scrollTopBtn = document.getElementById('scroll-top-btn');
+            if (scrollTopBtn) {
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.remove('hidden');
+                } else {
+                    scrollTopBtn.classList.add('hidden');
+                }
             }
-        }
-        updateDynamicGreeting();
+        });
+
+        window.scrollToTop = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -604,7 +623,6 @@
         }
 
         function completeSecurityCheck() {
-            updateDynamicGreeting(); // تأكيد تحديث التحية عند تحميل المتجر بالكامل
             const spinner = document.getElementById('loading-spinner');
             const ring = document.getElementById('security-ring');
             const iconBox = document.getElementById('security-icon-box');
@@ -740,7 +758,7 @@
                 });
                 localStorage.setItem('madina_cart', JSON.stringify(cart));
                 updateCartBadge();
-                filterAndRender(); // تثبيت التحديد الفخم
+                filterAndRender();
             }
             playSuccessSound();
             showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`);
@@ -831,9 +849,9 @@
             selectedPlatform = plat;
             currentPage = 1;
             document.querySelectorAll('.plat-btn').forEach(btn => {
-                btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition";
+                btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition";
             });
-            document.getElementById(`plat-${plat}`).className = "plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition";
+            document.getElementById(`plat-${plat}`).className = "plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition";
             filterAndRender();
         };
 
@@ -841,6 +859,12 @@
             selectedCategory = cat;
             currentPage = 1;
             renderCategoriesBar();
+            filterAndRender();
+        };
+
+        window.handleSortChange = function() {
+            currentSort = document.getElementById('sort-select').value;
+            currentPage = 1;
             filterAndRender();
         };
 
@@ -1039,13 +1063,22 @@
             const grid = document.getElementById('games-grid');
             const paginationContainer = document.getElementById('pagination-container');
 
-            const filtered = allGames.filter(g => {
+            let filtered = allGames.filter(g => {
                 const cats = g.categories || [g.category].filter(Boolean);
                 const matchSearch = g.title.toLowerCase().includes(search) || cats.some(c => c.toLowerCase().includes(search));
                 const matchPlat = selectedPlatform === "الكل" || (g.platform && g.platform.includes(selectedPlatform));
                 const matchCat = selectedCategory === "الكل" || cats.includes(selectedCategory) || g.category === selectedCategory;
                 return matchSearch && matchPlat && matchCat;
             });
+
+            // تطبيق الترتيب حسب اختيار الزبون
+            if (currentSort === 'newest') {
+                filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            } else if (currentSort === 'popular') {
+                filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+            } else if (currentSort === 'alpha') {
+                filtered.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
+            }
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
@@ -1205,7 +1238,6 @@
                 snapshot.forEach((docSnap) => {
                     newGamesList.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                newGamesList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
                 allGames = newGamesList;
                 renderCategoriesBar();
