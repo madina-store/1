@@ -1,47 +1,18 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متجر المدينة | ذي قار - قضاء النصر</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* الوضع الداكن (افتراضي) */
-        body.dark {
             background-color: #05070b;
             color: #ffffff;
         }
-        body.dark .store-bg-card { background-color: #0b0f19; border-color: #1e293b; }
-        body.dark .store-header { background-color: rgba(7, 10, 18, 0.95); border-color: #0f172a; }
-        body.dark .search-box-inner { background: #090d16; }
-
-        /* الوضع المضيء (النهاري) */
-        body:not(.dark) {
-            background-color: #f1f5f9;
-            color: #0f172a;
-        }
-        body:not(.dark) .store-bg-card { background-color: #ffffff; border-color: #cbd5e1; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
-        body:not(.dark) .store-header { background-color: rgba(255, 255, 255, 0.95); border-color: #e2e8f0; }
-        body:not(.dark) .search-box-inner { background: #f8fafc; }
-        body:not(.dark) .text-white { color: #0f172a !important; }
-        body:not(.dark) .text-slate-400 { color: #64748b !important; }
-        body:not(.dark) .text-slate-300 { color: #334155 !important; }
-        body:not(.dark) .bg-[#05070b] { background-color: #f8fafc !important; }
-        body:not(.dark) .bg-[#0b0f19] { background-color: #ffffff !important; }
-        body:not(.dark) .border-slate-800 { border-color: #e2e8f0 !important; }
-        body:not(.dark) .border-slate-900 { border-color: #f1f5f9 !important; }
 
         @keyframes ledEdgeSweep {
             0% { transform: rotate(0deg); opacity: 0; }
@@ -80,6 +51,13 @@
                 transparent 360deg
             );
             animation: ledEdgeSweep 5.5s ease-in-out infinite;
+        }
+
+        .search-led-inner {
+            position: relative;
+            background: #090d16;
+            border-radius: 9999px;
+            z-index: 1;
         }
 
         @keyframes animStylePulse {
@@ -189,7 +167,7 @@
         .floating-sad-cart { animation: floatCart 3s ease-in-out infinite; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black dark">
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
     <!-- شاشة فحص الأمان الذكية -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
@@ -205,8 +183,8 @@
         </p>
     </div>
 
-    <!-- الهيدر المحدث بذكاء -->
-    <header class="store-header backdrop-blur-md border-b px-4 py-3 sticky top-0 z-40">
+    <!-- الهيدر -->
+    <header class="bg-[#070a12]/95 backdrop-blur-md border-b border-slate-900 px-4 py-3 sticky top-0 z-40">
         <div class="container mx-auto max-w-4xl flex justify-between items-center">
             <div id="secret-admin-trigger" class="flex items-center gap-3 cursor-pointer select-none">
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center overflow-hidden">
@@ -219,19 +197,15 @@
                 <div>
                     <h1 class="text-base sm:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 leading-tight drop-shadow-[0_0_10px_rgba(6,182,212,0.4)]">متجر المدينة</h1>
                     <!-- التحية الذكية التلقائية -->
-                    <p id="dynamic-greeting-text" class="text-[10px] text-cyan-500 dark:text-cyan-400 font-bold tracking-wider flex items-center gap-1">
+                    <p id="dynamic-greeting-text" class="text-[10px] text-cyan-400 font-bold tracking-wider flex items-center gap-1">
                         <i class="fa-solid fa-bolt text-[9px] animate-pulse"></i> <span>جاري التحميل...</span>
                     </p>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
-                <!-- زر الوضع الليلي والنهاري -->
-                <button onclick="toggleDarkMode()" class="store-bg-card border p-2.5 rounded-xl text-cyan-500 dark:text-cyan-400 transition shadow-lg" title="تغيير وضع الإضاءة">
-                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
-                </button>
-                <button id="cart-btn-target" onclick="toggleCartModal()" class="store-bg-card border px-3.5 py-2 rounded-xl flex items-center gap-2 transition shadow-lg">
-                    <i class="fa-solid fa-cart-shopping text-cyan-500 dark:text-cyan-400"></i>
+                <button id="cart-btn-target" onclick="toggleCartModal()" class="relative bg-[#0b0f19] border border-slate-800 hover:border-cyan-400 px-3.5 py-2 rounded-xl flex items-center gap-2 transition shadow-lg">
+                    <i class="fa-solid fa-cart-shopping text-cyan-400"></i>
                     <span class="text-xs font-bold">السلة</span>
                     <span id="cart-badge" class="bg-cyan-400 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
                 </button>
@@ -244,18 +218,18 @@
 
         <!-- شريط البحث الدائري -->
         <div class="search-led-container shadow-lg">
-            <div class="search-box-inner search-led-inner px-5 py-3 flex items-center gap-3 relative">
+            <div class="search-led-inner px-5 py-3 flex items-center gap-3 relative">
                 <i class="fa-solid fa-magnifying-glass text-slate-400 text-base"></i>
                 <div id="search-placeholder-wrapper" class="flex items-center gap-1.5 pointer-events-none select-none overflow-hidden">
                     <span class="text-sm font-semibold text-slate-400 whitespace-nowrap">ابحث عن</span>
-                    <span id="animated-search-label" class="text-sm font-bold text-cyan-500 dark:text-cyan-400 whitespace-nowrap search-anim-pulse">ألعاب PS4 🎮</span>
+                    <span id="animated-search-label" class="text-sm font-bold text-cyan-400 whitespace-nowrap search-anim-pulse">ألعاب PS4 🎮</span>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearchInput()" onfocus="togglePlaceholderVisibility()" onblur="togglePlaceholderVisibility()" class="bg-transparent absolute inset-0 w-full h-full pr-12 pl-5 text-sm focus:outline-none z-10">
+                <input type="text" id="search-input" oninput="handleSearchInput()" onfocus="togglePlaceholderVisibility()" onblur="togglePlaceholderVisibility()" class="bg-transparent absolute inset-0 w-full h-full pr-12 pl-5 text-sm text-white focus:outline-none z-10">
             </div>
         </div>
 
         <!-- البنر الرئيسي -->
-        <section id="hero-section" class="hidden store-bg-card relative rounded-3xl overflow-hidden border shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
+        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
@@ -282,8 +256,8 @@
         <!-- أزرار المنصات -->
         <section class="grid grid-cols-3 gap-2.5">
             <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition">الكل</button>
-            <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn store-bg-card border text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS4</button>
-            <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn store-bg-card border text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
+            <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS4</button>
+            <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition">PS5</button>
         </section>
 
         <!-- شريط الأقسام -->
@@ -299,17 +273,17 @@
         </section>
 
         <!-- لوحة التحكم للمدير -->
-        <div id="admin-panel" class="hidden store-bg-card border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
+        <div id="admin-panel" class="hidden bg-[#0b0f19] border border-cyan-500/40 p-5 rounded-2xl shadow-2xl max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black text-cyan-500 dark:text-cyan-400 flex items-center gap-2">
+                <h3 class="text-lg font-black text-cyan-400 flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved"></i> إدارة متجر المدينة
                 </h3>
                 <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="text-slate-400 hover:text-white text-sm">✕ إغلاق</button>
             </div>
             
             <div id="admin-login-box" class="space-y-3">
-                <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full store-bg-card border rounded-xl p-3 text-sm">
-                <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full store-bg-card border rounded-xl p-3 text-sm">
+                <input type="email" id="admin-email" placeholder="البريد الإلكتروني للمدير" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                 <button onclick="loginAdmin()" class="cyan-gradient-btn w-full py-3 rounded-xl font-black text-sm">دخول الإدارة</button>
             </div>
 
@@ -319,63 +293,63 @@
                     <button onclick="logoutAdmin()" class="text-red-400 text-xs hover:underline">تسجيل خروج</button>
                 </div>
 
-                <div class="store-bg-card border rounded-xl p-3 space-y-2">
-                    <label class="block text-xs font-bold text-cyan-500 dark:text-cyan-400">
+                <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
+                    <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-solid fa-image"></i> تغيير شعار المتجر:
                     </label>
-                    <input type="file" id="logo-file-input" accept="image/*" class="w-full store-bg-card border rounded-lg p-2 text-xs text-slate-300">
+                    <input type="file" id="logo-file-input" accept="image/*" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2 text-xs text-slate-300">
                     <button onclick="uploadAndSaveLogo()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 py-2 rounded-lg font-bold text-xs transition">حفظ الشعار للسحاب فورا 🌟</button>
                 </div>
 
                 <hr class="border-slate-900">
 
                 <div class="flex justify-between items-center">
-                    <h4 id="admin-form-title" class="font-bold text-sm">إضافة لعبة جديدة:</h4>
+                    <h4 id="admin-form-title" class="font-bold text-sm text-white">إضافة لعبة جديدة:</h4>
                     <button id="cancel-edit-btn" onclick="resetAdminForm()" class="hidden text-xs text-amber-400 hover:underline">إلغاء التعديل</button>
                 </div>
                 
                 <input type="hidden" id="editing-game-id" value="">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="game-title" placeholder="اسم اللعبة" class="store-bg-card border rounded-xl p-3 text-sm">
-                    <select id="game-platform" class="store-bg-card border rounded-xl p-3 text-sm">
+                    <input type="text" id="game-title" placeholder="اسم اللعبة" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <select id="game-platform" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                         <option value="PS4">PS4</option>
                         <option value="PS5">PS5</option>
                         <option value="PS4 / PS5">PS4 / PS5</option>
                     </select>
                 </div>
 
-                <div class="store-bg-card border rounded-xl p-3.5 space-y-2">
-                    <label class="block text-xs font-bold text-cyan-500 dark:text-cyan-400 mb-1">
+                <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <label class="block text-xs font-bold text-cyan-400 mb-1">
                         <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر):
                     </label>
-                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 store-bg-card rounded-lg text-xs"></div>
+                    <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#0b0f19] rounded-lg text-xs"></div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="store-bg-card border rounded-xl p-3 text-sm">
-                    <select id="game-arabic" class="store-bg-card border rounded-xl p-3 text-sm">
+                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <select id="game-arabic" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
                         <option value="تدعم اللغة العربية (ترجمة)">تدعم اللغة العربية (ترجمة)</option>
                         <option value="لا تدعم اللغة العربية">لا تدعم اللغة العربية</option>
                     </select>
                 </div>
 
-                <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full store-bg-card border rounded-xl p-3 text-sm"></textarea>
+                <textarea id="game-desc" rows="2" placeholder="نبذة مختصرة عن اللعبة..." class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white"></textarea>
 
                 <div>
-                    <label class="block text-xs font-bold text-cyan-500 dark:text-cyan-400 mb-1">رابط غلاف اللعبة الرئيسي (Cover Image URL):</label>
-                    <textarea id="game-cover-url" rows="2" placeholder="https://... رابط الصورة الرئيسية" class="w-full store-bg-card border rounded-xl p-2.5 text-xs text-left dir-ltr focus:outline-none focus:border-cyan-500"></textarea>
+                    <label class="block text-xs font-bold text-cyan-400 mb-1">رابط غلاف اللعبة الرئيسي (Cover Image URL):</label>
+                    <textarea id="game-cover-url" rows="2" placeholder="https://... رابط الصورة الرئيسية" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <div class="store-bg-card border rounded-xl p-3 space-y-2">
-                    <label class="block text-xs font-bold text-cyan-500 dark:text-cyan-400">
+                <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
+                    <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة (ضع روابط الصور، كل رابط في سطر):
                     </label>
-                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg" class="w-full store-bg-card border rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+                    <textarea id="game-images-box" rows="3" placeholder="https://img1.jpg&#10;https://img2.jpg" class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-2.5 text-xs text-left dir-ltr text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
-                <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full store-bg-card border rounded-xl p-2.5 text-xs text-left dir-ltr focus:outline-none focus:border-cyan-500"></textarea>
+                <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
                 <button id="save-game-btn" onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
                     نشر اللعبة في المتجر 🚀
@@ -385,7 +359,7 @@
     </main>
 
     <!-- الفوتر -->
-    <footer class="border-t mt-10 pt-8 pb-6 px-4">
+    <footer class="bg-[#05070b] border-t border-slate-900 mt-10 pt-8 pb-6 px-4">
         <div class="container mx-auto max-w-xl footer-neon-wrap shadow-2xl">
             <div class="footer-neon-inner p-6 text-center space-y-4">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
@@ -428,7 +402,7 @@
 
     <!-- نافذة تفاصيل اللعبة -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="store-bg-card border rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
+        <div class="bg-[#0b0f19] border border-slate-800 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             <button onclick="closeDetailsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-900 text-slate-300 hover:text-white flex items-center justify-center text-sm z-10 transition">✕</button>
             
             <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-900 hidden mt-2">
@@ -437,7 +411,7 @@
 
             <div class="space-y-2 pt-1">
                 <div class="flex justify-between items-start">
-                    <h3 id="modal-title" class="text-xl font-black"></h3>
+                    <h3 id="modal-title" class="text-xl font-black text-white"></h3>
                     <span id="modal-views-badge" class="hidden bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full items-center gap-1.5">
                         <i class="fa-solid fa-eye text-xs"></i> <span id="modal-views-count">0</span> مشاهدة
                     </span>
@@ -445,14 +419,14 @@
                 <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
             </div>
 
-            <div class="store-bg-card border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
-                <h4 class="text-xs font-bold text-cyan-500 dark:text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> عن اللعبة</h4>
+            <div class="bg-[#05070b] border-r-4 border-cyan-400 p-3.5 rounded-xl space-y-1">
+                <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> عن اللعبة</h4>
                 <p id="modal-desc" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
             </div>
 
             <div class="space-y-3">
                 <div class="flex items-center justify-between flex-wrap gap-2">
-                    <h4 id="gallery-heading" class="text-xs font-bold text-cyan-500 dark:text-cyan-400 flex items-center gap-1.5">
+                    <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة
                     </h4>
                     <span class="text-[11px] text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1">
@@ -480,7 +454,7 @@
 
         <div class="max-w-4xl max-h-[85vh] flex flex-col items-center justify-center relative p-2">
             <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl border border-slate-800 shadow-2xl">
-            <div id="lightbox-counter" class="text-xs font-bold text-cyan-400 mt-3 store-bg-card px-4 py-1.5 rounded-full border"></div>
+            <div id="lightbox-counter" class="text-xs font-bold text-cyan-400 mt-3 bg-[#0b0f19] px-4 py-1.5 rounded-full border border-slate-800"></div>
         </div>
 
         <button onclick="nextLightboxImage()" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-xl z-20 hover:bg-cyan-500 hover:text-slate-950 transition">
@@ -490,7 +464,7 @@
 
     <!-- نافذة السلة الفخمة -->
     <div id="cart-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="store-bg-card border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.4)]">
+        <div class="bg-[#0b0f19] border-2 border-cyan-400 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.4)]">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-sm">
@@ -565,7 +539,7 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // تفعيل التحية الذكية حسب الوقت
+        // تفعيل التحية الذكية حسب الوقت بدقة
         function updateDynamicGreeting() {
             const greetingElem = document.getElementById('dynamic-greeting-text');
             if (!greetingElem) return;
@@ -579,31 +553,6 @@
             }
         }
         updateDynamicGreeting();
-
-        // نظام الوضع الليلي والنهاري
-        window.toggleDarkMode = function() {
-            const body = document.body;
-            const themeIcon = document.getElementById('theme-icon');
-            body.classList.toggle('dark');
-            const isDark = body.classList.contains('dark');
-            localStorage.setItem('madina_theme', isDark ? 'dark' : 'light');
-            if (themeIcon) {
-                themeIcon.className = isDark ? "fa-solid fa-moon text-sm" : "fa-solid fa-sun text-sm text-amber-500";
-            }
-        };
-
-        // استرجاع الثيم المحفوظ
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('madina_theme');
-            const themeIcon = document.getElementById('theme-icon');
-            if (savedTheme === 'light') {
-                document.body.classList.remove('dark');
-                if (themeIcon) themeIcon.className = "fa-solid fa-sun text-sm text-amber-500";
-            } else {
-                document.body.classList.add('dark');
-                if (themeIcon) themeIcon.className = "fa-solid fa-moon text-sm";
-            }
-        });
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -620,7 +569,7 @@
             if (labelElem && searchInput && !searchInput.value) {
                 searchItemIdx = (searchItemIdx + 1) % searchItemsList.length;
                 const randomAnim = animClasses[searchItemIdx % animClasses.length];
-                labelElem.className = "text-sm font-bold text-cyan-500 dark:text-cyan-400 whitespace-nowrap";
+                labelElem.className = "text-sm font-bold text-cyan-400 whitespace-nowrap";
                 void labelElem.offsetWidth;
                 labelElem.innerText = searchItemsList[searchItemIdx];
                 labelElem.classList.add(randomAnim);
@@ -703,7 +652,7 @@
                 return div;
             })();
             const toast = document.createElement('div');
-            toast.className = "toast-notification store-bg-card border border-cyan-400 text-white px-4 py-3 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-between gap-3 text-xs font-bold pointer-events-auto";
+            toast.className = "toast-notification bg-[#0b0f19] border border-cyan-400 text-white px-4 py-3 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-between gap-3 text-xs font-bold pointer-events-auto";
             toast.innerHTML = `
                 <div class="flex items-center gap-2.5">
                     <div class="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300">
@@ -757,7 +706,7 @@
             const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
             container.innerHTML = subCategories.map(cat => `
                 <label class="flex items-center gap-2 cursor-pointer hover:text-cyan-400 select-none">
-                    <input type="checkbox" name="game-cat-checkbox" value="${cat}" class="rounded store-bg-card border-slate-800 text-cyan-500 focus:ring-0">
+                    <input type="checkbox" name="game-cat-checkbox" value="${cat}" class="rounded bg-[#05070b] border-slate-800 text-cyan-500 focus:ring-0">
                     <span>${cat}</span>
                 </label>
             `).join('');
@@ -789,7 +738,7 @@
                 });
                 localStorage.setItem('madina_cart', JSON.stringify(cart));
                 updateCartBadge();
-                filterAndRender(); // إعادة العرض لتثبيت التحديد الفخم
+                filterAndRender(); // لتثبيت التحديد الفخم فوراً
             }
             playSuccessSound();
             showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`);
@@ -800,7 +749,7 @@
             localStorage.setItem('madina_cart', JSON.stringify(cart));
             updateCartBadge();
             renderCartItems();
-            filterAndRender(); // تحديث البطاقات لإزالة التحديد
+            filterAndRender();
         };
 
         window.toggleCartModal = function() {
@@ -835,7 +784,7 @@
                     </div>
                 `;
                 actionsBox.innerHTML = `
-                    <button onclick="toggleCartModal()" class="w-full store-bg-card hover:bg-slate-900 border text-slate-300 py-3 rounded-xl font-bold text-xs transition">
+                    <button onclick="toggleCartModal()" class="w-full bg-[#05070b] hover:bg-slate-900 border border-slate-800 text-slate-300 py-3 rounded-xl font-bold text-xs transition">
                         تصفح الألعاب الآن 🚀
                     </button>
                 `;
@@ -843,14 +792,14 @@
             }
 
             list.innerHTML = cart.map((item, idx) => `
-                <div class="flex items-center justify-between store-bg-card p-3 rounded-2xl border gap-3">
+                <div class="flex items-center justify-between bg-[#05070b] p-3 rounded-2xl border border-slate-800 gap-3">
                     <div class="flex items-center gap-3">
                         <img src="${item.cover || 'https://via.placeholder.com/80'}" class="w-12 h-12 object-cover rounded-xl border border-slate-700">
                         <div>
-                            <h4 class="font-bold text-xs line-clamp-1">${item.title}</h4>
-                            <div class="flex items-center gap-2 text-[10px] text-cyan-500 dark:text-cyan-400 mt-1">
+                            <h4 class="font-bold text-xs text-white line-clamp-1">${item.title}</h4>
+                            <div class="flex items-center gap-2 text-[10px] text-cyan-400 mt-1">
                                 <span class="bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30 font-bold">${item.platform}</span>
-                                ${item.size ? `<span class="text-amber-400 font-bold">${item.size} GB</span>` : ''}
+                                ${item.size ? `<span class="text-amber-300 font-bold">${item.size} GB</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -880,7 +829,7 @@
             selectedPlatform = plat;
             currentPage = 1;
             document.querySelectorAll('.plat-btn').forEach(btn => {
-                btn.className = "plat-btn store-bg-card border text-slate-300 py-2.5 rounded-xl font-bold text-sm transition";
+                btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 rounded-xl font-bold text-sm transition";
             });
             document.getElementById(`plat-${plat}`).className = "plat-btn cyan-gradient-btn py-2.5 rounded-xl font-black text-sm transition";
             filterAndRender();
@@ -915,7 +864,7 @@
             const bar = document.getElementById('categories-bar');
             bar.innerHTML = ALL_CATEGORIES.map(cat => {
                 const count = cat === "الكل" ? allGames.length : allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
-                const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black" : "store-bg-card border text-slate-300 font-bold hover:border-slate-500";
+                const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black" : "bg-[#0b0f19] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
                 return `
                     <button onclick="setCategory('${cat}')" class="${activeClass} whitespace-nowrap px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
                         <span>${cat}</span>
@@ -945,7 +894,7 @@
             const thumbs = document.getElementById('hero-thumbs');
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
-                const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border opacity-60 hover:opacity-100';
+                const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-800 opacity-60 hover:opacity-100';
                 return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
         }
@@ -1017,8 +966,8 @@
             const catsList = game.categories || [game.category].filter(Boolean);
             document.getElementById('modal-badges').innerHTML = `
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
-                ${catsList.map(c => `<span class="store-bg-card px-2.5 py-1 rounded-lg border">${c}</span>`).join('')}
-                ${game.size ? `<span class="store-bg-card text-amber-400 px-2.5 py-1 rounded-lg border" dir="ltr">${game.size} GB</span>` : ''}
+                ${catsList.map(c => `<span class="bg-slate-900 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-800">${c}</span>`).join('')}
+                ${game.size ? `<span class="bg-slate-900 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-800" dir="ltr">${game.size} GB</span>` : ''}
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
@@ -1027,7 +976,7 @@
 
             const verticalGallery = document.getElementById('modal-gallery-vertical');
             verticalGallery.innerHTML = currentLightboxImages.map((url, idx) => `
-                <div class="relative w-full rounded-2xl overflow-hidden border bg-black cursor-pointer hover:border-cyan-400 transition group" onclick="openLightbox(${idx})">
+                <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-black cursor-pointer hover:border-cyan-400 transition group" onclick="openLightbox(${idx})">
                     <img src="${url}" class="w-full h-auto object-cover max-h-80 group-hover:opacity-90 transition">
                     <div class="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-md border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-xl flex items-center gap-1.5 shadow-lg">
                         <i class="fa-solid fa-expand"></i>
@@ -1098,12 +1047,12 @@
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 store-bg-card shadow-lg text-center space-y-4">
+                    <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_20px_rgba(6,182,212,0.25)] text-center space-y-4">
                         <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xl animate-pulse">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <div class="space-y-1">
-                            <h3 class="font-black text-sm sm:text-base">عذراً، يبدو أن الاتصال بالإنترنت ضعيف أو منقطع!</h3>
+                            <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، يبدو أن الاتصال بالإنترنت ضعيف أو منقطع!</h3>
                             <p class="text-slate-400 text-xs leading-relaxed max-w-sm">تحقق من شبكتك أو قم بإعادة تحديث الصفحة لجلب أحدث البيانات.</p>
                         </div>
                         <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
@@ -1127,15 +1076,27 @@
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 const firstCat = (game.categories && game.categories[0]) || game.category || '';
                 
-                // التحقق هل اللعبة مضافة للسلة لتثبيت التحديد الفخم
+                // فحص هل اللعبة مضافة للسلة لتثبيت التحديد الفخم
                 const isInCart = cart.some(item => item.id === game.id);
-                const cardBorderClass = isInCart ? "border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)]" : "border";
-                const cartBadgeHtml = isInCart ? `<span class="absolute top-2.5 left-2.5 bg-cyan-500 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded-lg shadow-lg flex items-center gap-1 z-10"><i class="fa-solid fa-check"></i> تمت الإضافة</span>` : '';
+                const cardBorderClass = isInCart ? "border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.35)] bg-[#0b0f19]" : "border border-slate-800/90 bg-[#0b0f19]";
+                
+                // زر الإضافة الجديد الفخم (بدل علامة الزائد البسيطة)
+                const cartActionBtnHtml = isInCart ? `
+                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 bg-cyan-500 text-slate-950 text-[10px] font-black px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.5)] flex items-center gap-1.5 transition z-10 hover:scale-105">
+                        <i class="fa-solid fa-check text-xs"></i>
+                        <span>في السلة</span>
+                    </button>
+                ` : `
+                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 bg-black/80 hover:bg-cyan-500 text-cyan-400 hover:text-slate-950 text-[11px] font-black px-3 py-1.5 rounded-xl backdrop-blur-md border border-cyan-400/40 flex items-center gap-1.5 transition z-10 shadow-lg hover:scale-105">
+                        <i class="fa-solid fa-cart-plus text-xs pointer-events-none"></i>
+                        <span>أضف</span>
+                    </button>
+                `;
 
                 let arabicBadgeStyle = "text-slate-400";
                 if (game.arabic) {
-                    if (game.arabic.includes('دبلجة')) { arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold"; }
-                    else if (game.arabic.includes('ترجمة')) { arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold"; }
+                    if (game.arabic.includes('دبلجة')) { arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(16,185,129,0.2)]"; }
+                    else if (game.arabic.includes('ترجمة')) { arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(6,182,212,0.2)]"; }
                     else { arabicBadgeStyle = "bg-rose-500/10 text-rose-300/80 border border-rose-500/20 px-2 py-0.5 rounded-md"; }
                 }
 
@@ -1146,24 +1107,21 @@
                 ` : '';
 
                 return `
-                    <div class="store-bg-card ${cardBorderClass} rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group relative">
-                        ${cartBadgeHtml}
+                    <div class="${cardBorderClass} rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group relative transition-all duration-300">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
                             
-                            <button onclick="addToCart('${game.id}', event)" title="أضف إلى السلة" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/75 hover:bg-cyan-400 text-white hover:text-slate-950 backdrop-blur-sm border border-white/15 flex items-center justify-center font-black transition z-10">
-                                <i class="fa-solid fa-plus text-xs pointer-events-none"></i>
-                            </button>
+                            ${cartActionBtnHtml}
 
                             ${adminViewsBadgeHtml}
                         </div>
 
                         <div class="p-3 space-y-2 flex-grow flex flex-col justify-between">
                             <div>
-                                <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm line-clamp-1 cursor-pointer hover:text-cyan-500 dark:hover:text-cyan-400">${game.title}</h3>
+                                <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${game.title}</h3>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
                                     <span class="truncate max-w-[60%]">${firstCat}</span>
-                                    ${game.size ? `<span class="text-cyan-500 dark:text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
+                                    ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
                                 </div>
                             </div>
 
@@ -1193,7 +1151,7 @@
                     const isActive = i === currentPage;
                     const btnClass = isActive 
                         ? "cyan-gradient-btn font-black shadow-[0_0_15px_rgba(6,182,212,0.7)] scale-105" 
-                        : "store-bg-card border text-slate-300 hover:border-cyan-400 font-bold";
+                        : "bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400 font-bold";
                     pagesHtml += `
                         <button onclick="changePage(${i})" class="${btnClass} w-9 h-9 rounded-xl text-xs flex items-center justify-center transition">
                             ${i}
