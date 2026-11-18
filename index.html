@@ -505,6 +505,7 @@
             "الكل",
             "ألعاب الأكشن",
             "ألعاب المغامرات",
+            "ألعاب أكشن ومغامرات",
             "ألعاب الحركة والمغامرات",
             "تصويب منظور أول",
             "تصويب تكتيكي",
@@ -539,7 +540,7 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
 
-        // تفعيل التحية الذكية حسب الوقت بدقة
+        // دالة التحية التلقائية الذكية حسب الوقت (تعمل فوراً بدقة عالية)
         function updateDynamicGreeting() {
             const greetingElem = document.getElementById('dynamic-greeting-text');
             if (!greetingElem) return;
@@ -603,6 +604,7 @@
         }
 
         function completeSecurityCheck() {
+            updateDynamicGreeting(); // تأكيد تحديث التحية عند تحميل المتجر بالكامل
             const spinner = document.getElementById('loading-spinner');
             const ring = document.getElementById('security-ring');
             const iconBox = document.getElementById('security-icon-box');
@@ -738,7 +740,7 @@
                 });
                 localStorage.setItem('madina_cart', JSON.stringify(cart));
                 updateCartBadge();
-                filterAndRender(); // لتثبيت التحديد الفخم فوراً
+                filterAndRender(); // تثبيت التحديد الفخم
             }
             playSuccessSound();
             showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`);
@@ -1076,11 +1078,9 @@
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 const firstCat = (game.categories && game.categories[0]) || game.category || '';
                 
-                // فحص هل اللعبة مضافة للسلة لتثبيت التحديد الفخم
                 const isInCart = cart.some(item => item.id === game.id);
                 const cardBorderClass = isInCart ? "border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.35)] bg-[#0b0f19]" : "border border-slate-800/90 bg-[#0b0f19]";
                 
-                // زر الإضافة الجديد الفخم (بدل علامة الزائد البسيطة)
                 const cartActionBtnHtml = isInCart ? `
                     <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 bg-cyan-500 text-slate-950 text-[10px] font-black px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.5)] flex items-center gap-1.5 transition z-10 hover:scale-105">
                         <i class="fa-solid fa-check text-xs"></i>
