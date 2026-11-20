@@ -564,6 +564,7 @@
 
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
+        let globalStoreLogo = "";
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -1116,10 +1117,17 @@
                     `;
                 } else if (search.length > 0) {
                     const waMessage = encodeURIComponent(`السلام عليكم، أبحث عن لعبة (${search}) في متجر المدينة ولم أجدها، هل هي متوفرة لديكم؟`);
+                    const logoSrc = globalStoreLogo || '';
+                    const iconDisplayHtml = logoSrc 
+                        ? `<img src="${logoSrc}" class="w-full h-full object-cover rounded-[14px]">`
+                        : `<i class="fa-solid fa-gamepad text-cyan-300 text-2xl"></i>`;
+
                     grid.innerHTML = `
                         <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_25px_rgba(6,182,212,0.2)] text-center space-y-4">
-                            <div class="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-400 flex items-center justify-center text-cyan-300 text-2xl animate-bounce">
-                                <i class="fa-solid fa-gamepad"></i>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden animate-bounce">
+                                <div class="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center overflow-hidden">
+                                    ${iconDisplayHtml}
+                                </div>
                             </div>
                             <div class="space-y-1.5 max-w-md">
                                 <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة غير متوفرة حالياً في المتجر! 🎮</h3>
@@ -1159,8 +1167,6 @@
 
             grid.innerHTML = paginatedGames.map(game => {
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
-                
-                // عرض التصنيف الرئيسي المحدد واجهة للعبة أسفل الاسم بدقة
                 const displayCat = game.category || (game.categories && game.categories[0]) || '';
                 
                 const isInCart = cart.some(item => item.id === game.id);
@@ -1230,8 +1236,10 @@
                 `;
             }).join('');
 
+            // ترتيب أزرار الصفحات من اليسار لليمين (1 ثم 2 تصاعدياً)
             if (totalPages > 1) {
                 let pagesHtml = '';
+                
                 if (currentPage > 1) {
                     pagesHtml += `<button onclick="changePage(${currentPage - 1})" class="w-9 h-9 rounded-full bg-[#0b0f19] border border-slate-800 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition"><i class="fa-solid fa-chevron-right"></i></button>`;
                 }
@@ -1274,6 +1282,7 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     if (data.logoUrl) {
+                        globalStoreLogo = data.logoUrl;
                         const img = document.getElementById('store-logo-img');
                         const fallback = document.getElementById('store-logo-fallback');
                         img.src = data.logoUrl;
