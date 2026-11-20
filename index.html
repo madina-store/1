@@ -1079,7 +1079,8 @@
         };
 
         window.filterAndRender = function() {
-            const search = document.getElementById('search-input').value.trim().toLowerCase();
+            const searchInputElem = document.getElementById('search-input');
+            const search = searchInputElem ? searchInputElem.value.trim().toLowerCase() : '';
             const grid = document.getElementById('games-grid');
             const paginationContainer = document.getElementById('pagination-container');
 
@@ -1116,7 +1117,8 @@
                         </div>
                     `;
                 } else if (search.length > 0) {
-                    const waMessage = encodeURIComponent(`السلام عليكم، أبحث عن لعبة (${search}) في متجر المدينة ولم أجدها، هل هي متوفرة لديكم؟`);
+                    const rawSearchQuery = searchInputElem.value.trim();
+                    const waMessage = encodeURIComponent(`السلام عليكم، أبحث عن لعبة (${rawSearchQuery}) في متجر المدينة ولم أجدها، هل هي متوفرة لديكم؟`);
                     const logoSrc = globalStoreLogo || '';
                     const iconDisplayHtml = logoSrc 
                         ? `<img src="${logoSrc}" class="w-full h-full object-cover rounded-[14px]">`
@@ -1130,7 +1132,7 @@
                                 </div>
                             </div>
                             <div class="space-y-1.5 max-w-md">
-                                <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة غير متوفرة حالياً في المتجر! 🎮</h3>
+                                <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة (<span class="text-amber-300">${rawSearchQuery}</span>) غير متوفرة حالياً في المتجر! 🎮</h3>
                                 <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
                                     لا تقلق يا أسطورة! تواصل معنا عبر واتساب وسنقوم بتوفيرها لك بأسرع وقت ممكن وبأفضل سعر.
                                 </p>
@@ -1236,26 +1238,29 @@
                 `;
             }).join('');
 
-            // ترتيب أزرار الصفحات من اليسار لليمين (1 ثم 2 تصاعدياً)
+            // ترتيب أزرار الصفحات لتبدأ من اليسار (1، 2، 3 ثم النقاط)
             if (totalPages > 1) {
                 let pagesHtml = '';
                 
+                // زر السابقة (إلى اليسار)
                 if (currentPage > 1) {
                     pagesHtml += `<button onclick="changePage(${currentPage - 1})" class="w-9 h-9 rounded-full bg-[#0b0f19] border border-slate-800 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition"><i class="fa-solid fa-chevron-right"></i></button>`;
                 }
 
+                // بناء تسلسل الصفحات من اليسار لليمين (1 ثم 2 ثم 3 ثم النقاط والبقية)
                 for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    if (i <= 3 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
                         const isActive = i === currentPage;
                         const btnClass = isActive 
                             ? "w-9 h-9 rounded-full bg-red-600 text-white font-black shadow-[0_0_15px_rgba(239,68,68,0.6)] scale-105 flex items-center justify-center text-xs transition" 
                             : "w-9 h-9 rounded-full bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400 font-bold flex items-center justify-center text-xs transition";
                         pagesHtml += `<button onclick="changePage(${i})" class="${btnClass}">${i}</button>`;
-                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    } else if (i === 4 && totalPages > 4) {
                         pagesHtml += `<span class="text-slate-500 text-xs px-1">...</span>`;
                     }
                 }
 
+                // زر التالية
                 if (currentPage < totalPages) {
                     pagesHtml += `<button onclick="changePage(${currentPage + 1})" class="w-9 h-9 rounded-full bg-[#0b0f19] border border-slate-800 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition"><i class="fa-solid fa-chevron-left"></i></button>`;
                 }
