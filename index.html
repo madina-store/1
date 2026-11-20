@@ -280,8 +280,8 @@
         <div id="games-anchor"></div>
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
-            <!-- أزرار الصفحات (محاذاة كاملة للجهة اليسرى مع تصميم فريد) -->
-            <div id="pagination-container" class="flex items-center justify-start gap-2 pt-5 overflow-x-auto no-scrollbar px-1"></div>
+            <!-- أزرار الصفحات (مثبتة ومحاذية تماماً للجهة اليمنى كما طلبت) -->
+            <div id="pagination-container" class="flex items-center justify-end gap-2 pt-5 overflow-x-auto no-scrollbar px-1" style="direction: ltr !important;"></div>
         </section>
 
         <!-- لوحة التحكم للمدير -->
@@ -1085,9 +1085,12 @@
             const grid = document.getElementById('games-grid');
             const paginationContainer = document.getElementById('pagination-container');
 
+            // تعديل البحث ليكون بالبدء (startsWith) من أول حرف يكتبه الزبون
             let filtered = allGames.filter(g => {
+                const titleLower = g.title.toLowerCase();
                 const cats = g.categories || [g.category].filter(Boolean);
-                const matchSearch = g.title.toLowerCase().includes(search) || cats.some(c => c.toLowerCase().includes(search));
+                
+                const matchSearch = titleLower.startsWith(search) || cats.some(c => c.toLowerCase().startsWith(search));
                 const matchPlat = selectedPlatform === "الكل" || (g.platform && g.platform.includes(selectedPlatform));
                 const matchCat = selectedCategory === "الكل" || cats.includes(selectedCategory) || g.category === selectedCategory;
                 return matchSearch && matchPlat && matchCat;
@@ -1119,6 +1122,7 @@
                     `;
                 } else if (search.length > 0) {
                     const rawSearchQuery = searchInputElem.value.trim();
+                    // رسالة الواتساب تبدأ بـ "السلام عليكم" مرتبة تماماً حسب طلبك
                     const waMessage = encodeURIComponent(`السلام عليكم، أبحث عن لعبة ${rawSearchQuery} في متجر المدينة ولم أجدها، هل هي متوفرة لديكم؟`);
                     const logoSrc = globalStoreLogo || '';
                     const iconDisplayHtml = logoSrc 
@@ -1239,31 +1243,31 @@
                 `;
             }).join('');
 
-            // محاذاة أزرار الصفحات للجهة اليسرى تماماً مع تصميم فريد
+            // أزرار الصفحات (مثبتة ومحاذية حصرياً للجهة اليمنى كما طلبت)
             if (totalPages > 1) {
                 let pagesHtml = '';
                 
-                // زر السابقة
-                if (currentPage > 1) {
-                    pagesHtml += `<button onclick="changePage(${currentPage - 1})" class="w-10 h-10 rounded-2xl bg-[#0b0f19] border border-cyan-500/30 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-chevron-right"></i></button>`;
+                // زر التالية (من جهة اليمين)
+                if (currentPage < totalPages) {
+                    pagesHtml += `<button onclick="changePage(${currentPage + 1})" class="w-10 h-10 rounded-2xl bg-[#0b0f19] border border-cyan-500/30 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-chevron-right"></i></button>`;
                 }
 
-                // التسلسل يبدأ من اليسار (1، 2، 3 ثم النقاط والبقية)
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i <= 3 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                // التسلسل يبدأ من اليمين نحو اليسار
+                for (let i = totalPages; i >= 1; i--) {
+                    if (i === totalPages || i === 1 || (i >= currentPage - 1 && i <= currentPage + 1)) {
                         const isActive = i === currentPage;
                         const btnClass = isActive 
                             ? "w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 text-slate-950 font-black shadow-[0_0_20px_rgba(6,182,212,0.6)] scale-105 flex items-center justify-center text-xs transition" 
                             : "w-10 h-10 rounded-2xl bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400 font-bold flex items-center justify-center text-xs transition shadow";
                         pagesHtml += `<button onclick="changePage(${i})" class="${btnClass}">${i}</button>`;
-                    } else if (i === 4 && totalPages > 4) {
+                    } else if (i === currentPage + 2 || i === currentPage - 2) {
                         pagesHtml += `<span class="text-cyan-400 font-bold text-sm px-1.5 flex items-center">...</span>`;
                     }
                 }
 
-                // زر التالية
-                if (currentPage < totalPages) {
-                    pagesHtml += `<button onclick="changePage(${currentPage + 1})" class="w-10 h-10 rounded-2xl bg-[#0b0f19] border border-cyan-500/30 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-chevron-left"></i></button>`;
+                // زر السابقة
+                if (currentPage > 1) {
+                    pagesHtml += `<button onclick="changePage(${currentPage - 1})" class="w-10 h-10 rounded-2xl bg-[#0b0f19] border border-cyan-500/30 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-chevron-left"></i></button>`;
                 }
 
                 paginationContainer.innerHTML = pagesHtml;
