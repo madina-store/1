@@ -1122,8 +1122,8 @@
                     `;
                 } else if (search.length > 0) {
                     const rawSearchQuery = searchInputElem.value.trim();
-                    // رسالة الواتساب بالصيغة الأصلية الأصلية تماماً بدون أي تعديل
-                    const waMessage = encodeURIComponent(`السلام عليكم، ردت هاي اللعبة (${rawSearchQuery}) وما لقيتها بالمتجر، شوكد سعرها وتتوفر لو لا؟`);
+                    // رسالة الواتساب باللغة العربية الفصحى الفخمة والمرتبة تماماً
+                    const waMessage = encodeURIComponent(`السلام عليكم ورحمة الله وبركاته، أود الاستفسار عن توفر لعبة (${rawSearchQuery}) في متجركم الكريم، وما هو سعرها وطريقة طلبها؟ أرجو إفادتي مع الشكر الجزيل.`);
                     const logoSrc = globalStoreLogo || '';
                     const iconDisplayHtml = logoSrc 
                         ? `<img src="${logoSrc}" class="w-full h-full object-cover rounded-[14px]">`
@@ -1137,7 +1137,7 @@
                                 </div>
                             </div>
                             <div class="space-y-1.5 max-w-md">
-                                <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة (${rawSearchQuery}) غير متوفرة حالياً في المتجر! 🎮</h3>
+                                <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة <span class="text-amber-400 font-black">(${rawSearchQuery})</span> غير متوفرة حالياً في المتجر! 🎮</h3>
                                 <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
                                     لا تقلق يا أسطورة! تواصل معنا عبر واتساب وسنقوم بتوفيرها لك بأسرع وقت ممكن وبأفضل سعر.
                                 </p>
