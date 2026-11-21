@@ -599,7 +599,7 @@
             }
         };
 
-        // معالجة زر الرجوع في الهاتف بشكل فوري ونظيف وبدون أي مشاكل في اليوتيوب
+        // إدارة زر الرجوع في المتصفح والهاتف لإغلاق النوافذ المفتوحة فوراً بضغطة واحدة وبدون خروج من الموقع
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
@@ -805,9 +805,11 @@
             const isHidden = modal.classList.contains('hidden');
             if (isHidden) {
                 modal.classList.remove('hidden');
+                history.pushState({ modal: 'cart' }, "", "#cart");
                 renderCartItems();
             } else {
                 modal.classList.add('hidden');
+                if (window.location.hash === '#cart') history.back();
             }
         };
 
@@ -897,6 +899,10 @@
         window.handleSearchInput = function() {
             currentPage = 1;
             togglePlaceholderVisibility();
+            const searchVal = document.getElementById('search-input').value.trim();
+            if (searchVal.length > 0) {
+                history.pushState({ search: searchVal }, "", "#search");
+            }
             filterAndRender();
             const anchor = document.getElementById('games-anchor');
             if (anchor) { anchor.scrollIntoView({ behavior: 'smooth' }); }
@@ -1035,21 +1041,30 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
+            // إضافة حالة للسجل لكي يتم إغلاق النافذة بضغطة زر الرجوع بداخل المتصفح دون مغادرة الموقع
+            history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
         window.closeDetailsModal = function() {
             document.getElementById('details-modal').classList.add('hidden');
             document.getElementById('modal-yt-iframe').src = '';
+            if (window.location.hash.includes('details')) {
+                history.back();
+            }
         };
 
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox-modal').classList.remove('hidden');
+            history.pushState({ modal: 'lightbox' }, "", "#lightbox");
         };
 
         window.closeLightbox = function() {
             document.getElementById('lightbox-modal').classList.add('hidden');
+            if (window.location.hash === '#lightbox') {
+                history.back();
+            }
         };
 
         window.updateLightboxImage = function() {
