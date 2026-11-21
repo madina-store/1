@@ -599,34 +599,6 @@
             }
         };
 
-        // التحكم الذكي في زر الرجوع للنظام أو الهاتف لغلق النافذة بضغطة واحدة مباشرة ودون أي خروج من الموقع
-        window.addEventListener('popstate', (event) => {
-            const lightbox = document.getElementById('lightbox-modal');
-            const details = document.getElementById('details-modal');
-            const cartModal = document.getElementById('cart-modal');
-            const searchInput = document.getElementById('search-input');
-
-            if (!lightbox.classList.contains('hidden')) { 
-                lightbox.classList.add('hidden'); 
-                return; 
-            }
-            if (!details.classList.contains('hidden')) { 
-                details.classList.add('hidden'); 
-                document.getElementById('modal-yt-iframe').src = ''; 
-                return; 
-            }
-            if (!cartModal.classList.contains('hidden')) { 
-                cartModal.classList.add('hidden'); 
-                return; 
-            }
-            if (searchInput && searchInput.value.trim() !== '') { 
-                searchInput.value = ''; 
-                togglePlaceholderVisibility(); 
-                filterAndRender(); 
-                return; 
-            }
-        });
-
         function completeSecurityCheck() {
             const spinner = document.getElementById('loading-spinner');
             const ring = document.getElementById('security-ring');
@@ -805,11 +777,9 @@
             const isHidden = modal.classList.contains('hidden');
             if (isHidden) {
                 modal.classList.remove('hidden');
-                history.pushState({ modal: 'cart' }, "", "#cart");
                 renderCartItems();
             } else {
                 modal.classList.add('hidden');
-                if (window.location.hash === '#cart') history.back();
             }
         };
 
@@ -899,10 +869,6 @@
         window.handleSearchInput = function() {
             currentPage = 1;
             togglePlaceholderVisibility();
-            const searchVal = document.getElementById('search-input').value.trim();
-            if (searchVal.length > 0) {
-                history.pushState({ search: searchVal }, "", "#search");
-            }
             filterAndRender();
             const anchor = document.getElementById('games-anchor');
             if (anchor) { anchor.scrollIntoView({ behavior: 'smooth' }); }
@@ -1041,29 +1007,21 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
-            history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
         window.closeDetailsModal = function() {
-            document.getElementById('details-modal').classList.add('hidden');
             document.getElementById('modal-yt-iframe').src = '';
-            if (window.location.hash.includes('details')) {
-                history.back();
-            }
+            document.getElementById('details-modal').classList.add('hidden');
         };
 
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox-modal').classList.remove('hidden');
-            history.pushState({ modal: 'lightbox' }, "", "#lightbox");
         };
 
         window.closeLightbox = function() {
             document.getElementById('lightbox-modal').classList.add('hidden');
-            if (window.location.hash === '#lightbox') {
-                history.back();
-            }
         };
 
         window.updateLightboxImage = function() {
@@ -1079,7 +1037,7 @@
         };
 
         window.nextLightboxImage = function() {
-            currentLightboxIndex = (currentLightboxIndex + 1 + currentLightboxImages.length) % currentLightboxImages.length;
+            currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
             updateLightboxImage();
         };
 
