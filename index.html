@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الذكية -->
+    <!-- شاشة فحص الأمان والاتصال بفايربيس -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -184,9 +184,9 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والتحقق من التشفير...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال بسيرفرات متجر المدينة...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-lock text-[10px]"></i> اتصال آمن ومحمي - متجر المدينة
+            <i class="fa-solid fa-lock text-[10px]"></i> اتصال آمن ومحمي - جلب الألعاب
         </p>
     </div>
 
@@ -427,10 +427,9 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة مع زر "رجوع" عائم ومخصص لمتناول الإبهام على الجهة اليمين -->
+    <!-- نافذة تفاصيل اللعبة مع زر رجوع عائم -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-[#0b0f19] overflow-y-auto flex flex-col justify-between p-4 sm:p-6">
         
-        <!-- زر الرجوع العائم على الجهة اليمين وبجانب متناول الإبهام -->
         <button onclick="closeDetailsModal()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
             <i class="fa-solid fa-arrow-right text-sm"></i>
             <span>رجوع</span>
@@ -604,8 +603,11 @@
             }
         };
 
+        // دالة إخفاء شاشة الدرع فور تلقي البيانات الحقيقية من فايربيس بنجاح
         function completeSecurityCheck() {
             const spinner = document.getElementById('loading-spinner');
+            if (!spinner || spinner.style.display === 'none') return;
+
             const ring = document.getElementById('security-ring');
             const iconBox = document.getElementById('security-icon-box');
             const title = document.getElementById('security-title');
@@ -615,9 +617,9 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-                title.innerText = "تم التحقق والأمان بنجاح ✓";
+                title.innerText = "تم الاتصال بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة المشفر والمؤمن';
+                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة متصل بالسيرفر';
             }
 
             setTimeout(() => {
@@ -625,7 +627,7 @@
                     spinner.style.opacity = '0';
                     setTimeout(() => spinner.style.display = 'none', 450);
                 }
-            }, 350);
+            }, 300);
         }
 
         function playSuccessSound() {
@@ -1248,8 +1250,8 @@
                 await loadStoreSettings();
                 initRealtimeGamesListener();
             } catch (error) {
-                console.error("خطأ في بدء الاتصال:", error);
-                completeSecurityCheck();
+                console.error("خطأ في الاتصال:", error);
+                completeSecurityCheck(); // فتح الموقع حتى لو حدث خطأ بالاتصال لكي لا يعلق
             }
         }
 
@@ -1291,10 +1293,12 @@
                 renderHero();
                 resetHeroTimer();
                 filterAndRender();
+
+                // إخفاء شاشة الدرع فور تلقي أول استجابة حقيقية من السيرفر بنجاح
                 completeSecurityCheck();
             }, (error) => {
                 console.error("خطأ في المزامنة:", error);
-                completeSecurityCheck();
+                completeSecurityCheck(); // إخفاء الدرع حتى لو حدث خطأ بالاستماع لكي يعمل المتجر
             });
         }
 
