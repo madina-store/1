@@ -594,17 +594,32 @@
             }
         };
 
-        // معالجة زر الرجوع في الهاتف بشكل فوري ونظيف بدون إخراج المستخدم خارج الموقع
+        // إدارة زر الرجوع بضغطة واحدة وبدون أي شاشة سوداء أو خروج مفاجئ
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
             const cartModal = document.getElementById('cart-modal');
             const searchInput = document.getElementById('search-input');
 
-            if (!lightbox.classList.contains('hidden')) { lightbox.classList.add('hidden'); event.preventDefault(); return; }
-            if (!details.classList.contains('hidden')) { details.classList.add('hidden'); document.getElementById('modal-yt-iframe').src = ''; event.preventDefault(); return; }
-            if (!cartModal.classList.contains('hidden')) { cartModal.classList.add('hidden'); event.preventDefault(); return; }
-            if (searchInput && searchInput.value.trim() !== '') { searchInput.value = ''; togglePlaceholderVisibility(); filterAndRender(); event.preventDefault(); return; }
+            if (!lightbox.classList.contains('hidden')) { 
+                lightbox.classList.add('hidden'); 
+                return; 
+            }
+            if (!details.classList.contains('hidden')) { 
+                details.classList.add('hidden'); 
+                document.getElementById('modal-yt-iframe').src = ''; 
+                return; 
+            }
+            if (!cartModal.classList.contains('hidden')) { 
+                cartModal.classList.add('hidden'); 
+                return; 
+            }
+            if (searchInput && searchInput.value.trim() !== '') { 
+                searchInput.value = ''; 
+                togglePlaceholderVisibility(); 
+                filterAndRender(); 
+                return; 
+            }
         });
 
         function completeSecurityCheck() {
