@@ -422,7 +422,7 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة (بدون زر رجوع علوي - تصميم عالمي نظيف) -->
+    <!-- نافذة تفاصيل اللعبة (بأعلى معايير الاستجابة الفورية لزر الهاتف) -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border border-slate-800 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             <div class="flex items-center justify-end absolute top-4 left-4 right-4 z-20 pointer-events-none">
@@ -596,33 +596,34 @@
             }
         };
 
-        // إدارة زر الرجوع الخاص بالهاتف والمتصفح بدقة تامة من أول ضغطة وبشكل عالمي
+        // الحل الهندسي النظيف: اعتراض زر الرجوع الخاص بالهاتف برمجياً وإغلاق النافذة النشطة فوراً ومن أول ضغطة
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
             const cartModal = document.getElementById('cart-modal');
-            const searchInput = document.getElementById('search-input');
 
-            if (!lightbox.classList.contains('hidden')) { 
-                lightbox.classList.add('hidden'); 
-                return; 
+            if (!lightbox.classList.contains('hidden')) {
+                lightbox.classList.add('hidden');
+                history.pushState({ page: 'store' }, "", window.location.pathname);
+                return;
             }
-            if (!details.classList.contains('hidden')) { 
-                document.getElementById('modal-yt-iframe').src = ''; 
-                details.classList.add('hidden'); 
-                return; 
+            if (!details.classList.contains('hidden')) {
+                document.getElementById('modal-yt-iframe').src = '';
+                details.classList.add('hidden');
+                history.pushState({ page: 'store' }, "", window.location.pathname);
+                return;
             }
-            if (!cartModal.classList.contains('hidden')) { 
-                cartModal.classList.add('hidden'); 
-                return; 
-            }
-            if (searchInput && searchInput.value.trim() !== '') { 
-                searchInput.value = ''; 
-                togglePlaceholderVisibility(); 
-                filterAndRender(); 
-                return; 
+            if (!cartModal.classList.contains('hidden')) {
+                cartModal.classList.add('hidden');
+                history.pushState({ page: 'store' }, "", window.location.pathname);
+                return;
             }
         });
+
+        // تهيئة الحالة الافتراضية للسجل لضمان استجابة زر الهاتف الفورية
+        if (!window.history.state) {
+            window.history.replaceState({ page: 'store' }, "", window.location.pathname);
+        }
 
         function completeSecurityCheck() {
             const spinner = document.getElementById('loading-spinner');
@@ -896,10 +897,6 @@
         window.handleSearchInput = function() {
             currentPage = 1;
             togglePlaceholderVisibility();
-            const searchVal = document.getElementById('search-input').value.trim();
-            if (searchVal.length > 0) {
-                history.pushState({ search: searchVal }, "", "#search");
-            }
             filterAndRender();
             const anchor = document.getElementById('games-anchor');
             if (anchor) { anchor.scrollIntoView({ behavior: 'smooth' }); }
@@ -1039,14 +1036,14 @@
 
             document.getElementById('details-modal').classList.remove('hidden');
             
-            // إضافة حالة للسجل بذكاء لكي يستجيب زر الهاتف فوراً من أول ضغطة
+            // إضافة حالة جديدة للسجل فور فتح النافذة لكي يتفاعل زر الهاتف فوراً من أول ضغطة
             history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
         window.closeDetailsModal = function() {
             document.getElementById('modal-yt-iframe').src = '';
             document.getElementById('details-modal').classList.add('hidden');
-            if (window.location.hash.includes('details')) {
+            if (window.location.hash.includes('details') || window.history.state?.modal) {
                 history.back();
             }
         };
@@ -1060,7 +1057,7 @@
 
         window.closeLightbox = function() {
             document.getElementById('lightbox-modal').classList.add('hidden');
-            if (window.location.hash === '#lightbox') {
+            if (window.location.hash === '#lightbox' || window.history.state?.modal === 'lightbox') {
                 history.back();
             }
         };
