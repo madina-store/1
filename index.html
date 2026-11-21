@@ -176,17 +176,17 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان والاتصال بفايربيس -->
+    <!-- شاشة الاتصال والتحميل -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
             <div id="security-icon-box" class="absolute inset-0 flex items-center justify-center text-cyan-400 text-3xl transition-all duration-300">
-                <i class="fa-solid fa-shield-halved animate-pulse"></i>
+                <i class="fa-solid fa-gamepad animate-pulse"></i>
             </div>
         </div>
         <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال بسيرفرات متجر المدينة...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-lock text-[10px]"></i> اتصال آمن ومحمي - جلب الألعاب
+            <i class="fa-solid fa-bolt text-[10px]"></i> جلب أحدث الألعاب والبيانات
         </p>
     </div>
 
@@ -427,14 +427,9 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة -->
+    <!-- نافذة تفاصيل اللعبة (بدون زر رجوع عائم) -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-[#0b0f19] overflow-y-auto flex flex-col justify-between p-4 sm:p-6">
         
-        <button onclick="closeDetailsModal()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
-            <i class="fa-solid fa-arrow-right text-sm"></i>
-            <span>رجوع</span>
-        </button>
-
         <div class="max-w-xl mx-auto w-full space-y-4 pt-2 pb-20">
             <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-900 hidden">
                 <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
@@ -475,14 +470,9 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (ثابتة تماماً بـ Hash واحد لا يتغير أبداً أثناء التقليب) -->
+    <!-- نافذة تكبير الصورة (بدون زر رجوع عائم، وتقليب سلس تماماً) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         
-        <button onclick="closeLightbox()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
-            <i class="fa-solid fa-arrow-right text-sm"></i>
-            <span>رجوع</span>
-        </button>
-
         <button onclick="prevLightboxImage()" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-xl z-20 hover:bg-cyan-500 hover:text-slate-950 transition">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
@@ -536,31 +526,32 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // الأصناف الرسمية والمعتمدة في عالم الجيمز بالكامل
         const ALL_CATEGORIES = [
             "الكل",
-            "أساطير PS4 👑",
-            "رعب البقاء 🧟‍♂️",
-            "تصويب من منظور الشخص الثالث 🎯",
             "ألعاب الأكشن",
             "ألعاب المغامرات",
-            "ألعاب أكشن ومغامرات",
-            "ألعاب الحركة والمغامرات",
-            "تصويب منظور أول",
-            "تصويب تكتيكي",
+            "ألعاب الأكشن والمغامرات",
             "ألعاب تقمص الأدوار",
-            "ألعاب الاستراتيجية",
-            "ألعاب المحاكاة",
-            "ألعاب إطلاق النار",
+            "ألعاب الرعب",
+            "رعب البقاء",
+            "ألعاب البقاء على قيد الحياة",
+            "ألعاب التصويب من منظور الشخص الأول",
+            "ألعاب التصويب من منظور الشخص الثالث",
+            "التصويب التكتيكي",
+            "ألعاب العالم المفتوح",
+            "ألعاب التسلل والتخفي",
+            "ألعاب القتال",
             "ألعاب الرياضة",
             "ألعاب السباقات",
+            "ألعاب الاستراتيجية",
+            "ألعاب المحاكاة",
             "ألعاب المنصات",
             "ألعاب الألغاز",
-            "ألعاب البقاء على قيد الحياة",
-            "ألعاب الرعب",
-            "ألعاب القتال",
-            "ألعاب العالم المفتوح",
-            "ألعاب البطاقات",
-            "ألعاب التسلل والتخفي"
+            "ألعاب المعركة الملكية",
+            "ألعاب تقمص الأدوار الجماعية",
+            "ألعاب الإيقاع والموسيقى",
+            "ألعاب البطاقات واللوحية"
         ];
 
         let allGames = [];
@@ -625,7 +616,7 @@
                 iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
                 title.innerText = "تم الاتصال بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة متصل بالسيرفر';
+                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة جاهز للتصفح';
             }
 
             setTimeout(() => {
@@ -1026,34 +1017,15 @@
             window.scrollTo(0, 0);
         };
 
-        window.closeDetailsModal = function() {
-            if (window.location.hash === '#game') {
-                window.history.back();
-            } else {
-                document.getElementById('modal-yt-iframe').src = '';
-                document.getElementById('details-modal').classList.add('hidden');
-                document.body.classList.remove('modal-active');
-            }
-        };
-
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             
-            // استخدام replaceState عند فتح الصورة لضمان أن الـ Hash يبقى #image ثابتاً ولا تتراكم خطوات وهمية
             if (window.location.hash !== '#image') {
                 history.pushState({ modal: 'image' }, '', '#image');
             }
             
             document.getElementById('lightbox-modal').classList.remove('hidden');
-        };
-
-        window.closeLightbox = function() {
-            if (window.location.hash === '#image') {
-                window.history.back();
-            } else {
-                document.getElementById('lightbox-modal').classList.add('hidden');
-            }
         };
 
         window.addEventListener('hashchange', () => {
@@ -1091,7 +1063,6 @@
         };
 
         window.nextLightboxImage = function() {
-            // التقليب يتم محلياً بالكامل وثابت على نفس الـ Hash (#image) بغض النظر عن الوصول للصورة الرابعة أو الأولى!
             currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
             updateLightboxImage();
         };
