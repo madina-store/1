@@ -594,17 +594,17 @@
             }
         };
 
-        // تم إلغاء تتبع history.pushState للموديل لضمان الخروج بضغطة رجوع واحدة فورية
+        // معالجة زر الرجوع في الهاتف بشكل فوري ونظيف بدون إخراج المستخدم خارج الموقع
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
             const cartModal = document.getElementById('cart-modal');
             const searchInput = document.getElementById('search-input');
 
-            if (!lightbox.classList.contains('hidden')) { lightbox.classList.add('hidden'); return; }
-            if (!details.classList.contains('hidden')) { details.classList.add('hidden'); document.getElementById('modal-yt-iframe').src = ''; return; }
-            if (!cartModal.classList.contains('hidden')) { cartModal.classList.add('hidden'); return; }
-            if (searchInput && searchInput.value.trim() !== '') { searchInput.value = ''; togglePlaceholderVisibility(); filterAndRender(); return; }
+            if (!lightbox.classList.contains('hidden')) { lightbox.classList.add('hidden'); event.preventDefault(); return; }
+            if (!details.classList.contains('hidden')) { details.classList.add('hidden'); document.getElementById('modal-yt-iframe').src = ''; event.preventDefault(); return; }
+            if (!cartModal.classList.contains('hidden')) { cartModal.classList.add('hidden'); event.preventDefault(); return; }
+            if (searchInput && searchInput.value.trim() !== '') { searchInput.value = ''; togglePlaceholderVisibility(); filterAndRender(); event.preventDefault(); return; }
         });
 
         function completeSecurityCheck() {
@@ -785,9 +785,11 @@
             const isHidden = modal.classList.contains('hidden');
             if (isHidden) {
                 modal.classList.remove('hidden');
+                history.pushState({ modal: 'cart' }, "", "#cart");
                 renderCartItems();
             } else {
                 modal.classList.add('hidden');
+                if (window.location.hash === '#cart') history.back();
             }
         };
 
@@ -958,7 +960,6 @@
             if (featuredGames.length > 0) { openDetailsModal(featuredGames[heroIndex].id); }
         };
 
-        // فتح فوري وسريع بضغطة رجوع واحدة بدون أي تعقيد
         window.openDetailsModal = function(gameId) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
@@ -1020,21 +1021,25 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
+            history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
         window.closeDetailsModal = function() {
             document.getElementById('details-modal').classList.add('hidden');
             document.getElementById('modal-yt-iframe').src = '';
+            if (window.location.hash.includes('details') || window.location.hash === '#cart') history.back();
         };
 
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox-modal').classList.remove('hidden');
+            history.pushState({ modal: 'lightbox' }, "", "#lightbox");
         };
 
         window.closeLightbox = function() {
             document.getElementById('lightbox-modal').classList.add('hidden');
+            if (window.location.hash === '#lightbox') history.back();
         };
 
         window.updateLightboxImage = function() {
