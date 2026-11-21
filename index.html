@@ -475,7 +475,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (تعمل محلياً تماماً دون أي مساس بسجل المتصفح لخروج آمن ومثالي) -->
+    <!-- نافذة تكبير الصورة (تم دمجها برمجياً لتعود مباشرة لقائمة الألعاب عند ضغطة الرجوع) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         
         <button onclick="closeLightbox()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
@@ -1019,7 +1019,7 @@
                 addToCart(game.id, e);
             };
 
-            // إضافة خطوة واحدة فقط في تاريخ المتصفح عند الدخول لصفحة تفاصيل اللعبة
+            // إضافة خطوة واحدة للسجل عند فتح تفاصيل اللعبة
             history.pushState({ modal: 'details' }, '');
 
             document.getElementById('details-modal').classList.remove('hidden');
@@ -1036,7 +1036,7 @@
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
-            // تفتح نافذة الصور محلياً تماماً دون إضافة أي شيء للسجل لتجنب الخروج من الموقع
+            // تفتح الصورة محلياً تماماً، ولا نضيف أي سجل جديد، ليبقى زر الرجوع مرتبطاً حصراً بصفحة التفاصيل
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
@@ -1044,20 +1044,19 @@
             document.getElementById('lightbox-modal').classList.add('hidden');
         };
 
-        // إدارة زر الرجوع في الهاتف (Back Button) بشكل يضمن البقاء داخل الموقع
+        // إدارة ذكية وموحدة تماماً لزر الرجوع (Back Button)
         window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
 
-            // إذا كانت نافذة الصور مفتوحة، أغلقها وحدها وأبقِ تفاصيل اللعبة مفتوحة
+            // 1. إذا كانت نافذة الصور مفتوحة، أغلقها وحدها فوراً واجعل السجل مهيأً للتفاصيل
             if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
-                // نعيد حالة السجل تفاصيل اللعبة لكي لا يتأثر السجل
                 history.pushState({ modal: 'details' }, '');
                 return;
             }
 
-            // إذا كانت تفاصيل اللعبة مفتوحة، أغلقها وعد لقائمة الألعاب الرئيسية بضغطة واحدة
+            // 2. إذا كانت نافذة تفاصيل اللعبة مفتوحة، أغلقها فوراً وعد لقائمة الألعاب الرئيسية بضغطة واحدة فقط
             if (detailsModal && !detailsModal.classList.contains('hidden')) {
                 closeDetailsModal();
                 return;
@@ -1416,7 +1415,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (error) {
                 console.error("خطأ النشر:", error);
-                showToast("حدث خطأ في الاتصال، حاول مرة أخرى.");
+                showToast("حدث خطأ في الاتصال، حاول مرة واحدة.");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerText = "نشر اللعبة في المتجر 🚀";
