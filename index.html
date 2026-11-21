@@ -475,7 +475,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (تم ضبط التاريخ والسجل لزر الهاتف السفلي خصيصاً) -->
+    <!-- نافذة تكبير الصورة (تم إزالة أي تأثيرات على السجل لتعمل محلياً بالكامل) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         
         <button onclick="closeLightbox()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
@@ -1019,7 +1019,7 @@
                 addToCart(game.id, e);
             };
 
-            // إضافة خطوة للسجل عند فتح تفاصيل اللعبة ليقوم زر الهاتف بإغلاقها
+            // إضافة خطوة واحدة للسجل عند فتح تفاصيل اللعبة فقط
             history.pushState({ modal: 'details' }, '');
 
             document.getElementById('details-modal').classList.remove('hidden');
@@ -1031,45 +1031,39 @@
             document.getElementById('modal-yt-iframe').src = '';
             document.getElementById('details-modal').classList.add('hidden');
             document.body.classList.remove('modal-active');
+            // التأكد من تفريغ أي حالة في السجل لضمان عدم الخروج من الموقع
+            if (window.history.state && window.history.state.modal === 'details') {
+                window.history.back();
+            }
         };
 
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
-            
-            // الحل الذكي لزر الموبايل السفلي: نضيف حالة مؤقتة للسجل عند فتح الصورة
-            history.pushState({ modal: 'lightbox' }, '');
-            
+            // تفتح الصورة المكبرة محلياً بالكامل دون أي تلاعب بسجل المتجر
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
         window.closeLightbox = function() {
-            const lightboxModal = document.getElementById('lightbox-modal');
-            if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
-                lightboxModal.classList.add('hidden');
-                // إذا تم الإغلاق بالزر العائم، نرجع خطوة في السجل لنعيد المزامنة مع تفاصيل اللعبة
-                if (window.history.state && window.history.state.modal === 'lightbox') {
-                    window.history.back();
-                }
-            }
+            document.getElementById('lightbox-modal').classList.add('hidden');
         };
 
-        // إدارة ذكية ومطلقة لزر الموبايل السفلي (Back Button)
+        // إدارة زر الرجوع الفعلي للموبايل بكل دقة
         window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
 
-            // 1. إذا ضغطت زر الهاتف والسورة مكبرة مفتوحة: أغلق الصورة وحدها وابق في تفاصيل اللعبة
+            // 1. إذا كانت الصورة المكبرة مفتوحة وضغطت زر الهاتف، أغلق الصورة فقط وحدها
             if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
-                // نعيد وضع تفاصيل اللعبة في السجل لكي تبقى محمية
-                history.pushState({ modal: 'details' }, '');
                 return;
             }
 
-            // 2. إذا ضغطت زر الهاتف ثانية وهي في تفاصيل اللعبة: أغلق تفاصيل اللعبة وعد لقائمة الألعاب بضغطة واحدة
+            // 2. إذا كانت تفاصيل اللعبة مفتوحة وضغطت زر الهاتف، أغلق التفاصيل وعُد للقائمة الرئيسية بضغطة واحدة فوراً
             if (detailsModal && !detailsModal.classList.contains('hidden')) {
-                closeDetailsModal();
+                document.getElementById('modal-yt-iframe').src = '';
+                detailsModal.classList.add('hidden');
+                document.body.classList.remove('modal-active');
                 return;
             }
         });
@@ -1426,7 +1420,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (error) {
                 console.error("خطأ النشر:", error);
-                showToast("حدث خطأ في الاتصال، حاول مرة أخرى.");
+                showToast("حدث خطأ في الاتصال، حاول مرة واحدة.");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerText = "نشر اللعبة في المتجر 🚀";
