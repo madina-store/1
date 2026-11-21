@@ -456,7 +456,6 @@
             </div>
 
             <div class="space-y-3">
-                <!-- زر وتوضيح مرتب جداً فوق الصور تماماً -->
                 <div class="flex items-center justify-between flex-wrap gap-2 pt-1">
                     <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة
@@ -476,7 +475,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (تم ضبط التاريخ والسجل بشكل نظيف ومستقل تماماً) -->
+    <!-- نافذة تكبير الصورة (تعمل محلياً تماماً دون أي مساس بسجل المتصفح لخروج آمن ومثالي) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         
         <button onclick="closeLightbox()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
@@ -1020,7 +1019,7 @@
                 addToCart(game.id, e);
             };
 
-            // إضافة حالة للتاريخ لكي يعمل زر الرجوع لصفحة الألعاب الرئيسية بضغطة واحدة
+            // إضافة خطوة واحدة فقط في تاريخ المتصفح عند الدخول لصفحة تفاصيل اللعبة
             history.pushState({ modal: 'details' }, '');
 
             document.getElementById('details-modal').classList.remove('hidden');
@@ -1037,38 +1036,28 @@
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
-            
-            // الحل الجذري: نضيف حالة في السجل خاصة بنافذة الصور لكي يتم التقاطها بزر الرجوع وإغلاق الصورة حصراً دون الخروج من تفاصيل اللعبة أو الموقع
-            history.pushState({ modal: 'lightbox' }, '');
-            
+            // تفتح نافذة الصور محلياً تماماً دون إضافة أي شيء للسجل لتجنب الخروج من الموقع
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
         window.closeLightbox = function() {
-            const lightboxModal = document.getElementById('lightbox-modal');
-            if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
-                lightboxModal.classList.add('hidden');
-                // إذا تم الإغلاق يدوياً بالزر العائم، نرجع خطوة واحدة في السجل لنظبطه مع تفاصيل اللعبة
-                if (window.history.state && window.history.state.modal === 'lightbox') {
-                    window.history.back();
-                }
-            }
+            document.getElementById('lightbox-modal').classList.add('hidden');
         };
 
-        // إدارة ذكية ومطلقة لزر الهاتف (Back Button)
+        // إدارة زر الرجوع في الهاتف (Back Button) بشكل يضمن البقاء داخل الموقع
         window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
 
-            // 1. إذا كانت نافذة الصور مفتوحة، أغلقها وحدها وابق في صفحة تفاصيل اللعبة
+            // إذا كانت نافذة الصور مفتوحة، أغلقها وحدها وأبقِ تفاصيل اللعبة مفتوحة
             if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
-                // نمنع انتشار الحدث للسجل الرئيسي لكي لا يغلق تفاصيل اللعبة
+                // نعيد حالة السجل تفاصيل اللعبة لكي لا يتأثر السجل
                 history.pushState({ modal: 'details' }, '');
                 return;
             }
 
-            // 2. إذا كانت نافذة تفاصيل اللعبة مفتوحة والصور مغلقة، أغلق تفاصيل اللعبة وارجع لقائمة الألعاب الرئيسية
+            // إذا كانت تفاصيل اللعبة مفتوحة، أغلقها وعد لقائمة الألعاب الرئيسية بضغطة واحدة
             if (detailsModal && !detailsModal.classList.contains('hidden')) {
                 closeDetailsModal();
                 return;
