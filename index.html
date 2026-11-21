@@ -460,7 +460,7 @@
                     <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة
                     </h4>
-                    <span class="text-[10px] text-slate-400 bg-[#05070b] border border-slate-800 px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
+                    <span class="text-[10px] text-slate-400 bg-[#0b0f19] border border-slate-800 px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass-plus text-cyan-400"></i> اضغط على أي صورة لتكبيرها وعرضها بالشاشة الكاملة 🔍
                     </span>
                 </div>
@@ -475,7 +475,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (تم دمجها برمجياً لتعود مباشرة لقائمة الألعاب عند ضغطة الرجوع) -->
+    <!-- نافذة تكبير الصورة (تم دمجها وتعديلها لتصبح جزءاً داخلياً لا يخدع سجل المتصفح) -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2">
         
         <button onclick="closeLightbox()" class="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.6)] flex items-center gap-2 transition-all active:scale-95 border-2 border-white/20 backdrop-blur-md">
@@ -1019,7 +1019,7 @@
                 addToCart(game.id, e);
             };
 
-            // إضافة خطوة واحدة للسجل عند فتح تفاصيل اللعبة
+            // نضيف خطوة واحدة فقط في سجل المتصفح عند فتح صفحة تفاصيل اللعبة
             history.pushState({ modal: 'details' }, '');
 
             document.getElementById('details-modal').classList.remove('hidden');
@@ -1036,7 +1036,7 @@
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
-            // تفتح الصورة محلياً تماماً، ولا نضيف أي سجل جديد، ليبقى زر الرجوع مرتبطاً حصراً بصفحة التفاصيل
+            // فتح الصورة محلياً بالكامل دون استخدام pushState لكي لا تؤثر على سجل الـ history الخاص بالزر
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
@@ -1044,19 +1044,19 @@
             document.getElementById('lightbox-modal').classList.add('hidden');
         };
 
-        // إدارة ذكية وموحدة تماماً لزر الرجوع (Back Button)
+        // إدارة موحدة ومحكمة لزر الرجوع (Back Button)
         window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
 
-            // 1. إذا كانت نافذة الصور مفتوحة، أغلقها وحدها فوراً واجعل السجل مهيأً للتفاصيل
+            // إذا كانت نافذة الصورة المكبرة مفتوحة، أغلقها فوراً واستعد لسجل التفاصيل
             if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
                 history.pushState({ modal: 'details' }, '');
                 return;
             }
 
-            // 2. إذا كانت نافذة تفاصيل اللعبة مفتوحة، أغلقها فوراً وعد لقائمة الألعاب الرئيسية بضغطة واحدة فقط
+            // إذا كانت تفاصيل اللعبة مفتوحة، أغلقها فوراً وعد للقائمة الرئيسية بضغطة زر واحدة فقط
             if (detailsModal && !detailsModal.classList.contains('hidden')) {
                 closeDetailsModal();
                 return;
@@ -1415,7 +1415,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (error) {
                 console.error("خطأ النشر:", error);
-                showToast("حدث خطأ في الاتصال، حاول مرة واحدة.");
+                showToast("حدث خطأ في الاتصال، حاول مرة أخرى.");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerText = "نشر اللعبة في المتجر 🚀";
