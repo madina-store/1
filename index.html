@@ -599,7 +599,7 @@
             }
         };
 
-        // إدارة زر الرجوع في المتصفح والهاتف لإغلاق النوافذ المفتوحة فوراً بضغطة واحدة وبدون خروج من الموقع
+        // التحكم الذكي في زر الرجوع للنظام أو الهاتف لغلق النافذة بضغطة واحدة مباشرة ودون أي خروج من الموقع
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
@@ -1041,7 +1041,6 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
-            // إضافة حالة للسجل لكي يتم إغلاق النافذة بضغطة زر الرجوع بداخل المتصفح دون مغادرة الموقع
             history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
@@ -1080,7 +1079,7 @@
         };
 
         window.nextLightboxImage = function() {
-            currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
+            currentLightboxIndex = (currentLightboxIndex + 1 + currentLightboxImages.length) % currentLightboxImages.length;
             updateLightboxImage();
         };
 
