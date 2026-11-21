@@ -227,7 +227,7 @@
             </div>
         </div>
 
-        <!-- البنر الرئيسي (أحدث الألعاب المضافة) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
@@ -338,13 +338,11 @@
                     <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#0b0f19] rounded-lg text-xs"></div>
                 </div>
 
-                <!-- اختيار التصنيف الرئيسي للواجهة -->
                 <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400">
                         <i class="fa-solid fa-star"></i> التصنيف الرئيسي (يظهر على واجهة اللعبة أسفل الاسم):
                     </label>
                     <select id="game-main-category" class="w-full bg-[#0b0f19] border border-slate-800 rounded-xl p-2.5 text-xs text-cyan-300 font-bold focus:outline-none focus:border-cyan-500">
-                        <!-- سيتم تعبئتها ديناميكياً -->
                     </select>
                 </div>
 
@@ -422,7 +420,7 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة (بأعلى معايير الاستجابة الفورية لزر الهاتف) -->
+    <!-- نافذة تفاصيل اللعبة -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border border-slate-800 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
             <div class="flex items-center justify-end absolute top-4 left-4 right-4 z-20 pointer-events-none">
@@ -596,7 +594,7 @@
             }
         };
 
-        // الحل الهندسي النظيف: اعتراض زر الرجوع الخاص بالهاتف برمجياً وإغلاق النافذة النشطة فوراً ومن أول ضغطة
+        // الحل الهندسي لإغلاق النوافذ وتفريغ اليوتيوب من أول ضغطة على زر الرجوع في الهاتف
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightbox-modal');
             const details = document.getElementById('details-modal');
@@ -604,23 +602,19 @@
 
             if (!lightbox.classList.contains('hidden')) {
                 lightbox.classList.add('hidden');
-                history.pushState({ page: 'store' }, "", window.location.pathname);
                 return;
             }
             if (!details.classList.contains('hidden')) {
-                document.getElementById('modal-yt-iframe').src = '';
+                document.getElementById('modal-yt-iframe').src = ''; // تفريغ اليوتيوب لإنهاء الشاشة السوداء والصوت
                 details.classList.add('hidden');
-                history.pushState({ page: 'store' }, "", window.location.pathname);
                 return;
             }
             if (!cartModal.classList.contains('hidden')) {
                 cartModal.classList.add('hidden');
-                history.pushState({ page: 'store' }, "", window.location.pathname);
                 return;
             }
         });
 
-        // تهيئة الحالة الافتراضية للسجل لضمان استجابة زر الهاتف الفورية
         if (!window.history.state) {
             window.history.replaceState({ page: 'store' }, "", window.location.pathname);
         }
@@ -1035,13 +1029,11 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
-            
-            // إضافة حالة جديدة للسجل فور فتح النافذة لكي يتفاعل زر الهاتف فوراً من أول ضغطة
             history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
         window.closeDetailsModal = function() {
-            document.getElementById('modal-yt-iframe').src = '';
+            document.getElementById('modal-yt-iframe').src = ''; // تفريغ الـ iframe لمنع الشاشة السوداء والصوت
             document.getElementById('details-modal').classList.add('hidden');
             if (window.location.hash.includes('details') || window.history.state?.modal) {
                 history.back();
