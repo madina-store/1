@@ -422,17 +422,14 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة -->
+    <!-- نافذة تفاصيل اللعبة (بدون زر رجوع علوي - تصميم عالمي نظيف) -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border border-slate-800 rounded-3xl max-w-xl w-full max-h-[95vh] overflow-y-auto p-5 space-y-4 shadow-2xl relative">
-            <div class="flex items-center justify-between absolute top-4 left-4 right-4 z-20 pointer-events-none">
-                <button onclick="closeDetailsModal()" class="pointer-events-auto px-3.5 py-1.5 rounded-full bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-400/50 flex items-center gap-1.5 text-xs font-black transition shadow-lg">
-                    <i class="fa-solid fa-arrow-right"></i> رجوع
-                </button>
-                <button onclick="closeDetailsModal()" class="pointer-events-auto w-8 h-8 rounded-full bg-slate-900 text-slate-300 hover:text-white flex items-center justify-center text-sm transition shadow">✕</button>
+            <div class="flex items-center justify-end absolute top-4 left-4 right-4 z-20 pointer-events-none">
+                <button onclick="closeDetailsModal()" class="pointer-events-auto w-9 h-9 rounded-full bg-slate-900 hover:bg-cyan-500 text-slate-300 hover:text-slate-950 border border-slate-800 flex items-center justify-center text-sm transition shadow">✕</button>
             </div>
             
-            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-900 hidden mt-8">
+            <div id="modal-video-container" class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-900 hidden mt-6">
                 <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
             </div>
 
@@ -598,6 +595,34 @@
                 wrapper.style.display = (searchInput.value.length > 0 || document.activeElement === searchInput) ? 'none' : 'flex';
             }
         };
+
+        // إدارة زر الرجوع الخاص بالهاتف والمتصفح بدقة تامة من أول ضغطة وبشكل عالمي
+        window.addEventListener('popstate', (event) => {
+            const lightbox = document.getElementById('lightbox-modal');
+            const details = document.getElementById('details-modal');
+            const cartModal = document.getElementById('cart-modal');
+            const searchInput = document.getElementById('search-input');
+
+            if (!lightbox.classList.contains('hidden')) { 
+                lightbox.classList.add('hidden'); 
+                return; 
+            }
+            if (!details.classList.contains('hidden')) { 
+                document.getElementById('modal-yt-iframe').src = ''; 
+                details.classList.add('hidden'); 
+                return; 
+            }
+            if (!cartModal.classList.contains('hidden')) { 
+                cartModal.classList.add('hidden'); 
+                return; 
+            }
+            if (searchInput && searchInput.value.trim() !== '') { 
+                searchInput.value = ''; 
+                togglePlaceholderVisibility(); 
+                filterAndRender(); 
+                return; 
+            }
+        });
 
         function completeSecurityCheck() {
             const spinner = document.getElementById('loading-spinner');
@@ -777,9 +802,11 @@
             const isHidden = modal.classList.contains('hidden');
             if (isHidden) {
                 modal.classList.remove('hidden');
+                history.pushState({ modal: 'cart' }, "", "#cart");
                 renderCartItems();
             } else {
                 modal.classList.add('hidden');
+                if (window.location.hash === '#cart') history.back();
             }
         };
 
@@ -869,6 +896,10 @@
         window.handleSearchInput = function() {
             currentPage = 1;
             togglePlaceholderVisibility();
+            const searchVal = document.getElementById('search-input').value.trim();
+            if (searchVal.length > 0) {
+                history.pushState({ search: searchVal }, "", "#search");
+            }
             filterAndRender();
             const anchor = document.getElementById('games-anchor');
             if (anchor) { anchor.scrollIntoView({ behavior: 'smooth' }); }
@@ -1007,21 +1038,31 @@
             };
 
             document.getElementById('details-modal').classList.remove('hidden');
+            
+            // إضافة حالة للسجل بذكاء لكي يستجيب زر الهاتف فوراً من أول ضغطة
+            history.pushState({ modal: 'details', id: gameId }, "", `#details-${gameId}`);
         };
 
         window.closeDetailsModal = function() {
             document.getElementById('modal-yt-iframe').src = '';
             document.getElementById('details-modal').classList.add('hidden');
+            if (window.location.hash.includes('details')) {
+                history.back();
+            }
         };
 
         window.openLightbox = function(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox-modal').classList.remove('hidden');
+            history.pushState({ modal: 'lightbox' }, "", "#lightbox");
         };
 
         window.closeLightbox = function() {
             document.getElementById('lightbox-modal').classList.add('hidden');
+            if (window.location.hash === '#lightbox') {
+                history.back();
+            }
         };
 
         window.updateLightboxImage = function() {
