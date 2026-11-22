@@ -1220,7 +1220,7 @@
                                 </span>
                                 ${isAdminLoggedIn ? `
                                     <div class="flex gap-1">
-                                        <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل اللعبة">
+                                        <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل ونقل اللعبة">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
                                         <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف">
@@ -1387,7 +1387,7 @@
             try {
                 if (editingId) {
                     await updateDoc(doc(db, "games", editingId), gameData);
-                    showToast("تم تعديل وحفظ اللعبة بنجاح 🌟");
+                    showToast("تم نقل وتحديث اللعبة بنجاح 🌟");
                     resetAdminForm();
                 } else {
                     gameData.createdAt = new Date();
@@ -1438,8 +1438,8 @@
             updateMainCategoryDropdown();
             document.getElementById('game-main-category').value = game.category || gameCats[0] || '';
 
-            document.getElementById('admin-form-title').innerText = "تعديل بيانات اللعبة:";
-            document.getElementById('save-game-btn').innerText = "حفظ التعديلات 💾";
+            document.getElementById('admin-form-title').innerText = "تعديل ونقل اللعبة:";
+            document.getElementById('save-game-btn').innerText = "حفظ ونقل التعديلات 💾";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
             const panel = document.getElementById('admin-panel');
