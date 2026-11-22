@@ -528,7 +528,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // أصناف الألعاب الفرعية المتبقية (بدون شريط المنصات المحذوف)
+        // قائمة التصنيفات الفرعية الأساسية
         const ALL_CATEGORIES = [
             "الكل",
             "ألعاب الأكشن ⚔️",
@@ -557,7 +557,7 @@
         ];
 
         let allGames = [];
-        let selectedPlatform = "الكل"; // يمكن أن تكون: "الكل", "PS5", "PS4", "الريترو للـ PS4"
+        let selectedPlatform = "الكل"; // "الكل", "PS5", "PS4", "الريترو للـ PS4"
         let selectedCategory = "الكل";
         let currentSort = "newest";
         let currentPage = 1;
@@ -852,7 +852,6 @@
         window.setPlatform = function(plat) {
             selectedPlatform = plat;
             currentPage = 1;
-            // تحديث تصميم أزرار المنصات بالأعلى
             ['الكل', 'PS5', 'PS4', 'الريترو للـ PS4'].forEach(p => {
                 const btn = document.getElementById(`plat-${p}`);
                 if (btn) {
@@ -1097,7 +1096,12 @@
                 if (selectedPlatform === "الكل") {
                     matchPlat = true;
                 } else if (selectedPlatform === "الريترو للـ PS4") {
-                    matchPlat = cats.includes("ألعاب الريترو والجيل القديم المحولة للـ PS4 🕹️") || cats.some(c => c.includes("الريترو") || c.includes("الجيل القديم"));
+                    // اللعبة تنتمي للريترو إذا كان منصتها PS4 وتحتوي تصنيف ريترو أو الجيل القديم
+                    matchPlat = (g.platform === "PS4" && (cats.some(c => c.includes("الريترو") || c.includes("الجيل القديم")) || g.category?.includes("الريترو") || g.category?.includes("الجيل القديم")));
+                } else if (selectedPlatform === "PS4") {
+                    // تظهر ألعاب الـ PS4 العادية فقط (باستثناء ألعاب الريترو الحصرية لكي لا تتداخل)
+                    const isRetro = cats.some(c => c.includes("الريترو") || c.includes("الجيل القديم")) || g.category?.includes("الريترو") || g.category?.includes("الجيل القديم");
+                    matchPlat = (g.platform && g.platform.includes("PS4") && !isRetro);
                 } else {
                     matchPlat = (g.platform && g.platform.includes(selectedPlatform));
                 }
