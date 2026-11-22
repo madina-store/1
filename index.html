@@ -527,10 +527,10 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // الأصناف الرسمية والمعتمدة عالمياً مع إضافة تصنيف ألعاب الجيل القديم المحولة للـ PS4
+        // الأصناف الرسمية والمعتمدة عالمياً مع توضيح ألعاب PS2 & PS3 المحولة للـ PS4
         const ALL_CATEGORIES = [
             "الكل",
-            "ألعاب الجيل القديم المحولة PS2 & PS3 💿",
+            "ألعاب PS2 & PS3 المحولة للـ PS4 💿",
             "ألعاب الأكشن ⚔️",
             "ألعاب المغامرات 🗺️",
             "ألعاب الأكشن والمغامرات 🏃‍♂️",
@@ -576,7 +576,7 @@
         const searchItemsList = [
             "ألعاب PS4 🎮",
             "ألعاب PS5 ⚡",
-            "ألعاب الجيل القديم المحولة 💿",
+            "ألعاب PS2 & PS3 المحولة للـ PS4 💿",
             ...ALL_CATEGORIES.filter(c => c !== "الكل")
         ];
         const animClasses = ["search-anim-pulse", "search-anim-slide", "search-anim-glow"];
