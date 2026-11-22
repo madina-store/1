@@ -336,6 +336,7 @@
                         <option value="PS4">PS4</option>
                         <option value="PS5">PS5</option>
                         <option value="PS4 / PS5">PS4 / PS5</option>
+                        <option value="الريترو للـ PS4">الريترو للـ PS4 🕹️</option>
                     </select>
                 </div>
 
@@ -381,7 +382,7 @@
                 <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
                 <button id="save-game-btn" onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
-                    نشر اللعبة في المتجر 🚀
+                    حفظ التعديل 💾
                 </button>
             </div>
         </div>
@@ -528,7 +529,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // قائمة التصنيفات الفرعية الأساسية
         const ALL_CATEGORIES = [
             "الكل",
             "ألعاب الأكشن ⚔️",
@@ -557,7 +557,7 @@
         ];
 
         let allGames = [];
-        let selectedPlatform = "الكل"; // "الكل", "PS5", "PS4", "الريترو للـ PS4"
+        let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentSort = "newest";
         let currentPage = 1;
@@ -834,7 +834,7 @@
             `).join('');
 
             actionsBox.innerHTML = `
-                <button onclick="sendCartToWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition">
+                <button onclick="sendCartToWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.4)]">
                     <i class="fa-brands fa-whatsapp text-lg"></i> إرسال الطلب عبر واتساب
                 </button>
             `;
@@ -1096,12 +1096,9 @@
                 if (selectedPlatform === "الكل") {
                     matchPlat = true;
                 } else if (selectedPlatform === "الريترو للـ PS4") {
-                    // اللعبة تنتمي للريترو إذا كان منصتها PS4 وتحتوي تصنيف ريترو أو الجيل القديم
-                    matchPlat = (g.platform === "PS4" && (cats.some(c => c.includes("الريترو") || c.includes("الجيل القديم")) || g.category?.includes("الريترو") || g.category?.includes("الجيل القديم")));
+                    matchPlat = (g.platform === "الريترو للـ PS4");
                 } else if (selectedPlatform === "PS4") {
-                    // تظهر ألعاب الـ PS4 العادية فقط (باستثناء ألعاب الريترو الحصرية لكي لا تتداخل)
-                    const isRetro = cats.some(c => c.includes("الريترو") || c.includes("الجيل القديم")) || g.category?.includes("الريترو") || g.category?.includes("الجيل القديم");
-                    matchPlat = (g.platform && g.platform.includes("PS4") && !isRetro);
+                    matchPlat = (g.platform === "PS4");
                 } else {
                     matchPlat = (g.platform && g.platform.includes(selectedPlatform));
                 }
@@ -1389,7 +1386,7 @@
             if (!arabic) { showToast("يرجى اختيار حالة اللغة العربية للعبة أولاً! ⚠️"); return; }
 
             saveBtn.disabled = true;
-            saveBtn.innerText = "جاري النشر الفوري للسحاب... ⏳";
+            saveBtn.innerText = "جاري الحفظ والتحديث... ⏳";
 
             const gameData = {
                 title,
@@ -1407,7 +1404,7 @@
             try {
                 if (editingId) {
                     await updateDoc(doc(db, "games", editingId), gameData);
-                    showToast("تم نقل وتحديث اللعبة بنجاح 🌟");
+                    showToast("تم حفظ التعديل بنجاح 💾");
                     resetAdminForm();
                 } else {
                     gameData.createdAt = new Date();
@@ -1432,7 +1429,7 @@
                 showToast("حدث خطأ في الاتصال، حاول مرة واحدة.");
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "نشر اللعبة في المتجر 🚀";
+                saveBtn.innerText = "حفظ التعديل 💾";
             }
         };
 
@@ -1458,8 +1455,8 @@
             updateMainCategoryDropdown();
             document.getElementById('game-main-category').value = game.category || gameCats[0] || '';
 
-            document.getElementById('admin-form-title').innerText = "تعديل ونقل اللعبة:";
-            document.getElementById('save-game-btn').innerText = "حفظ ونقل التعديلات 💾";
+            document.getElementById('admin-form-title').innerText = "تعديل اللعبة:";
+            document.getElementById('save-game-btn').innerText = "حفظ التعديل 💾";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
             const panel = document.getElementById('admin-panel');
@@ -1480,7 +1477,7 @@
             renderAdminCheckboxes();
 
             document.getElementById('admin-form-title').innerText = "إضافة لعبة جديدة:";
-            document.getElementById('save-game-btn').innerText = "نشر اللعبة في المتجر 🚀";
+            document.getElementById('save-game-btn').innerText = "حفظ التعديل 💾";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
