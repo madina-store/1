@@ -259,12 +259,13 @@
             </div>
         </section>
 
-        <!-- أزرار المنصات وقائمة الترتيب -->
+        <!-- أزرار المنصات (الكل، PS5، PS4، والريترو للـ PS4) وقائمة الترتيب -->
         <section class="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div class="grid grid-cols-3 gap-2.5 w-full sm:w-auto">
-                <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition">الكل</button>
-                <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition">PS4</button>
-                <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition">PS5</button>
+            <div class="grid grid-cols-2 sm:flex items-center gap-2.5 w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
+                <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition whitespace-nowrap">الكل</button>
+                <button onclick="setPlatform('PS5')" id="plat-PS5" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition whitespace-nowrap">PS5</button>
+                <button onclick="setPlatform('PS4')" id="plat-PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition whitespace-nowrap">PS4</button>
+                <button onclick="setPlatform('الريترو للـ PS4')" id="plat-الريترو للـ PS4" class="plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition whitespace-nowrap">الريترو للـ PS4 🕹️</button>
             </div>
 
             <div class="w-full sm:w-auto flex items-center gap-2 bg-[#0b0f19] border border-slate-800 rounded-xl px-3 py-2 shadow">
@@ -278,7 +279,7 @@
             </div>
         </section>
 
-        <!-- شريط الأقسام -->
+        <!-- شريط الأقسام (الفرعية الأخرى) -->
         <section>
             <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
@@ -527,10 +528,9 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // الأصناف الرسمية والمعتمدة عالمياً مع التأكيد أن القسم ينتهي بـ (للـ PS4) لتوضيح الزبون
+        // أصناف الألعاب الفرعية المتبقية (بدون شريط المنصات المحذوف)
         const ALL_CATEGORIES = [
             "الكل",
-            "ألعاب الريترو والجيل القديم المحولة للـ PS4 🕹️",
             "ألعاب الأكشن ⚔️",
             "ألعاب المغامرات 🗺️",
             "ألعاب الأكشن والمغامرات 🏃‍♂️",
@@ -557,7 +557,7 @@
         ];
 
         let allGames = [];
-        let selectedPlatform = "الكل";
+        let selectedPlatform = "الكل"; // يمكن أن تكون: "الكل", "PS5", "PS4", "الريترو للـ PS4"
         let selectedCategory = "الكل";
         let currentSort = "newest";
         let currentPage = 1;
@@ -576,7 +576,7 @@
         const searchItemsList = [
             "ألعاب PS4 🎮",
             "ألعاب PS5 ⚡",
-            "ألعاب الريترو والجيل القديم المحولة للـ PS4 🕹️",
+            "الريترو للـ PS4 🕹️",
             ...ALL_CATEGORIES.filter(c => c !== "الكل")
         ];
         const animClasses = ["search-anim-pulse", "search-anim-slide", "search-anim-glow"];
@@ -852,10 +852,17 @@
         window.setPlatform = function(plat) {
             selectedPlatform = plat;
             currentPage = 1;
-            document.querySelectorAll('.plat-btn').forEach(btn => {
-                btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition";
+            // تحديث تصميم أزرار المنصات بالأعلى
+            ['الكل', 'PS5', 'PS4', 'الريترو للـ PS4'].forEach(p => {
+                const btn = document.getElementById(`plat-${p}`);
+                if (btn) {
+                    btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition whitespace-nowrap";
+                }
             });
-            document.getElementById(`plat-${plat}`).className = "plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition";
+            const activeBtn = document.getElementById(`plat-${plat}`);
+            if (activeBtn) {
+                activeBtn.className = "plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition whitespace-nowrap";
+            }
             filterAndRender();
         };
 
@@ -1085,7 +1092,16 @@
                 const cats = g.categories || [g.category].filter(Boolean);
                 
                 const matchSearch = titleLower.startsWith(search) || cats.some(c => c.toLowerCase().startsWith(search));
-                const matchPlat = selectedPlatform === "الكل" || (g.platform && g.platform.includes(selectedPlatform));
+                
+                let matchPlat = true;
+                if (selectedPlatform === "الكل") {
+                    matchPlat = true;
+                } else if (selectedPlatform === "الريترو للـ PS4") {
+                    matchPlat = cats.includes("ألعاب الريترو والجيل القديم المحولة للـ PS4 🕹️") || cats.some(c => c.includes("الريترو") || c.includes("الجيل القديم"));
+                } else {
+                    matchPlat = (g.platform && g.platform.includes(selectedPlatform));
+                }
+
                 const matchCat = selectedCategory === "الكل" || cats.includes(selectedCategory) || g.category === selectedCategory;
                 return matchSearch && matchPlat && matchCat;
             });
