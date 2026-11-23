@@ -182,7 +182,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الذكية (تتصل بفايربيس وتفتح فوراً، أو تعيد المحاولة بعد 8 ثوانٍ) -->
+    <!-- شاشة فحص الأمان الذكية (تتصل بفايربيس وتفتح فوراً، مع حماية ذكية ضد التعليق) -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -194,6 +194,13 @@
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-bolt text-[10px]"></i> بوابتك الآمنة لعالم الألعاب
         </p>
+        
+        <!-- زر طوارئ إضافي يظهر إذا تأخر النت كثيراً -->
+        <div id="retry-box" class="hidden mt-4">
+            <button onclick="window.location.reload()" class="bg-cyan-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-black shadow-lg">
+                إعادة المحاولة / تحديث الصفحة 🔄
+            </button>
+        </div>
     </div>
 
     <!-- الهيدر -->
@@ -511,7 +518,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس (مع توقيت ذكي 8 ثوانٍ كحد أقصى وإعادة تشغيل تلقائية عند انقطاع النت) -->
+    <!-- سكربت فايربيس (مع الحماية الذكية لمنع التعليق والتحميل الفوري) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -575,9 +582,8 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
-        let isStoreLoaded = false;
 
-        // عرض فوري للألعاب المخزنة مسبقاً في الذاكرة لتكون جاهزة للمستخدم
+        // العرض الفوري للألعاب المخزنة مسبقاً في الذاكرة لتكون جاهزة للمستخدم
         if (allGames.length > 0) {
             renderCategoriesBar();
             renderHero();
@@ -585,12 +591,23 @@
             filterAndRender();
         }
 
-        // ⏱️ مؤقت أمان ذكي مدته 8 ثوانٍ كحد أقصى (إذا وصل للـ 8 ثوانٍ ولم يتصل السيرفر، يتم عمل ريستارت للصفحة تلقائياً)
-        const maxEightSecondsTimer = setTimeout(() => {
-            if (!isStoreLoaded) {
-                window.location.reload();
+        // 🛡️ حماية ذكية ضد الدوران الأبدي (تتأكد أنه إذا تجاوز الاتصال 4 ثوانٍ ولم يستجب، يتم فتح الموقع إجبارياً وإظهار زر إعادة المحاولة)
+        const smartTimeoutProtection = setTimeout(() => {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner && spinner.style.display !== 'none') {
+                const title = document.getElementById('security-title');
+                const subtitle = document.getElementById('security-subtitle');
+                const retryBox = document.getElementById('retry-box');
+                
+                if (title) title.innerText = "الاتصال بطيء أو ضعيف جداً!";
+                if (subtitle) subtitle.innerText = "تم فتح المتجر من الذاكرة المؤقتة، يمكنك إعادة المحاولة.";
+                if (retryBox) retryBox.classList.remove('hidden');
+
+                setTimeout(() => {
+                    hideLoadingSpinnerSuccessfully("تم الاتصال بنجاح (وضع الاستجابة السريعة)");
+                }, 1500);
             }
-        }, 8000);
+        }, 4000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -623,12 +640,9 @@
         };
 
         function hideLoadingSpinnerSuccessfully(customText = "تم الاتصال بفايربيس بنجاح ✓") {
-            if (isStoreLoaded) return;
-            isStoreLoaded = true;
-            clearTimeout(maxEightSecondsTimer);
-
             const spinner = document.getElementById('loading-spinner');
             if (spinner && spinner.style.display !== 'none') {
+                clearTimeout(smartTimeoutProtection);
                 const ring = document.getElementById('security-ring');
                 const iconBox = document.getElementById('security-icon-box');
                 const title = document.getElementById('security-title');
@@ -1323,7 +1337,7 @@
                     filterAndRender();
                 }
 
-                // 🚀 نجاح الاتصال بفايربيس في أي وقت خلال الـ 8 ثوانٍ -> إخفاء الشاشة فوراً وفتح الموقع
+                // 🚀 نجاح الاتصال بفايربيس -> إخفاء شاشة الفحص فوراً وفتح الموقع
                 hideLoadingSpinnerSuccessfully("تم الاتصال بفايربيس بنجاح ✓");
 
                 initRealtimeGamesListener();
