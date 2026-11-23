@@ -157,6 +157,20 @@
             animation: flyToCart 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
+        .spinner-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #0b1324 0%, #05070b 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 99999; transition: opacity 0.3s ease;
+        }
+        .shield-ring {
+            position: relative; width: 85px; height: 85px; border-radius: 50%;
+            border: 3px solid rgba(6, 182, 212, 0.15); border-top: 3px solid #06b6d4; border-bottom: 3px solid #38bdf8;
+            animation: spin 1s linear infinite; display: flex; align-items: center; justify-content: center;
+        }
+        .shield-ring.verified { animation: none; border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.5); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes progressAnimation { 0% { width: 0%; } 100% { width: 100%; } }
         .hero-progress-bar { animation: progressAnimation 5s linear infinite; }
         @keyframes floatCart {
@@ -167,6 +181,20 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+    <!-- شاشة فحص الأمان والاتصال السريع الفخمة -->
+    <div id="loading-spinner" class="spinner-overlay px-4 text-center">
+        <div class="relative flex items-center justify-center mb-5">
+            <div id="security-ring" class="shield-ring"></div>
+            <div id="security-icon-box" class="absolute inset-0 flex items-center justify-center text-cyan-400 text-3xl transition-all duration-300">
+                <i class="fa-solid fa-shield-halved animate-pulse"></i>
+            </div>
+        </div>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والاتصال السريع...</h2>
+        <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-bolt text-[10px]"></i> بوابتك الآمنة لعالم الألعاب
+        </p>
+    </div>
 
     <!-- الهيدر -->
     <header class="bg-[#070a12]/95 backdrop-blur-md border-b border-slate-900 px-4 py-3 sticky top-0 z-40">
@@ -483,7 +511,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي السريع الفوري -->
+    <!-- سكربت فايربيس والمنطق البرمجي المحسّن للسرعة الفائقة -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -548,12 +576,13 @@
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
 
-        // العرض الفوري مباشرة أول ما يفتح الموقع
+        // إذا كانت البيانات مخزنة مسبقاً، اعرضها فوريًا وأخفِ شاشة التحميل في أجزاء من الثانية (مثل الخطف)
         if (allGames.length > 0) {
             renderCategoriesBar();
             renderHero();
             resetHeroTimer();
             filterAndRender();
+            hideLoadingSpinnerQuickly();
         }
 
         const searchItemsList = [
@@ -585,6 +614,28 @@
                 wrapper.style.display = (searchInput.value.length > 0 || document.activeElement === searchInput) ? 'none' : 'flex';
             }
         };
+
+        function hideLoadingSpinnerQuickly() {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner && spinner.style.display !== 'none') {
+                const ring = document.getElementById('security-ring');
+                const iconBox = document.getElementById('security-icon-box');
+                const title = document.getElementById('security-title');
+
+                if (ring && iconBox && title) {
+                    ring.classList.add('verified');
+                    iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
+                    iconBox.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
+                    title.innerText = "تم الاتصال بنجاح ✓";
+                    title.classList.replace('text-white', 'text-emerald-400');
+                }
+
+                setTimeout(() => {
+                    spinner.style.opacity = '0';
+                    setTimeout(() => spinner.style.display = 'none', 300);
+                }, 200);
+            }
+        }
 
         function playSuccessSound() {
             try {
@@ -1259,10 +1310,14 @@
                 resetHeroTimer();
                 filterAndRender();
 
+                // إخفاء شاشة الفحص فوراً وبشكل فخم بمجرد جاهزية الألعاب
+                hideLoadingSpinnerQuickly();
+
                 initRealtimeGamesListener();
 
             } catch (error) {
                 console.error("خطأ في الاتصال:", error);
+                hideLoadingSpinnerQuickly();
             }
         }
 
