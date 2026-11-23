@@ -182,7 +182,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الذكية (تتصل بفايربيس وتفتح فوراً، مع حماية ذكية ضد التعليق) -->
+    <!-- شاشة فحص الأمان القديمة بدون أي تعديلات أو كلمات خارجية -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -190,17 +190,10 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والاتصال بفايربيس...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-bolt text-[10px]"></i> بوابتك الآمنة لعالم الألعاب
         </p>
-        
-        <!-- زر طوارئ إضافي يظهر إذا تأخر النت كثيراً -->
-        <div id="retry-box" class="hidden mt-4">
-            <button onclick="window.location.reload()" class="bg-cyan-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-black shadow-lg">
-                إعادة المحاولة / تحديث الصفحة 🔄
-            </button>
-        </div>
     </div>
 
     <!-- الهيدر -->
@@ -518,7 +511,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس (مع الحماية الذكية لمنع التعليق والتحميل الفوري) -->
+    <!-- سكربت فايربيس (الكود الأصلي الشغال بدون أي إضافات) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -583,31 +576,12 @@
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
 
-        // العرض الفوري للألعاب المخزنة مسبقاً في الذاكرة لتكون جاهزة للمستخدم
         if (allGames.length > 0) {
             renderCategoriesBar();
             renderHero();
             resetHeroTimer();
             filterAndRender();
         }
-
-        // 🛡️ حماية ذكية ضد الدوران الأبدي (تتأكد أنه إذا تجاوز الاتصال 4 ثوانٍ ولم يستجب، يتم فتح الموقع إجبارياً وإظهار زر إعادة المحاولة)
-        const smartTimeoutProtection = setTimeout(() => {
-            const spinner = document.getElementById('loading-spinner');
-            if (spinner && spinner.style.display !== 'none') {
-                const title = document.getElementById('security-title');
-                const subtitle = document.getElementById('security-subtitle');
-                const retryBox = document.getElementById('retry-box');
-                
-                if (title) title.innerText = "الاتصال بطيء أو ضعيف جداً!";
-                if (subtitle) subtitle.innerText = "تم فتح المتجر من الذاكرة المؤقتة، يمكنك إعادة المحاولة.";
-                if (retryBox) retryBox.classList.remove('hidden');
-
-                setTimeout(() => {
-                    hideLoadingSpinnerSuccessfully("تم الاتصال بنجاح (وضع الاستجابة السريعة)");
-                }, 1500);
-            }
-        }, 4000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -639,10 +613,9 @@
             }
         };
 
-        function hideLoadingSpinnerSuccessfully(customText = "تم الاتصال بفايربيس بنجاح ✓") {
+        function hideLoadingSpinnerSuccessfully() {
             const spinner = document.getElementById('loading-spinner');
             if (spinner && spinner.style.display !== 'none') {
-                clearTimeout(smartTimeoutProtection);
                 const ring = document.getElementById('security-ring');
                 const iconBox = document.getElementById('security-icon-box');
                 const title = document.getElementById('security-title');
@@ -651,7 +624,7 @@
                     ring.classList.add('verified');
                     iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                     iconBox.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
-                    title.innerText = customText;
+                    title.innerText = "تم الفحص بنجاح ✓";
                     title.classList.replace('text-white', 'text-emerald-400');
                 }
 
@@ -1108,11 +1081,6 @@
             updateLightboxImage();
         };
 
-        window.reloadStoreData = function() {
-            showToast("🔄 جاري إعادة تحديث الصفحة والاتصال...");
-            window.location.reload();
-        };
-
         window.filterAndRender = function() {
             const searchInputElem = document.getElementById('search-input');
             const search = searchInputElem ? searchInputElem.value.trim().toLowerCase() : '';
@@ -1151,17 +1119,14 @@
             if (filtered.length === 0) {
                 if (allGames.length === 0) {
                     grid.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_20px_rgba(6,182,212,0.25)] text-center space-y-4">
+                        <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] text-center space-y-3">
                             <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xl animate-pulse">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <i class="fa-solid fa-gamepad"></i>
                             </div>
                             <div class="space-y-1">
-                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، يبدو أن الاتصال بالإنترنت أو بالسيرفر ضعيف!</h3>
-                                <p class="text-slate-400 text-xs leading-relaxed max-w-sm">تحقق من شبكتك أو قم بإعادة تحديث الصفحة لجلب أحدث البيانات.</p>
+                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">جاري تحضير الألعاب...</h3>
+                                <p class="text-slate-400 text-xs leading-relaxed">يرجى الانتظار ثوانٍ معدودة.</p>
                             </div>
-                            <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
-                                <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والاتصال
-                            </button>
                         </div>
                     `;
                 } else if (search.length > 0) {
@@ -1313,7 +1278,6 @@
             }
         };
 
-        // دالة التهيئة والاتصال بفايربيس
         async function initStore() {
             if (window.location.hash) {
                 history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -1337,14 +1301,12 @@
                     filterAndRender();
                 }
 
-                // 🚀 نجاح الاتصال بفايربيس -> إخفاء شاشة الفحص فوراً وفتح الموقع
-                hideLoadingSpinnerSuccessfully("تم الاتصال بفايربيس بنجاح ✓");
-
+                hideLoadingSpinnerSuccessfully();
                 initRealtimeGamesListener();
 
             } catch (error) {
                 console.error("خطأ في الاتصال:", error);
-                hideLoadingSpinnerSuccessfully("تم الاتصال بنجاح (وضع الاستجابة السريعة)");
+                hideLoadingSpinnerSuccessfully();
             }
         }
 
