@@ -259,7 +259,7 @@
             </div>
         </section>
 
-        <!-- أزرار المنصات (الكل، PS5، PS4، والريترو للـ PS4) وقائمة الترتيب -->
+        <!-- أزرار المنصات وقائمة الترتيب -->
         <section class="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div class="grid grid-cols-2 sm:flex items-center gap-2.5 w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
                 <button onclick="setPlatform('الكل')" id="plat-الكل" class="plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition whitespace-nowrap">الكل</button>
@@ -279,7 +279,7 @@
             </div>
         </section>
 
-        <!-- شريط الأقسام (الفرعية الأخرى) -->
+        <!-- شريط الأقسام -->
         <section>
             <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
@@ -288,7 +288,6 @@
         <div id="games-anchor"></div>
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
-            <!-- أزرار الصفحات -->
             <div id="pagination-container" class="flex items-center gap-2 pt-5 overflow-x-auto no-scrollbar px-1" style="direction: ltr !important; justify-content: flex-start !important;"></div>
         </section>
 
@@ -458,7 +457,7 @@
                     <h4 id="gallery-heading" class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
                         <i class="fa-regular fa-images"></i> لقطات الشاشة
                     </h4>
-                    <span class="text-[10px] text-slate-400 bg-[#05070b] border border-slate-800 px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
+                    <span class="text-[10px] text-slate-400 bg-[#0b0f19] border border-slate-800 px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass-plus text-cyan-400"></i> اضغط على أي صورة لتكبيرها وعرضها بالشاشة الكاملة 🔍
                     </span>
                 </div>
@@ -573,6 +572,14 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
+        let isDataLoaded = false;
+
+        // ⏱️ مؤقت أمان ذكي بحد أقصى 7 ثوانٍ: إذا لم يتصل السيرفر يعرض رسالة الخطأ تلقائياً بدلاً من التعليق
+        const connectionTimeout = setTimeout(() => {
+            if (!isDataLoaded) {
+                showNetworkErrorState();
+            }
+        }, 7000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -605,6 +612,10 @@
         };
 
         function completeSecurityCheck() {
+            if (isDataLoaded) return;
+            isDataLoaded = true;
+            clearTimeout(connectionTimeout);
+
             const spinner = document.getElementById('loading-spinner');
             if (!spinner || spinner.style.display === 'none') return;
 
@@ -628,6 +639,16 @@
                     setTimeout(() => spinner.style.display = 'none', 450);
                 }
             }, 300);
+        }
+
+        function showNetworkErrorState() {
+            if (isDataLoaded) return;
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                spinner.style.opacity = '0';
+                setTimeout(() => spinner.style.display = 'none', 450);
+            }
+            filterAndRender();
         }
 
         function playSuccessSound() {
@@ -1290,7 +1311,7 @@
                 initRealtimeGamesListener();
             } catch (error) {
                 console.error("خطأ في الاتصال:", error);
-                completeSecurityCheck();
+                showNetworkErrorState();
             }
         }
 
@@ -1336,7 +1357,7 @@
                 completeSecurityCheck();
             }, (error) => {
                 console.error("خطأ في المزامنة:", error);
-                completeSecurityCheck();
+                showNetworkErrorState();
             });
         }
 
