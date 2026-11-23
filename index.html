@@ -182,7 +182,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان والاتصال بفايربيس (تختفي فوراً تلقائياً بمجرد نجاح الاتصال حسب نت الزبون) -->
+    <!-- شاشة فحص الأمان الذكية (تتصل بفايربيس وتفتح فوراً، أو تعيد المحاولة بعد 8 ثوانٍ) -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -192,7 +192,7 @@
         </div>
         <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والاتصال بفايربيس...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-bolt text-[10px]"></i> يتكيف تلقائياً مع سرعة الإنترنت لديك
+            <i class="fa-solid fa-bolt text-[10px]"></i> بوابتك الآمنة لعالم الألعاب
         </p>
     </div>
 
@@ -511,7 +511,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس (يتصل حسب سرعة نت الزبون ويفتح فوراً بمجرد الاستجابة الفعلية) -->
+    <!-- سكربت فايربيس (مع توقيت ذكي 8 ثوانٍ كحد أقصى وإعادة تشغيل تلقائية عند انقطاع النت) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -575,8 +575,9 @@
         let currentLightboxImages = [];
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
+        let isStoreLoaded = false;
 
-        // إذا كان هناك بيانات مخزنة مسبقاً، اعرضها فورا في الخلفية لتكون جاهزة
+        // عرض فوري للألعاب المخزنة مسبقاً في الذاكرة لتكون جاهزة للمستخدم
         if (allGames.length > 0) {
             renderCategoriesBar();
             renderHero();
@@ -584,10 +585,12 @@
             filterAndRender();
         }
 
-        // عداد أمان زمني ذكي كحد أقصى (6 ثواني) لضمان عدم تعليق الشاشة نهائياً لو كان نت الزبون منقطعاً تماماً
-        const safetyConnectionTimeout = setTimeout(() => {
-            hideLoadingSpinnerSuccessfully("اتصل بنجاح (وضع غير متصل سريع)");
-        }, 6000);
+        // ⏱️ مؤقت أمان ذكي مدته 8 ثوانٍ كحد أقصى (إذا وصل للـ 8 ثوانٍ ولم يتصل السيرفر، يتم عمل ريستارت للصفحة تلقائياً)
+        const maxEightSecondsTimer = setTimeout(() => {
+            if (!isStoreLoaded) {
+                window.location.reload();
+            }
+        }, 8000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -620,9 +623,12 @@
         };
 
         function hideLoadingSpinnerSuccessfully(customText = "تم الاتصال بفايربيس بنجاح ✓") {
+            if (isStoreLoaded) return;
+            isStoreLoaded = true;
+            clearTimeout(maxEightSecondsTimer);
+
             const spinner = document.getElementById('loading-spinner');
             if (spinner && spinner.style.display !== 'none') {
-                clearTimeout(safetyConnectionTimeout);
                 const ring = document.getElementById('security-ring');
                 const iconBox = document.getElementById('security-icon-box');
                 const title = document.getElementById('security-title');
@@ -1293,41 +1299,37 @@
             }
         };
 
-        // دالة التهيئة والاتصال الحقيقي بفايربيس (تنتظر استجابة النت الحقيقي للزبون ثم تفتح الموقع فوراً)
+        // دالة التهيئة والاتصال بفايربيس
         async function initStore() {
             if (window.location.hash) {
                 history.replaceState(null, '', window.location.pathname + window.location.search);
             }
 
             try {
-                // جلب إعدادات الشعار أولاً بالتوازي
                 loadStoreSettings();
                 
-                // جلب الألعاب من فايربيس (حسب سرعة نت الزبون الفعلي)
                 const querySnapshot = await getDocs(collection(db, "games"));
                 const freshGamesList = [];
                 querySnapshot.forEach((docSnap) => {
                     freshGamesList.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                // بمجرد وصول البيانات بنجاح من فايربيس:
-                allGames = freshGamesList;
-                localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
-                
-                renderCategoriesBar();
-                renderHero();
-                resetHeroTimer();
-                filterAndRender();
+                if (freshGamesList.length > 0) {
+                    allGames = freshGamesList;
+                    localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
+                    renderCategoriesBar();
+                    renderHero();
+                    resetHeroTimer();
+                    filterAndRender();
+                }
 
-                // 🚀 إخفاء شاشة الفحص فوراً لأن الاتصال تم بنجاح تام!
+                // 🚀 نجاح الاتصال بفايربيس في أي وقت خلال الـ 8 ثوانٍ -> إخفاء الشاشة فوراً وفتح الموقع
                 hideLoadingSpinnerSuccessfully("تم الاتصال بفايربيس بنجاح ✓");
 
-                // تفعيل الاستماع الحي للتحديثات في الخلفية بعد فتح الموقع
                 initRealtimeGamesListener();
 
             } catch (error) {
-                console.error("خطأ في الاتصال بفايربيس:", error);
-                // حتى لو حصل خطأ في الاتصال، نفتح الموقع للزبون باستخدام الكاش المحلي لكي لا يعلق أبداً
+                console.error("خطأ في الاتصال:", error);
                 hideLoadingSpinnerSuccessfully("تم الاتصال بنجاح (وضع الاستجابة السريعة)");
             }
         }
@@ -1552,7 +1554,7 @@
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
             
-            if, user) {
+            if (user) {
                 isAdminLoggedIn = true;
                 loginBox.classList.add('hidden');
                 dashboard.classList.remove('hidden');
@@ -1574,7 +1576,6 @@
             }
         });
 
-        // تشغيل نظام التحقق الفعلي والربط بفايربيس عند فتح الصفحة
         initStore();
     </script>
 </body>
