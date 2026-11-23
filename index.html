@@ -574,7 +574,6 @@
         let globalStoreLogo = "";
         let isDataLoaded = false;
 
-        // ⏱️ مؤقت أمان ذكي بحد أقصى 7 ثوانٍ: إذا لم يتصل السيرفر يعرض رسالة الخطأ تلقائياً بدلاً من التعليق
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
                 showNetworkErrorState();
@@ -1532,35 +1531,52 @@
 
         window.toggleAdminPanel = function() {
             const panel = document.getElementById('admin-panel');
-            panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) { panel.scrollIntoView({ behavior: 'smooth' }); }
+            const loginBox = document.getElementById('admin-login-box');
+            const dashboard = document.getElementById('admin-dashboard');
+
+            if (panel) {
+                panel.classList.toggle('hidden');
+                if (!panel.classList.contains('hidden')) {
+                    panel.scrollIntoView({ behavior: 'smooth' });
+                    if (!isAdminLoggedIn && loginBox) {
+                        loginBox.classList.remove('hidden');
+                        if (dashboard) dashboard.classList.add('hidden');
+                    }
+                }
+            }
         };
 
         onAuthStateChanged(auth, (user) => {
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
+            const panel = document.getElementById('admin-panel');
             
             if (user) {
                 isAdminLoggedIn = true;
-                loginBox.classList.add('hidden');
-                dashboard.classList.remove('hidden');
+                if (loginBox) loginBox.classList.add('hidden');
+                if (dashboard) dashboard.classList.remove('hidden');
             } else {
                 isAdminLoggedIn = false;
-                loginBox.classList.add('hidden');
-                dashboard.classList.add('hidden');
+                if (panel && !panel.classList.contains('hidden')) {
+                    if (loginBox) loginBox.classList.remove('hidden');
+                }
+                if (dashboard) dashboard.classList.add('hidden');
                 resetAdminForm();
             }
             filterAndRender();
         });
 
         let clickCount = 0;
-        document.getElementById('secret-admin-trigger').addEventListener('click', () => {
-            clickCount++;
-            if (clickCount >= 3) {
-                toggleAdminPanel();
-                clickCount = 0;
-            }
-        });
+        const secretTrigger = document.getElementById('secret-admin-trigger');
+        if (secretTrigger) {
+            secretTrigger.addEventListener('click', () => {
+                clickCount++;
+                if (clickCount >= 3) {
+                    toggleAdminPanel();
+                    clickCount = 0;
+                }
+            });
+        }
 
         initStore();
     </script>
