@@ -182,7 +182,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان والاتصال السريع الفخمة -->
+    <!-- شاشة فحص الأمان الذكية (تختفي حتماً خلال أقل من ثانيتين كحد أقصى) -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -511,7 +511,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي المحسّن للسرعة الفائقة -->
+    <!-- سكربت فايربيس والمنطق البرمجي السريع الفوري المضمون -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -576,14 +576,18 @@
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
 
-        // إذا كانت البيانات مخزنة مسبقاً، اعرضها فوريًا وأخفِ شاشة التحميل في أجزاء من الثانية (مثل الخطف)
+        // العرض الفوري مباشرة أول ما يفتح الموقع من الذاكرة المحلية
         if (allGames.length > 0) {
             renderCategoriesBar();
             renderHero();
             resetHeroTimer();
             filterAndRender();
-            hideLoadingSpinnerQuickly();
         }
+
+        // 🚀 ضمان عدم بقاء شاشة الفحص معلقة نهائياً (تختفي حتماً بعد 1.8 ثانية بحد أقصى لتطير للصفحة مباشرة)
+        const safetyTimer = setTimeout(() => {
+            hideLoadingSpinnerQuickly();
+        }, 1800);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -618,6 +622,7 @@
         function hideLoadingSpinnerQuickly() {
             const spinner = document.getElementById('loading-spinner');
             if (spinner && spinner.style.display !== 'none') {
+                clearTimeout(safetyTimer);
                 const ring = document.getElementById('security-ring');
                 const iconBox = document.getElementById('security-icon-box');
                 const title = document.getElementById('security-title');
@@ -633,7 +638,7 @@
                 setTimeout(() => {
                     spinner.style.opacity = '0';
                     setTimeout(() => spinner.style.display = 'none', 300);
-                }, 200);
+                }, 150);
             }
         }
 
@@ -1310,7 +1315,7 @@
                 resetHeroTimer();
                 filterAndRender();
 
-                // إخفاء شاشة الفحص فوراً وبشكل فخم بمجرد جاهزية الألعاب
+                // إخفاء شاشة الفحص فوراً وبكل فخامة وسرعة
                 hideLoadingSpinnerQuickly();
 
                 initRealtimeGamesListener();
