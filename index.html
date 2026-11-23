@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متجر المدينة | ذي قار - قضاء النصر</title>
+    
+    <!-- تحسينات السرعة والاتصال المسبق (Preload & Preconnect) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -156,12 +163,12 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #0b1324 0%, #05070b 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 99999; transition: opacity 0.45s ease;
+            z-index: 99999; transition: opacity 0.3s ease;
         }
         .shield-ring {
             position: relative; width: 85px; height: 85px; border-radius: 50%;
             border: 3px solid rgba(6, 182, 212, 0.15); border-top: 3px solid #06b6d4; border-bottom: 3px solid #38bdf8;
-            animation: spin 1.2s linear infinite; display: flex; align-items: center; justify-content: center;
+            animation: spin 1s linear infinite; display: flex; align-items: center; justify-content: center;
         }
         .shield-ring.verified { animation: none; border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.5); }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -176,7 +183,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الفخمة -->
+    <!-- شاشة فحص الأمان وسرعة التحميل الفخمة -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -184,9 +191,9 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والحماية...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال السريع بالمتجر...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-lock text-[10px]"></i> اتصال آمن ومحمي - جلب الألعاب
+            <i class="fa-solid fa-bolt text-[10px]"></i> محرك الأداء الفائق - جلب الألعاب
         </p>
     </div>
 
@@ -195,7 +202,7 @@
         <div class="container mx-auto max-w-4xl flex justify-between items-center">
             <div id="secret-admin-trigger" class="flex items-center gap-3 cursor-pointer select-none">
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center overflow-hidden">
-                    <img id="store-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[10px] hidden">
+                    <img id="store-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[10px] hidden" loading="eager">
                     <div id="store-logo-fallback" class="w-full h-full bg-[#0b0f19] rounded-[10px] flex flex-col items-center justify-center">
                         <i class="fa-solid fa-gamepad text-cyan-400 text-sm"></i>
                         <span class="text-[8px] font-black text-white leading-none mt-0.5">المدينة</span>
@@ -237,7 +244,7 @@
         <!-- البنر الرئيسي -->
         <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
-                <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
+                <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105" loading="eager">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
                 
                 <div class="absolute top-3 left-3 bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 shadow-lg animate-pulse">
@@ -393,7 +400,7 @@
         <div class="container mx-auto max-w-xl footer-neon-wrap shadow-2xl">
             <div class="footer-neon-inner p-6 text-center space-y-4">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden">
-                    <img id="footer-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[14px] hidden">
+                    <img id="footer-logo-img" src="" alt="شعار المتجر" class="w-full h-full object-cover rounded-[14px] hidden" loading="lazy">
                     <div id="footer-logo-fallback" class="w-full h-full bg-[#0b0f19] rounded-[14px] flex flex-col items-center justify-center">
                         <i class="fa-solid fa-gamepad text-cyan-400 text-xl"></i>
                     </div>
@@ -481,7 +488,7 @@
         </button>
 
         <div class="max-w-4xl max-h-[85vh] flex flex-col items-center justify-center relative p-2">
-            <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl border border-slate-800 shadow-2xl">
+            <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl border border-slate-800 shadow-2xl" loading="lazy">
             <div id="lightbox-counter" class="text-xs font-bold text-cyan-400 mt-3 bg-[#0b0f19] px-4 py-1.5 rounded-full border border-slate-800"></div>
         </div>
 
@@ -509,10 +516,10 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي -->
+    <!-- سكربت فايربيس والمنطق البرمجي محسّن للسرعة الفائقة -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -557,7 +564,8 @@
             "ألعاب البطاقات واللوحية 🃏"
         ];
 
-        let allGames = [];
+        // تحميل فوري من الذاكرة المحلية (Cache) لفتح الموقع بسرعة الصاروخ في الزيارة الثانية
+        let allGames = JSON.parse(localStorage.getItem('madina_cached_games') || '[]');
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentSort = "newest";
@@ -617,17 +625,17 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
-                title.innerText = "تم الفحص والتحقق بنجاح ✓";
+                title.innerText = "تم التحميل بقرار صاروخي ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة آمن ومحمي';
+                subtitle.innerHTML = '<i class="fa-solid fa-bolt text-emerald-400"></i> متجر المدينة جاهز للعمل';
             }
 
             setTimeout(() => {
                 if (spinner) {
                     spinner.style.opacity = '0';
-                    setTimeout(() => spinner.style.display = 'none', 450);
+                    setTimeout(() => spinner.style.display = 'none', 300);
                 }
-            }, 300);
+            }, 150);
         }
 
         function playSuccessSound() {
@@ -819,7 +827,7 @@
             list.innerHTML = cart.map((item, idx) => `
                 <div class="flex items-center justify-between bg-[#05070b] p-3 rounded-2xl border border-slate-800 gap-3">
                     <div class="flex items-center gap-3">
-                        <img src="${item.cover || 'https://via.placeholder.com/80'}" class="w-12 h-12 object-cover rounded-xl border border-slate-700">
+                        <img src="${item.cover || 'https://via.placeholder.com/80'}" class="w-12 h-12 object-cover rounded-xl border border-slate-700" loading="lazy">
                         <div>
                             <h4 class="font-bold text-xs text-white line-clamp-1">${item.title}</h4>
                             <div class="flex items-center gap-2 text-[10px] text-cyan-400 mt-1">
@@ -931,7 +939,7 @@
             thumbs.innerHTML = featuredGames.map((g, idx) => {
                 const thumbUrl = g.coverImage || (g.images && g.images[0]) || g.image || 'https://via.placeholder.com/100';
                 const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-800 opacity-60 hover:opacity-100';
-                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
+                return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}" loading="lazy">`;
             }).join('');
         }
 
@@ -1011,7 +1019,7 @@
             const verticalGallery = document.getElementById('modal-gallery-vertical');
             verticalGallery.innerHTML = currentLightboxImages.map((url, idx) => `
                 <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-black cursor-pointer hover:border-cyan-400 transition group" onclick="openLightbox(${idx})">
-                    <img src="${url}" class="w-full h-auto object-cover max-h-80 group-hover:opacity-90 transition">
+                    <img src="${url}" class="w-full h-auto object-cover max-h-80 group-hover:opacity-90 transition" loading="lazy">
                 </div>
             `).join('');
 
@@ -1216,7 +1224,7 @@
                 return `
                     <div class="${cardBorderClass} rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group relative transition-all duration-300">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
-                            <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
+                            <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300" loading="lazy">
                             
                             ${cartActionBtnHtml}
 
@@ -1285,11 +1293,40 @@
             if (window.location.hash) {
                 history.replaceState(null, '', window.location.pathname + window.location.search);
             }
+
+            // إذا كانت الألعاب مخزنة مسبقاً، اعرضها فوريًا للزبون (سرعة صاروخية 0 ثانية)
+            if (allGames.length > 0) {
+                renderCategoriesBar();
+                renderHero();
+                resetHeroTimer();
+                filterAndRender();
+                completeSecurityCheck();
+            }
+
             try {
-                await loadStoreSettings();
+                loadStoreSettings(); // تحميل الشعار في الخلفية
+                
+                // جلب البيانات بسرعة فائقة ومن ثم تحديث الكاش
+                const querySnapshot = await getDocs(collection(db, "games"));
+                const freshGamesList = [];
+                querySnapshot.forEach((docSnap) => {
+                    freshGamesList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                allGames = freshGamesList;
+                localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
+
+                renderCategoriesBar();
+                renderHero();
+                resetHeroTimer();
+                filterAndRender();
+                completeSecurityCheck();
+
+                // تفعيل المزامنة اللحظية في الخلفية بهدوء
                 initRealtimeGamesListener();
+
             } catch (error) {
-                console.error("خطأ في الاتصال:", error);
+                console.error("خطأ في الاتصال السريع:", error);
                 completeSecurityCheck();
             }
         }
@@ -1314,9 +1351,7 @@
                         footerFallback.classList.add('hidden');
                     }
                 }
-            } catch (error) {
-                console.error("خطأ في جلب الشعار:", error);
-            }
+            } catch (error) {}
         }
 
         function initRealtimeGamesListener() {
@@ -1327,17 +1362,14 @@
                     newGamesList.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                allGames = newGamesList;
-                renderCategoriesBar();
-                renderHero();
-                resetHeroTimer();
-                filterAndRender();
-
-                completeSecurityCheck();
-            }, (error) => {
-                console.error("خطأ في المزامنة:", error);
-                completeSecurityCheck();
-            });
+                if (JSON.stringify(newGamesList) !== JSON.stringify(allGames)) {
+                    allGames = newGamesList;
+                    localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
+                    renderCategoriesBar();
+                    renderHero();
+                    filterAndRender();
+                }
+            }, (error) => {});
         }
 
         window.uploadAndSaveLogo = function() {
@@ -1519,7 +1551,7 @@
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
             
-            if (user) {
+            if, user {
                 isAdminLoggedIn = true;
                 loginBox.classList.add('hidden');
                 dashboard.classList.remove('hidden');
