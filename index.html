@@ -332,6 +332,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input type="text" id="game-title" placeholder="اسم اللعبة" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                     <select id="game-platform" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                        <option value="" disabled selected>اختر المنصة يدوياً...</option>
                         <option value="PS4">PS4</option>
                         <option value="PS5">PS5</option>
                         <option value="PS4 / PS5">PS4 / PS5</option>
@@ -354,10 +355,11 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-year" placeholder="سنة الإصدار (مثال: 2023)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                     <select id="game-arabic" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
-                        <option value="" disabled selected>اختر حالة اللغة العربية للعبة...</option>
+                        <option value="" disabled selected>اختر حالة اللغة...</option>
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
                         <option value="تدعم اللغة العربية (ترجمة)">تدعم اللغة العربية (ترجمة)</option>
                         <option value="لا تدعم اللغة العربية">لا تدعم اللغة العربية</option>
@@ -381,7 +383,7 @@
                 <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
                 <button id="save-game-btn" onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
-                    حفظ التعديل 💾
+                    جاري الحفظ 💾
                 </button>
             </div>
         </div>
@@ -1022,6 +1024,7 @@
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
                 ${catsList.map(c => `<span class="bg-slate-900 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-800">${c}</span>`).join('')}
                 ${game.size ? `<span class="bg-slate-900 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-800" dir="ltr">${game.size} GB</span>` : ''}
+                ${game.year ? `<span class="bg-slate-900 text-purple-300 px-2.5 py-1 rounded-lg border border-slate-800"><i class="fa-solid fa-calendar-days text-[10px]"></i> ${game.year}</span>` : ''}
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
@@ -1248,7 +1251,10 @@
                                 <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${game.title}</h3>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
                                     <span class="truncate max-w-[60%]">${displayCat}</span>
-                                    ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
+                                    <div class="flex items-center gap-1.5">
+                                        ${game.year ? `<span class="text-purple-300 font-bold">${game.year}</span>` : ''}
+                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
+                                    </div>
                                 </div>
                             </div>
 
@@ -1387,6 +1393,7 @@
             const title = document.getElementById('game-title').value.trim();
             const platform = document.getElementById('game-platform').value;
             const size = document.getElementById('game-size').value.trim();
+            const year = document.getElementById('game-year').value.trim();
             const arabic = document.getElementById('game-arabic').value;
             const desc = document.getElementById('game-desc').value.trim();
             const coverImage = document.getElementById('game-cover-url').value.trim();
@@ -1402,12 +1409,13 @@
                 .filter(line => line.length > 0);
 
             if (!title) { showToast("يرجى كتابة اسم اللعبة!"); return; }
+            if (!platform) { showToast("يرجى اختيار المنصة (PS4 / PS5 / الريترو) أولاً! ⚠️"); return; }
             if (!coverImage) { showToast("يرجى إدخال رابط غلاف اللعبة الرئيسي!"); return; }
             if (selectedCats.length === 0) { showToast("يرجى اختيار صنف واحد على الأقل!"); return; }
             if (!arabic) { showToast("يرجى اختيار حالة اللغة العربية للعبة أولاً! ⚠️"); return; }
 
             saveBtn.disabled = true;
-            saveBtn.innerText = "جاري الحفظ والتحديث... ⏳";
+            saveBtn.innerText = "جاري الحفظ... ⏳";
 
             const gameData = {
                 title,
@@ -1415,6 +1423,7 @@
                 categories: selectedCats,
                 category: mainCategory || selectedCats[0],
                 size,
+                year,
                 arabic,
                 desc,
                 coverImage: coverImage,
@@ -1433,7 +1442,9 @@
                     await addDoc(collection(db, "games"), gameData);
                     showToast("🚀 تم نشر اللعبة بنجاح!");
                     document.getElementById('game-title').value = "";
+                    document.getElementById('game-platform').selectedIndex = 0;
                     document.getElementById('game-size').value = "";
+                    document.getElementById('game-year').value = "";
                     document.getElementById('game-arabic').selectedIndex = 0;
                     document.getElementById('game-desc').value = "";
                     document.getElementById('game-cover-url').value = "";
@@ -1450,7 +1461,7 @@
                 showToast("حدث خطأ في الاتصال، حاول مرة واحدة.");
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "حفظ التعديل 💾";
+                saveBtn.innerText = "جاري الحفظ 💾";
             }
         };
 
@@ -1460,8 +1471,9 @@
 
             document.getElementById('editing-game-id').value = game.id;
             document.getElementById('game-title').value = game.title || '';
-            document.getElementById('game-platform').value = game.platform || 'PS4';
+            document.getElementById('game-platform').value = game.platform || '';
             document.getElementById('game-size').value = game.size || '';
+            document.getElementById('game-year').value = game.year || '';
             document.getElementById('game-arabic').value = game.arabic || '';
             document.getElementById('game-desc').value = game.desc || '';
             document.getElementById('game-cover-url').value = game.coverImage || game.image || '';
@@ -1477,7 +1489,7 @@
             document.getElementById('game-main-category').value = game.category || gameCats[0] || '';
 
             document.getElementById('admin-form-title').innerText = "تعديل اللعبة:";
-            document.getElementById('save-game-btn').innerText = "حفظ التعديل 💾";
+            document.getElementById('save-game-btn').innerText = "جاري الحفظ 💾";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
             const panel = document.getElementById('admin-panel');
@@ -1488,7 +1500,9 @@
         window.resetAdminForm = function() {
             document.getElementById('editing-game-id').value = "";
             document.getElementById('game-title').value = "";
+            document.getElementById('game-platform').selectedIndex = 0;
             document.getElementById('game-size').value = "";
+            document.getElementById('game-year').value = "";
             document.getElementById('game-arabic').selectedIndex = 0;
             document.getElementById('game-desc').value = "";
             document.getElementById('game-cover-url').value = "";
@@ -1498,7 +1512,7 @@
             renderAdminCheckboxes();
 
             document.getElementById('admin-form-title').innerText = "إضافة لعبة جديدة:";
-            document.getElementById('save-game-btn').innerText = "حفظ التعديل 💾";
+            document.getElementById('save-game-btn').innerText = "جاري الحفظ 💾";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
