@@ -356,8 +356,12 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 2)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                     <input type="text" id="game-year" placeholder="سنة الإصدار (مثال: 2007)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-director" placeholder="اسم المخرج (مثال: جيمس كاميرون)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                </div>
+
+                <div class="grid grid-cols-1 gap-3">
                     <select id="game-arabic" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                         <option value="" disabled selected>اختر حالة اللغة...</option>
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
@@ -439,7 +443,7 @@
                 <iframe id="modal-yt-iframe" src="" class="w-full h-full border-none" allowfullscreen></iframe>
             </div>
 
-            <div class="space-y-2 pt-1">
+            <div class="space-y-2.5 pt-1">
                 <div class="flex justify-between items-start">
                     <h3 id="modal-title" class="text-xl sm:text-2xl font-black text-white"></h3>
                     <span id="modal-views-badge" class="hidden bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 text-[11px] font-bold px-3 py-1 rounded-full items-center gap-1.5">
@@ -447,11 +451,17 @@
                     </span>
                 </div>
                 
-                <!-- عرض سنة الإصدار بشكل فخم وواضح جداً في الأعلى -->
-                <div id="modal-year-banner" class="hidden items-center gap-2 bg-gradient-to-r from-purple-900/40 via-[#0b0f19] to-[#05070b] border border-purple-500/40 px-4 py-2 rounded-xl text-purple-300 text-xs font-black shadow-lg">
-                    <i class="fa-solid fa-calendar-days text-purple-400 text-sm"></i>
-                    <span>سنة إصدار اللعبة:</span>
-                    <span id="modal-year-value" class="text-white text-sm font-black bg-purple-500/20 px-2.5 py-0.5 rounded-lg border border-purple-400/30"></span>
+                <!-- صف يجمع سنة الإصدار ومخرج اللعبة بملء الفراغ بشكل فخم -->
+                <div id="modal-meta-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div id="modal-year-box" class="hidden items-center justify-between bg-gradient-to-r from-purple-900/40 via-[#0b0f19] to-[#05070b] border border-purple-500/40 px-3.5 py-2 rounded-xl text-purple-300 text-xs font-bold shadow-md">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar-days text-purple-400"></i> سنة الإصدار:</span>
+                        <span id="modal-year-value" class="text-white text-xs font-black bg-purple-500/20 px-2.5 py-0.5 rounded-lg border border-purple-400/30"></span>
+                    </div>
+
+                    <div id="modal-director-box" class="hidden items-center justify-between bg-gradient-to-r from-blue-900/40 via-[#0b0f19] to-[#05070b] border border-blue-500/40 px-3.5 py-2 rounded-xl text-blue-300 text-xs font-bold shadow-md">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-clapperboard text-blue-400"></i> مخرج اللعبة:</span>
+                        <span id="modal-director-value" class="text-white text-xs font-black bg-blue-500/20 px-2.5 py-0.5 rounded-lg border border-blue-400/30 truncate max-w-[130px]"></span>
+                    </div>
                 </div>
 
                 <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
@@ -854,7 +864,7 @@
                             <h4 class="font-bold text-xs text-white line-clamp-1">${item.title}</h4>
                             <div class="flex items-center gap-2 text-[10px] text-cyan-400 mt-1">
                                 <span class="bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30 font-bold">${item.platform}</span>
-                                ${item.size ? `<span class="text-amber-300 font-bold">${item.size} GB</span>` : ''}
+                                ${item.size ? `<span class="text-amber-300 font-bold">حجم اللعبة: ${item.size} GB</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1014,16 +1024,40 @@
                 viewsBadge.classList.remove('flex');
             }
 
-            // عرض سنة الإصدار بشكل فخم وواضح في النافذة الداخلية
-            const yearBanner = document.getElementById('modal-year-banner');
+            // تعبئة سنة الإصدار ومخرج اللعبة بملء الفراغ بشكل فخم ومتناسق
+            const metaGrid = document.getElementById('modal-meta-grid');
+            const yearBox = document.getElementById('modal-year-box');
             const yearValue = document.getElementById('modal-year-value');
+            const directorBox = document.getElementById('modal-director-box');
+            const directorValue = document.getElementById('modal-director-value');
+
+            let hasMeta = false;
+            metaGrid.classList.remove('hidden');
+            metaGrid.classList.add('grid');
+
             if (game.year) {
                 yearValue.innerText = game.year;
-                yearBanner.classList.remove('hidden');
-                yearBanner.classList.add('flex');
+                yearBox.classList.remove('hidden');
+                yearBox.classList.add('flex');
+                hasMeta = true;
             } else {
-                yearBanner.classList.add('hidden');
-                yearBanner.classList.remove('flex');
+                yearBox.classList.add('hidden');
+                yearBox.classList.remove('flex');
+            }
+
+            if (game.director) {
+                directorValue.innerText = game.director;
+                directorBox.classList.remove('hidden');
+                directorBox.classList.add('flex');
+                hasMeta = true;
+            } else {
+                directorBox.classList.add('hidden');
+                directorBox.classList.remove('flex');
+            }
+
+            if (!hasMeta) {
+                metaGrid.classList.add('hidden');
+                metaGrid.classList.remove('grid');
             }
 
             const videoContainer = document.getElementById('modal-video-container');
@@ -1043,7 +1077,7 @@
             document.getElementById('modal-badges').innerHTML = `
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
                 ${catsList.map(c => `<span class="bg-slate-900 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-800">${c}</span>`).join('')}
-                ${game.size ? `<span class="bg-slate-900 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-800" dir="ltr">${game.size} GB</span>` : ''}
+                ${game.size ? `<span class="bg-slate-900 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-800 font-bold" dir="ltr">حجم اللعبة: ${game.size} GB</span>` : ''}
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
@@ -1272,7 +1306,7 @@
                                     <span class="truncate max-w-[60%]">${displayCat}</span>
                                     <div class="flex items-center gap-1.5">
                                         ${game.year ? `<span class="text-purple-300 font-bold">${game.year}</span>` : ''}
-                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
+                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">حجم اللعبة: ${game.size} GB</span>` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -1413,6 +1447,7 @@
             const platform = document.getElementById('game-platform').value;
             const size = document.getElementById('game-size').value.trim();
             const year = document.getElementById('game-year').value.trim();
+            const director = document.getElementById('game-director').value.trim();
             const arabic = document.getElementById('game-arabic').value;
             const desc = document.getElementById('game-desc').value.trim();
             const coverImage = document.getElementById('game-cover-url').value.trim();
@@ -1443,6 +1478,7 @@
                 category: mainCategory || selectedCats[0],
                 size,
                 year,
+                director,
                 arabic,
                 desc,
                 coverImage: coverImage,
@@ -1464,6 +1500,7 @@
                     document.getElementById('game-platform').selectedIndex = 0;
                     document.getElementById('game-size').value = "";
                     document.getElementById('game-year').value = "";
+                    document.getElementById('game-director').value = "";
                     document.getElementById('game-arabic').selectedIndex = 0;
                     document.getElementById('game-desc').value = "";
                     document.getElementById('game-cover-url').value = "";
@@ -1493,6 +1530,7 @@
             document.getElementById('game-platform').value = game.platform || '';
             document.getElementById('game-size').value = game.size || '';
             document.getElementById('game-year').value = game.year || '';
+            document.getElementById('game-director').value = game.director || '';
             document.getElementById('game-arabic').value = game.arabic || '';
             document.getElementById('game-desc').value = game.desc || '';
             document.getElementById('game-cover-url').value = game.coverImage || game.image || '';
@@ -1522,6 +1560,7 @@
             document.getElementById('game-platform').selectedIndex = 0;
             document.getElementById('game-size').value = "";
             document.getElementById('game-year').value = "";
+            document.getElementById('game-director').value = "";
             document.getElementById('game-arabic').selectedIndex = 0;
             document.getElementById('game-desc').value = "";
             document.getElementById('game-cover-url').value = "";
