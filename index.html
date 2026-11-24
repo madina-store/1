@@ -357,7 +357,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <input type="text" id="game-size" placeholder="حجم اللعبة (مثال: 47)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
-                    <input type="text" id="game-year" placeholder="سنة الإصدار (مثال: 2023)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="game-year" placeholder="سنة الإصدار (مثال: 2007)" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                     <select id="game-arabic" class="bg-[#05070b] border border-slate-800 rounded-xl p-3 text-sm text-white">
                         <option value="" disabled selected>اختر حالة اللغة...</option>
                         <option value="تدعم اللغة العربية (دبلجة)">تدعم اللغة العربية (دبلجة)</option>
@@ -383,7 +383,7 @@
                 <textarea id="game-youtube" rows="2" placeholder="رابط فيديو يوتيوب للعبة (اختياري)" class="w-full bg-[#05070b] border border-slate-800 rounded-xl p-2.5 text-xs text-left dir-ltr text-white focus:outline-none focus:border-cyan-500"></textarea>
 
                 <button id="save-game-btn" onclick="addNewGame()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-full py-3 rounded-xl font-black text-sm transition">
-                    جاري الحفظ 💾
+                    🚀 نشر اللعبة رسمياً
                 </button>
             </div>
         </div>
@@ -446,6 +446,14 @@
                         <i class="fa-solid fa-eye text-xs"></i> <span id="modal-views-count">0</span> مشاهدة
                     </span>
                 </div>
+                
+                <!-- عرض سنة الإصدار بشكل فخم وواضح جداً في الأعلى -->
+                <div id="modal-year-banner" class="hidden items-center gap-2 bg-gradient-to-r from-purple-900/40 via-[#0b0f19] to-[#05070b] border border-purple-500/40 px-4 py-2 rounded-xl text-purple-300 text-xs font-black shadow-lg">
+                    <i class="fa-solid fa-calendar-days text-purple-400 text-sm"></i>
+                    <span>سنة إصدار اللعبة:</span>
+                    <span id="modal-year-value" class="text-white text-sm font-black bg-purple-500/20 px-2.5 py-0.5 rounded-lg border border-purple-400/30"></span>
+                </div>
+
                 <div id="modal-badges" class="flex flex-wrap gap-2 text-xs"></div>
             </div>
 
@@ -1006,6 +1014,18 @@
                 viewsBadge.classList.remove('flex');
             }
 
+            // عرض سنة الإصدار بشكل فخم وواضح في النافذة الداخلية
+            const yearBanner = document.getElementById('modal-year-banner');
+            const yearValue = document.getElementById('modal-year-value');
+            if (game.year) {
+                yearValue.innerText = game.year;
+                yearBanner.classList.remove('hidden');
+                yearBanner.classList.add('flex');
+            } else {
+                yearBanner.classList.add('hidden');
+                yearBanner.classList.remove('flex');
+            }
+
             const videoContainer = document.getElementById('modal-video-container');
             const ytIframe = document.getElementById('modal-yt-iframe');
             if (game.youtube) {
@@ -1024,7 +1044,6 @@
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
                 ${catsList.map(c => `<span class="bg-slate-900 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-800">${c}</span>`).join('')}
                 ${game.size ? `<span class="bg-slate-900 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-800" dir="ltr">${game.size} GB</span>` : ''}
-                ${game.year ? `<span class="bg-slate-900 text-purple-300 px-2.5 py-1 rounded-lg border border-slate-800"><i class="fa-solid fa-calendar-days text-[10px]"></i> ${game.year}</span>` : ''}
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
@@ -1264,10 +1283,10 @@
                                 </span>
                                 ${isAdminLoggedIn ? `
                                     <div class="flex gap-1">
-                                        <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل ونقل اللعبة">
+                                        <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل وتحديث البيانات">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
-                                        <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف">
+                                        <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف اللعبة نهائياً">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -1415,7 +1434,7 @@
             if (!arabic) { showToast("يرجى اختيار حالة اللغة العربية للعبة أولاً! ⚠️"); return; }
 
             saveBtn.disabled = true;
-            saveBtn.innerText = "جاري الحفظ... ⏳";
+            saveBtn.innerText = editingId ? "💾 جاري حفظ التعديلات..." : "🚀 جاري نشر اللعبة...";
 
             const gameData = {
                 title,
@@ -1434,13 +1453,13 @@
             try {
                 if (editingId) {
                     await updateDoc(doc(db, "games", editingId), gameData);
-                    showToast("تم حفظ التعديل بنجاح 💾");
+                    showToast("تم تحديث وحفظ بيانات اللعبة بنجاح 💾");
                     resetAdminForm();
                 } else {
                     gameData.createdAt = new Date();
                     gameData.views = 0;
                     await addDoc(collection(db, "games"), gameData);
-                    showToast("🚀 تم نشر اللعبة بنجاح!");
+                    showToast("🚀 تمت عملية نشر اللعبة بنجاح!");
                     document.getElementById('game-title').value = "";
                     document.getElementById('game-platform').selectedIndex = 0;
                     document.getElementById('game-size').value = "";
@@ -1458,10 +1477,10 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (error) {
                 console.error("خطأ النشر:", error);
-                showToast("حدث خطأ في الاتصال، حاول مرة واحدة.");
+                showToast("حدث خطأ في الاتصال، حاول مرة أخرى.");
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "جاري الحفظ 💾";
+                saveBtn.innerText = "🚀 نشر اللعبة رسمياً";
             }
         };
 
@@ -1488,8 +1507,8 @@
             updateMainCategoryDropdown();
             document.getElementById('game-main-category').value = game.category || gameCats[0] || '';
 
-            document.getElementById('admin-form-title').innerText = "تعديل اللعبة:";
-            document.getElementById('save-game-btn').innerText = "جاري الحفظ 💾";
+            document.getElementById('admin-form-title').innerText = "تعديل وتحديث بيانات اللعبة:";
+            document.getElementById('save-game-btn').innerText = "💾 حفظ التعديلات";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
             const panel = document.getElementById('admin-panel');
@@ -1512,7 +1531,7 @@
             renderAdminCheckboxes();
 
             document.getElementById('admin-form-title').innerText = "إضافة لعبة جديدة:";
-            document.getElementById('save-game-btn').innerText = "جاري الحفظ 💾";
+            document.getElementById('save-game-btn').innerText = "🚀 نشر اللعبة رسمياً";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
