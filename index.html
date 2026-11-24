@@ -1024,7 +1024,6 @@
                 viewsBadge.classList.remove('flex');
             }
 
-            // تعبئة سنة الإصدار ومخرج اللعبة بملء الفراغ بشكل فخم ومتناسق
             const metaGrid = document.getElementById('modal-meta-grid');
             const yearBox = document.getElementById('modal-year-box');
             const yearValue = document.getElementById('modal-year-value');
@@ -1306,6 +1305,7 @@
                                     <span class="truncate max-w-[60%]">${displayCat}</span>
                                     <div class="flex items-center gap-1.5">
                                         ${game.year ? `<span class="text-purple-300 font-bold">${game.year}</span>` : ''}
+                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
                                     </div>
                                 </div>
                             </div>
