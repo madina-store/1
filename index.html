@@ -451,7 +451,6 @@
                     </span>
                 </div>
                 
-                <!-- صف يجمع سنة الإصدار ومخرج اللعبة بملء الفراغ بشكل فخم (مصحح ليظهر الاسم كاملاً) -->
                 <div id="modal-meta-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div id="modal-year-box" class="hidden items-center justify-between bg-gradient-to-r from-purple-900/40 via-[#0b0f19] to-[#05070b] border border-purple-500/40 px-3.5 py-2 rounded-xl text-purple-300 text-xs font-bold shadow-md">
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar-days text-purple-400"></i> سنة الإصدار:</span>
@@ -469,7 +468,6 @@
 
             <div class="bg-[#05070b] border-r-4 border-cyan-400 p-4 rounded-xl space-y-1.5">
                 <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> عن اللعبة</h4>
-                <!-- خط مخصص ومكبر وواضح لوصف اللعبة -->
                 <p id="modal-desc" class="text-sm sm:text-base text-slate-100 leading-relaxed font-semibold"></p>
             </div>
 
@@ -551,8 +549,8 @@
 
         const ALL_CATEGORIES = [
             "الكل",
-            "ألعاب اركض وأطلق النار 🏃‍♂️🔥",
             "ألعاب قتال الشوارع 🥊🔥",
+            "ألعاب اركض وأطلق النار 🏃‍♂️🔥",
             "ألعاب الأكشن ⚔️",
             "ألعاب المغامرات 🗺️",
             "ألعاب الأكشن والمغامرات 🏃‍♂️",
@@ -1096,11 +1094,13 @@
                 addToCart(game.id, e);
             };
 
-            window.location.hash = 'game';
+            // التعديل الثاني: إضافة تاريخ المتصفح بدقة لمنع الخروج من الموقع عند الرجوع
+            if (window.location.hash !== '#game') {
+                history.pushState({ modal: 'game' }, '', '#game');
+            }
 
             document.getElementById('details-modal').classList.remove('hidden');
             document.body.classList.add('modal-active');
-            window.scrollTo(0, 0);
         };
 
         window.openLightbox = function(index) {
@@ -1114,25 +1114,23 @@
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
-        window.addEventListener('hashchange', () => {
-            const currentHash = window.location.hash;
+        // إدارة زر الرجوع في المتصفح ليعود للقائمة الرئيسية مباشرة دون الخروج من الموقع
+        window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
 
-            if (currentHash === '#image') {
-                if (lightboxModal) lightboxModal.classList.remove('hidden');
-            } 
-            else if (currentHash === '#game') {
-                if (lightboxModal) lightboxModal.classList.add('hidden');
-                if (detailsModal) detailsModal.classList.remove('hidden');
-            } 
-            else {
-                if (lightboxModal) lightboxModal.classList.add('hidden');
-                if (detailsModal) {
-                    document.getElementById('modal-yt-iframe').src = '';
-                    detailsModal.classList.add('hidden');
-                    document.body.classList.remove('modal-active');
+            if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
+                lightboxModal.classList.add('hidden');
+                if (detailsModal && !detailsModal.classList.contains('hidden')) {
+                    history.pushState({ modal: 'game' }, '', '#game');
                 }
+                return;
+            }
+
+            if (detailsModal && !detailsModal.classList.contains('hidden')) {
+                document.getElementById('modal-yt-iframe').src = '';
+                detailsModal.classList.add('hidden');
+                document.body.classList.remove('modal-active');
             }
         });
 
@@ -1307,7 +1305,8 @@
                                     <span class="truncate max-w-[60%]">${displayCat}</span>
                                     <div class="flex items-center gap-1.5">
                                         ${game.year ? `<span class="text-purple-300 font-bold">${game.year}</span>` : ''}
-                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size}</span>` : ''}
+                                        <!-- التعديل الأول: عرض الحجم على الكفر مضافاً إليه GB بدون كلمة حجم اللعبة -->
+                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
                                     </div>
                                 </div>
                             </div>
