@@ -435,7 +435,7 @@
         </div>
     </footer>
 
-    <!-- نافذة تفاصيل اللعبة (بدون زر رجوع إضافي، الاعتماد على زر الهاتف حصراً) -->
+    <!-- نافذة تفاصيل اللعبة -->
     <div id="details-modal" class="hidden fixed inset-0 z-50 bg-[#0b0f19] overflow-y-auto flex flex-col justify-between p-4 sm:p-6">
         
         <div class="max-w-xl mx-auto w-full space-y-4 pt-4 pb-20">
@@ -593,6 +593,7 @@
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
         let isDataLoaded = false;
+        let isSearchingActive = false;
 
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
@@ -920,11 +921,20 @@
         };
 
         window.handleSearchInput = function() {
+            const searchInputElem = document.getElementById('search-input');
+            const query = searchInputElem ? searchInputElem.value.trim() : '';
+
+            if (query.length > 0 && !isSearchingActive) {
+                isSearchingActive = true;
+                // تسجيل حالة البحث في التاريخ لتصبح محطة مستقلة تماماً
+                history.pushState({ search: true }, '', '#search');
+            } else if (query.length === 0 && isSearchingActive) {
+                isSearchingActive = false;
+            }
+
             currentPage = 1;
             togglePlaceholderVisibility();
             filterAndRender();
-            const anchor = document.getElementById('games-anchor');
-            if (anchor) { anchor.scrollIntoView({ behavior: 'smooth' }); }
         };
 
         window.changePage = function(page) {
@@ -1094,7 +1104,7 @@
                 addToCart(game.id, e);
             };
 
-            // إضافة الحالة لتاريخ المتجر ليعود الهاتف خطوة واحدة عند الضغط على رجوع
+            // تسجيل خطوة فتح اللعبة في تاريخ المتصفح
             history.pushState({ modal: 'game' }, '', '#game');
 
             document.getElementById('details-modal').classList.remove('hidden');
@@ -1105,16 +1115,17 @@
             currentLightboxIndex = index;
             updateLightboxImage();
             
-            // دفع حالة الصورة في تاريخ المتصفح
+            // تسجيل خطوة تكبير الصورة
             history.pushState({ modal: 'image' }, '', '#image');
             
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
-        // إدارة زر الرجوع في الهاتف بشكل متسلسل ودقيق (الضغطات بالتتابع)
+        // إدارة زر الرجوع في الهاتف بشكل متسلسل ودقيق تماماً
         window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
+            const searchInput = document.getElementById('search-input');
 
             if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
@@ -1125,6 +1136,14 @@
                 document.getElementById('modal-yt-iframe').src = '';
                 detailsModal.classList.add('hidden');
                 document.body.classList.remove('modal-active');
+                return;
+            }
+
+            if (isSearchingActive && searchInput && searchInput.value.trim() !== '') {
+                searchInput.value = '';
+                isSearchingActive = false;
+                togglePlaceholderVisibility();
+                filterAndRender();
             }
         });
 
