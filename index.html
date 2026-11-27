@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الفخمة -->
+    <!-- شاشة فحص الأمان الذكية (مع مانع التجمد للنت الضعيف) -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -241,7 +241,7 @@
             </div>
         </div>
 
-        <!-- البنر الرئيسي (يظهر فوراً بدون أي وميض أو تأخير) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
@@ -534,7 +534,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي المطور -->
+    <!-- سكربت فايربيس والمنطق البرمجي المطور (مع مانع التجمد الذكي) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -608,7 +608,7 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
-        // عرض فوري أولي من الكاش لمنع أي تأخير أو وميض في البنر وشبكة الألعاب عند الفتح
+        // العرض الفوري من الذاكرة المحلية (الكاش) لفتح الموقع بسرعة خيالية دون انتظار السيرفر
         if (allGames.length > 0) {
             renderCategoriesBar();
             renderHero();
@@ -634,11 +634,12 @@
             showToast("🔴 انقطع الاتصال بالإنترنت!");
         });
 
+        // مهلة أمان قصيرة جداً (ثانيتان فقط) لتجنب التجمد تماماً إذا كان النت ضعيفاً
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
                 completeSecurityCheck();
             }
-        }, 3000);
+        }, 2000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -695,9 +696,9 @@
             setTimeout(() => {
                 if (spinner) {
                     spinner.style.opacity = '0';
-                    setTimeout(() => spinner.style.display = 'none', 300);
+                    setTimeout(() => spinner.style.display = 'none', 200);
                 }
-            }, 200);
+            }, 150);
         }
 
         function playSuccessSound() {
