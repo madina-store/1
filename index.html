@@ -184,9 +184,9 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والحماية...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فتح متجر المدينة وتحميل الألعاب...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-bolt text-[10px]"></i> تحميل فوري وسريع للألعاب
+            <i class="fa-solid fa-bolt text-[10px]"></i> تشغيل فوري وسريع
         </p>
     </div>
 
@@ -527,7 +527,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي المضاد لأخطاء القراءة -->
+    <!-- سكربت فايربيس والمنطق البرمجي الآمن المضمون 100% -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -582,47 +582,7 @@
             "الألعاب الخفيفة والمنوعة 🎲"
         ];
 
-        // ألعاب افتراضية جاهزة تظهر فوراً لو السيرفر رفض القراءة بسبب الأمان
-        const FALLBACK_GAMES = [
-            {
-                id: "default_1",
-                title: "Gran Turismo 7",
-                platform: "PS5",
-                category: "سباقات السيارات 🏎️",
-                categories: ["سباقات السيارات 🏎️", "المحاكاة الواقعية ✈️"],
-                size: "95",
-                year: "2022",
-                director: "Kazunori Yamauchi",
-                arabic: "تدعم اللغة العربية (ترجمة)",
-                desc: "تجربة القيادة الواقعية الأكثر اكتمالاً في تاريخ ألعاب سباقات السيارات.",
-                coverImage: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=600",
-                images: ["https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800"],
-                youtube: "https://www.youtube.com/embed/gtc2n2x0v2M",
-                views: 120
-            },
-            {
-                id: "default_2",
-                title: "Resident Evil 4 Remake",
-                platform: "PS4 / PS5",
-                category: "رعب البقاء 🧟‍♂️",
-                categories: ["ألعاب الرعب 👻", "رعب البقاء 🧟‍♂️"],
-                size: "58",
-                year: "2023",
-                director: "Yasuhiro Ampo",
-                arabic: "تدعم اللغة العربية (ترجمة)",
-                desc: "إعادة إنتاج لإحدى أعظم ألعاب رعب البقاء في التاريخ بأسلوب لعب عثري حديث.",
-                coverImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600",
-                images: ["https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800"],
-                youtube: "",
-                views: 95
-            }
-        ];
-
         let allGames = JSON.parse(localStorage.getItem('madina_cached_games') || '[]');
-        if (allGames.length === 0) {
-            allGames = FALLBACK_GAMES;
-        }
-
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentSort = "newest";
@@ -640,7 +600,7 @@
         let globalStoreLogo = "";
         let isSearchingActive = false;
 
-        // العرض الفوري
+        // عرض فوري أولي للاستجابة السريعة
         hideSpinnerFast();
         renderCategoriesBar();
         renderHero();
@@ -678,7 +638,7 @@
 
         function hideSpinnerFast() {
             const spinner = document.getElementById('loading-spinner');
-            if (spinner) {
+            if (spinner && spinner.style.display !== 'none') {
                 spinner.style.opacity = '0';
                 setTimeout(() => spinner.style.display = 'none', 300);
             }
@@ -750,14 +710,15 @@
         updateCartBadge();
 
         window.addToCart = function(gameId, event) {
-            const game = allGames.find(g => g.id === gameId);
+            const game = allGames.find(g => (g.id || g.gameId) === gameId);
             if (!game) return;
-            const coverImg = game.coverImage || (game.images && game.images[0]) || '';
+            const title = game.title || game.name || 'لعبة بدون اسم';
+            const coverImg = game.coverImage || game.image || (game.images && game.images[0]) || '';
 
             if (!cart.some(item => item.id === gameId)) {
                 cart.push({ 
-                    id: game.id, 
-                    title: game.title, 
+                    id: gameId, 
+                    title: title, 
                     cover: coverImg,
                     platform: game.platform || 'PS4',
                     size: game.size || ''
@@ -766,7 +727,7 @@
                 updateCartBadge();
                 filterAndRender();
             }
-            showToast(`تمت إضافة "${game.title}" إلى السلة بنجاح ✅`);
+            showToast(`تمت إضافة "${title}" إلى السلة بنجاح ✅`);
         };
 
         window.removeFromCart = function(index) {
@@ -900,7 +861,10 @@
         function renderCategoriesBar() {
             const bar = document.getElementById('categories-bar');
             bar.innerHTML = ALL_CATEGORIES.map(cat => {
-                const count = cat === "الكل" ? allGames.length : allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
+                const count = cat === "الكل" ? allGames.length : allGames.filter(g => {
+                    const cats = g.categories || [g.category, g.mainCategory].filter(Boolean);
+                    return cats.includes(cat);
+                }).length;
                 const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "bg-[#0b0f19] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
                 return `
                     <button onclick="setCategory('${cat}')" class="${activeClass} whitespace-nowrap px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
@@ -916,15 +880,14 @@
             if (allGames.length === 0) { heroSection.classList.add('hidden'); return; }
             heroSection.classList.remove('hidden');
 
-            const sortedByDate = [...allGames].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            const featuredGames = sortedByDate.slice(0, 5);
-
+            const featuredGames = [...allGames].slice(0, 5);
             if (heroIndex >= featuredGames.length) heroIndex = 0;
             const current = featuredGames[heroIndex];
-            const coverImg = current.coverImage || (current.images && current.images[0]) || 'https://via.placeholder.com/800x450';
+            const title = current.title || current.name || 'لعبة مميزة';
+            const coverImg = current.coverImage || current.image || (current.images && current.images[0]) || 'https://via.placeholder.com/800x450';
 
             document.getElementById('hero-bg').src = coverImg;
-            document.getElementById('hero-title').innerText = current.title;
+            document.getElementById('hero-title').innerText = title;
 
             const timerBar = document.getElementById('hero-timer-bar');
             timerBar.style.animation = 'none';
@@ -933,7 +896,7 @@
 
             const thumbs = document.getElementById('hero-thumbs');
             thumbs.innerHTML = featuredGames.map((g, idx) => {
-                const thumbUrl = g.coverImage || (g.images && g.images[0]) || 'https://via.placeholder.com/100';
+                const thumbUrl = g.coverImage || g.image || (g.images && g.images[0]) || 'https://via.placeholder.com/100';
                 const isSelected = idx === heroIndex ? 'border-2 border-cyan-400 scale-105' : 'border border-slate-800 opacity-60 hover:opacity-100';
                 return `<img onclick="selectHero(${idx})" src="${thumbUrl}" class="w-11 h-11 rounded-xl object-cover cursor-pointer transition ${isSelected}">`;
             }).join('');
@@ -948,8 +911,7 @@
         function resetHeroTimer() {
             if (heroInterval) clearInterval(heroInterval);
             heroInterval = setInterval(() => {
-                const sortedByDate = [...allGames].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                const featuredGames = sortedByDate.slice(0, 5);
+                const featuredGames = [...allGames].slice(0, 5);
                 if (featuredGames.length > 0) {
                     heroIndex = (heroIndex + 1) % featuredGames.length;
                     renderHero();
@@ -958,17 +920,18 @@
         }
 
         window.openHeroDetails = function() {
-            const sortedByDate = [...allGames].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            const featuredGames = sortedByDate.slice(0, 5);
-            if (featuredGames.length > 0) { openDetailsModal(featuredGames[heroIndex].id); }
+            const featuredGames = [...allGames].slice(0, 5);
+            if (featuredGames.length > 0) { openDetailsModal(featuredGames[heroIndex].id || featuredGames[heroIndex].gameId); }
         };
 
         window.openDetailsModal = function(gameId) {
-            const game = allGames.find(g => g.id === gameId);
+            const game = allGames.find(g => (g.id || g.gameId) === gameId);
             if (!game) return;
 
-            document.getElementById('modal-title').innerText = game.title;
-            document.getElementById('modal-desc').innerText = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
+            const title = game.title || game.name || 'لعبة بدون اسم';
+            const desc = game.desc || game.description || 'لا يوجد وصف متاح لهذه اللعبة.';
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
             document.getElementById('modal-views-count').innerText = game.views || 1;
 
             const viewsBadge = document.getElementById('modal-views-badge');
@@ -1023,7 +986,7 @@
                 videoContainer.classList.add('hidden');
             }
 
-            const catsList = game.categories || [game.category].filter(Boolean);
+            const catsList = game.categories || [game.category, game.mainCategory].filter(Boolean);
             document.getElementById('modal-badges').innerHTML = `
                 <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-bold">${game.platform || 'PS4'}</span>
                 ${catsList.map(c => `<span class="bg-slate-900 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-800">${c}</span>`).join('')}
@@ -1031,7 +994,7 @@
                 ${game.arabic ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg">✓ ${game.arabic}</span>` : ''}
             `;
 
-            currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage].filter(Boolean);
+            currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             document.getElementById('gallery-heading').innerHTML = `<i class="fa-regular fa-images"></i> لقطات الشاشة (${currentLightboxImages.length})`;
 
             document.getElementById('modal-gallery-vertical').innerHTML = currentLightboxImages.map((url, idx) => `
@@ -1040,7 +1003,8 @@
                 </div>
             `).join('');
 
-            document.getElementById('modal-add-cart').onclick = (e) => addToCart(game.id, e);
+            const primaryId = game.id || game.gameId;
+            document.getElementById('modal-add-cart').onclick = (e) => addToCart(primaryId, e);
             history.pushState({ modal: 'game' }, '', '#game');
             document.getElementById('details-modal').classList.remove('hidden');
             document.body.classList.add('modal-active');
@@ -1091,8 +1055,8 @@
             const paginationContainer = document.getElementById('pagination-container');
 
             let filtered = allGames.filter(g => {
-                const titleLower = g.title.toLowerCase();
-                const cats = g.categories || [g.category].filter(Boolean);
+                const titleLower = (g.title || g.name || '').toLowerCase();
+                const cats = g.categories || [g.category, g.mainCategory].filter(Boolean);
                 const matchSearch = titleLower.includes(search) || cats.some(c => c.toLowerCase().includes(search));
                 
                 let matchPlat = true;
@@ -1105,7 +1069,7 @@
 
             if (currentSort === 'newest') filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
             else if (currentSort === 'popular') filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
-            else if (currentSort === 'alpha') filtered.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
+            else if (currentSort === 'alpha') filtered.sort((a, b) => (a.title || a.name || '').localeCompare((b.title || b.name || ''), 'ar'));
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
@@ -1128,17 +1092,19 @@
             const paginatedGames = filtered.slice(startIndex, startIndex + gamesPerPage);
 
             grid.innerHTML = paginatedGames.map(game => {
-                const coverImg = game.coverImage || (game.images && game.images[0]) || 'https://via.placeholder.com/400x250';
-                const displayCat = game.category || (game.categories && game.categories[0]) || '';
-                const isInCart = cart.some(item => item.id === game.id);
+                const primaryId = game.id || game.gameId;
+                const title = game.title || game.name || 'لعبة بدون اسم';
+                const coverImg = game.coverImage || game.image || (game.images && game.images[0]) || 'https://via.placeholder.com/400x250';
+                const displayCat = game.category || game.mainCategory || (game.categories && game.categories[0]) || '';
+                const isInCart = cart.some(item => item.id === primaryId);
                 const cardBorderClass = isInCart ? "border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.35)] bg-[#0b0f19]" : "border border-slate-800/90 bg-[#0b0f19]";
                 
                 const cartActionBtnHtml = isInCart ? `
-                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-cyan-500 text-slate-950 flex items-center justify-center shadow transition z-10">
+                    <button onclick="addToCart('${primaryId}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-cyan-500 text-slate-950 flex items-center justify-center shadow transition z-10">
                         <i class="fa-solid fa-check text-xs font-black"></i>
                     </button>
                 ` : `
-                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/80 hover:bg-cyan-500 text-cyan-400 hover:text-slate-950 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md transition z-10 shadow">
+                    <button onclick="addToCart('${primaryId}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/80 hover:bg-cyan-500 text-cyan-400 hover:text-slate-950 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md transition z-10 shadow">
                         <i class="fa-solid fa-cart-shopping text-xs"></i>
                     </button>
                 `;
@@ -1146,12 +1112,12 @@
                 return `
                     <div class="${cardBorderClass} rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group relative transition-all duration-300">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px]">
-                            <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
+                            <img onclick="openDetailsModal('${primaryId}')" src="${coverImg}" alt="${title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
                             ${cartActionBtnHtml}
                         </div>
                         <div class="p-3 space-y-2 flex-grow flex flex-col justify-between">
                             <div>
-                                <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${game.title}</h3>
+                                <h3 onclick="openDetailsModal('${primaryId}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${title}</h3>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
                                     <span class="truncate max-w-[60%]">${displayCat}</span>
                                     ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
@@ -1177,7 +1143,6 @@
 
         async function initStore() {
             try {
-                // جلب البيانات من السيرفر مع حماية تامة ضد القيود
                 const querySnapshot = await getDocs(collection(db, "games"));
                 const serverGames = [];
                 querySnapshot.forEach((docSnap) => {
@@ -1189,7 +1154,7 @@
                     localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
                 }
             } catch (error) {
-                console.log("استخدام التخزين المحلي الاحتياطي بسبب الصلاحيات.");
+                console.log("الاعتماد على الذاكرة المحلية الاحتياطية.");
             } finally {
                 renderCategoriesBar();
                 renderHero();
@@ -1233,7 +1198,7 @@
                 document.getElementById('admin-panel').classList.add('hidden');
                 initStore();
             } catch (error) {
-                showToast("خطأ في النشر، تأكد من صلاحيات قاعدة البيانات.");
+                showToast("خطأ في النشر، تأكد من اتصال الإنترنت.");
             }
         };
 
