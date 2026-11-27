@@ -184,9 +184,9 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فتح متجر المدينة وتحميل الألعاب...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري مزامنة ألعاب متجر المدينة...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-bolt text-[10px]"></i> تشغيل فوري وسريع
+            <i class="fa-solid fa-bolt text-[10px]"></i> تحديث حي وفوري للسيرفر
         </p>
     </div>
 
@@ -527,10 +527,10 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي الآمن المضمون 100% -->
+    <!-- سكربت فايربيس والمزامنة الحية الحقيقية -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -582,7 +582,7 @@
             "الألعاب الخفيفة والمنوعة 🎲"
         ];
 
-        let allGames = JSON.parse(localStorage.getItem('madina_cached_games') || '[]');
+        let allGames = [];
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentSort = "newest";
@@ -599,12 +599,6 @@
         let currentLightboxIndex = 0;
         let globalStoreLogo = "";
         let isSearchingActive = false;
-
-        // عرض فوري أولي للاستجابة السريعة
-        hideSpinnerFast();
-        renderCategoriesBar();
-        renderHero();
-        filterAndRender();
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -880,7 +874,13 @@
             if (allGames.length === 0) { heroSection.classList.add('hidden'); return; }
             heroSection.classList.remove('hidden');
 
-            const featuredGames = [...allGames].slice(0, 5);
+            const sortedByDate = [...allGames].sort((a, b) => {
+                const timeA = a.createdAt?.seconds || (a.createdAt ? new Date(a.createdAt).getTime() / 1000 : 0);
+                const timeB = b.createdAt?.seconds || (b.createdAt ? new Date(b.createdAt).getTime() / 1000 : 0);
+                return timeB - timeA;
+            });
+            const featuredGames = sortedByDate.slice(0, 5);
+
             if (heroIndex >= featuredGames.length) heroIndex = 0;
             const current = featuredGames[heroIndex];
             const title = current.title || current.name || 'لعبة مميزة';
@@ -911,7 +911,12 @@
         function resetHeroTimer() {
             if (heroInterval) clearInterval(heroInterval);
             heroInterval = setInterval(() => {
-                const featuredGames = [...allGames].slice(0, 5);
+                const sortedByDate = [...allGames].sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || (a.createdAt ? new Date(a.createdAt).getTime() / 1000 : 0);
+                    const timeB = b.createdAt?.seconds || (b.createdAt ? new Date(b.createdAt).getTime() / 1000 : 0);
+                    return timeB - timeA;
+                });
+                const featuredGames = sortedByDate.slice(0, 5);
                 if (featuredGames.length > 0) {
                     heroIndex = (heroIndex + 1) % featuredGames.length;
                     renderHero();
@@ -920,7 +925,12 @@
         }
 
         window.openHeroDetails = function() {
-            const featuredGames = [...allGames].slice(0, 5);
+            const sortedByDate = [...allGames].sort((a, b) => {
+                const timeA = a.createdAt?.seconds || (a.createdAt ? new Date(a.createdAt).getTime() / 1000 : 0);
+                const timeB = b.createdAt?.seconds || (b.createdAt ? new Date(b.createdAt).getTime() / 1000 : 0);
+                return timeB - timeA;
+            });
+            const featuredGames = sortedByDate.slice(0, 5);
             if (featuredGames.length > 0) { openDetailsModal(featuredGames[heroIndex].id || featuredGames[heroIndex].gameId); }
         };
 
@@ -1067,9 +1077,17 @@
                 return matchSearch && matchPlat && matchCat;
             });
 
-            if (currentSort === 'newest') filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            else if (currentSort === 'popular') filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
-            else if (currentSort === 'alpha') filtered.sort((a, b) => (a.title || a.name || '').localeCompare((b.title || b.name || ''), 'ar'));
+            if (currentSort === 'newest') {
+                filtered.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || (a.createdAt ? new Date(a.createdAt).getTime() / 1000 : 0);
+                    const timeB = b.createdAt?.seconds || (b.createdAt ? new Date(b.createdAt).getTime() / 1000 : 0);
+                    return timeB - timeA;
+                });
+            } else if (currentSort === 'popular') {
+                filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+            } else if (currentSort === 'alpha') {
+                filtered.sort((a, b) => (a.title || a.name || '').localeCompare((b.title || b.name || ''), 'ar'));
+            }
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
@@ -1141,26 +1159,45 @@
             }
         };
 
-        async function initStore() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "games"));
+        function initStore() {
+            // تنظيف الكاش القديم تماماً لضمان سحب أحدث الألعاب
+            localStorage.removeItem('madina_cached_games');
+
+            const gamesRef = collection(db, "games");
+            onSnapshot(gamesRef, (snapshot) => {
                 const serverGames = [];
-                querySnapshot.forEach((docSnap) => {
+                snapshot.forEach((docSnap) => {
                     serverGames.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                if (serverGames.length > 0) {
-                    allGames = serverGames;
-                    localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
-                }
-            } catch (error) {
-                console.log("الاعتماد على الذاكرة المحلية الاحتياطية.");
-            } finally {
+                allGames = serverGames;
                 renderCategoriesBar();
                 renderHero();
                 filterAndRender();
                 hideSpinnerFast();
-            }
+            }, (error) => {
+                console.error("خطأ في جلب المزامنة الحية:", error);
+                hideSpinnerFast();
+            });
+        }
+
+        async function loadStoreSettings() {
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "general"));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.logoUrl) {
+                        globalStoreLogo = data.logoUrl;
+                        const img = document.getElementById('store-logo-img');
+                        const fallback = document.getElementById('store-logo-fallback');
+                        if (img && fallback) {
+                            img.src = data.logoUrl;
+                            img.classList.remove('hidden');
+                            fallback.classList.add('hidden');
+                        }
+                    }
+                }
+            } catch (e) {}
         }
 
         window.addNewGame = async function() {
@@ -1196,10 +1233,46 @@
                 await addDoc(collection(db, "games"), gameData);
                 showToast("🚀 تمت إضافة اللعبة ونشرها بنجاح!");
                 document.getElementById('admin-panel').classList.add('hidden');
-                initStore();
+                resetAdminForm();
             } catch (error) {
                 showToast("خطأ في النشر، تأكد من اتصال الإنترنت.");
             }
+        };
+
+        window.resetAdminForm = function() {
+            document.getElementById('editing-game-id').value = "";
+            document.getElementById('game-title').value = "";
+            document.getElementById('game-platform').selectedIndex = 0;
+            document.getElementById('game-size').value = "";
+            document.getElementById('game-year').value = "";
+            document.getElementById('game-director').value = "";
+            document.getElementById('game-arabic').selectedIndex = 0;
+            document.getElementById('game-desc').value = "";
+            document.getElementById('game-cover-url').value = "";
+            document.getElementById('game-images-box').value = "";
+            document.getElementById('game-youtube').value = "";
+            document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
+            renderAdminCheckboxes();
+        };
+
+        window.uploadAndSaveLogo = function() {
+            const fileInput = document.getElementById('logo-file-input');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showToast("يرجى اختيار صورة أولاً!");
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    await setDoc(doc(db, "settings", "general"), { logoUrl: e.target.result }, { merge: true });
+                    showToast("تم حفظ وتحديث شعار المتجر بنجاح 🌟");
+                    loadStoreSettings();
+                } catch (error) {
+                    showToast("خطأ أثناء حفظ الشعار");
+                }
+            };
+            reader.readAsDataURL(file);
         };
 
         window.loginAdmin = async function() {
@@ -1241,6 +1314,7 @@
             }
         });
 
+        loadStoreSettings();
         initStore();
     </script>
 </body>
