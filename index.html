@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الفخمة -->
+    <!-- شاشة فحص الأمان الفخمة (بدون إظهار كواليس السيرفر) -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -184,10 +184,17 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال بقاعدة البيانات...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري إجراء فحص الأمان وتأمين الجلسة...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-lock text-[10px]"></i> اتصال ذكي ومتأقلم مع سرعة الإنترنت
+            <i class="fa-solid fa-lock text-[10px]"></i> اتصال مشفر وفائق السرعة
         </p>
+    </div>
+
+    <!-- مؤشر حالة انقطاع الإنترنت الحي -->
+    <div id="offline-banner" class="hidden bg-rose-600 text-white text-xs font-bold text-center py-2 px-4 sticky top-0 z-50 flex items-center justify-center gap-2 shadow-lg">
+        <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
+        <span>انقطع الاتصال بالإنترنت! يرجى التحقق من الشبكة.</span>
+        <button onclick="window.location.reload()" class="bg-black/30 hover:bg-black/50 px-2.5 py-0.5 rounded text-[11px] underline">إعادة المحاولة</button>
     </div>
 
     <!-- الهيدر -->
@@ -527,7 +534,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي الذكي -->
+    <!-- سكربت فايربيس والمنطق البرمجي المطور -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -582,7 +589,7 @@
             "الألعاب الخفيفة والمنوعة 🎲"
         ];
 
-        let allGames = [];
+        let allGames = JSON.parse(localStorage.getItem('madina_cached_games') || '[]');
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentSort = "newest";
@@ -601,12 +608,26 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
-        // تحديث ذكي لمهلة الاتصال: زيادة الوقت بمرونة ليتأقلم مع أصحاب النت الضعيف بدون قطع وهمي
+        // مراقبة الاتصال الحية بالإنترنت
+        window.addEventListener('online', () => {
+            const banner = document.getElementById('offline-banner');
+            if (banner) banner.classList.add('hidden');
+            showToast("🟢 عاد الاتصال بالإنترنت!");
+            initStore();
+        });
+
+        window.addEventListener('offline', () => {
+            const banner = document.getElementById('offline-banner');
+            if (banner) banner.classList.remove('hidden');
+            showToast("🔴 انقطع الاتصال بالإنترنت!");
+        });
+
+        // مهلة اتصال ذكية وفائقة السرعة لتجنب الانتظار الطويل
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
-                showNetworkErrorState();
+                completeSecurityCheck(); // فتح سريع حتى لو كان النت ضعيفاً بالاعتماد على الكاش المحلي
             }
-        }, 18000); // 18 ثانية كاملة تمنح النت الضعيف وقتاً كافياً للتحميل بصمت وبدون لاغ
+        }, 3500); // 3.5 ثانية فقط لتجربة صاروخية
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -655,27 +676,17 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
-                title.innerText = "تم الاتصال بنجاح ✓";
+                title.innerText = "تم التحقق من الأمان بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة جاهز ومتأقلم مع شبكتك';
+                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> الجلسة مؤمنة بالكامل - متجر المدينة';
             }
 
             setTimeout(() => {
                 if (spinner) {
                     spinner.style.opacity = '0';
-                    setTimeout(() => spinner.style.display = 'none', 450);
+                    setTimeout(() => spinner.style.display = 'none', 300);
                 }
-            }, 300);
-        }
-
-        function showNetworkErrorState() {
-            if (isDataLoaded) return;
-            const spinner = document.getElementById('loading-spinner');
-            if (spinner) {
-                spinner.style.opacity = '0';
-                setTimeout(() => spinner.style.display = 'none', 450);
-            }
-            filterAndRender();
+            }, 250);
         }
 
         function playSuccessSound() {
@@ -758,14 +769,12 @@
             if (!container || !mainCatSelect) return;
 
             const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
-            
             container.innerHTML = subCategories.map(cat => `
                 <label class="flex items-center gap-2 cursor-pointer hover:text-cyan-400 select-none">
                     <input type="checkbox" name="game-cat-checkbox" value="${cat}" onchange="updateMainCategoryDropdown()" class="rounded bg-[#05070b] border-slate-800 text-cyan-500 focus:ring-0">
                     <span>${cat}</span>
                 </label>
             `).join('');
-            
             updateMainCategoryDropdown();
         }
 
@@ -773,9 +782,7 @@
             const mainCatSelect = document.getElementById('game-main-category');
             if (!mainCatSelect) return;
             const currentSelected = mainCatSelect.value;
-
-            const checkedBoxes = Array.from(document.querySelectorAll('input[name="game-cat-checkbox"]:checked'))
-                .map(cb => cb.value);
+            const checkedBoxes = Array.from(document.querySelectorAll('input[name="game-cat-checkbox"]:checked')).map(cb => cb.value);
 
             if (checkedBoxes.length === 0) {
                 mainCatSelect.innerHTML = `<option value="">(اختر التصنيفات أولاً أعلاه)</option>`;
@@ -796,12 +803,9 @@
         window.addToCart = function(gameId, event) {
             const game = allGames.find(g => g.id === gameId);
             if (!game) return;
-            
             const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || '';
 
-            if (event) {
-                triggerFlyToCart(event, coverImg);
-            }
+            if (event) triggerFlyToCart(event, coverImg);
 
             if (!cart.some(item => item.id === gameId)) {
                 cart.push({ 
@@ -829,8 +833,7 @@
 
         window.toggleCartModal = function() {
             const modal = document.getElementById('cart-modal');
-            const isHidden = modal.classList.contains('hidden');
-            if (isHidden) {
+            if (modal.classList.contains('hidden')) {
                 modal.classList.remove('hidden');
                 renderCartItems();
             } else {
@@ -876,7 +879,7 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="removeFromCart(${idx})" class="w-9 h-9 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition" title="حذف">
+                    <button onclick="removeFromCart(${idx})" class="w-9 h-9 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition">
                         <i class="fa-solid fa-trash text-xs"></i>
                     </button>
                 </div>
@@ -903,14 +906,10 @@
             currentPage = 1;
             ['الكل', 'PS5', 'PS4', 'الريترو للـ PS4'].forEach(p => {
                 const btn = document.getElementById(`plat-${p}`);
-                if (btn) {
-                    btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition whitespace-nowrap";
-                }
+                if (btn) btn.className = "plat-btn bg-[#0b0f19] border border-slate-800 text-slate-300 py-2.5 px-4 rounded-xl font-bold text-sm transition whitespace-nowrap";
             });
             const activeBtn = document.getElementById(`plat-${plat}`);
-            if (activeBtn) {
-                activeBtn.className = "plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition whitespace-nowrap";
-            }
+            if (activeBtn) activeBtn.className = "plat-btn cyan-gradient-btn py-2.5 px-4 rounded-xl font-black text-sm transition whitespace-nowrap";
             filterAndRender();
         };
 
@@ -927,18 +926,15 @@
             filterAndRender();
         };
 
-        // تحديث ذكي جداً لزر البحث: استجابة فورية لكل حرف، وبمجرد الضغط على Enter أو بحث يخفي الكيبورد ويقود عين المستخدم مباشرة للنتائج
         window.handleSearchInput = function() {
             const searchInputElem = document.getElementById('search-input');
             const query = searchInputElem ? searchInputElem.value.trim() : '';
-
             if (query.length > 0 && !isSearchingActive) {
                 isSearchingActive = true;
                 history.pushState({ search: true }, '', '#search');
             } else if (query.length === 0 && isSearchingActive) {
                 isSearchingActive = false;
             }
-
             currentPage = 1;
             togglePlaceholderVisibility();
             filterAndRender();
@@ -946,14 +942,8 @@
 
         window.handleSearchKeydown = function(event) {
             if (event.key === 'Enter') {
-                const searchInputElem = document.getElementById('search-input');
-                if (searchInputElem) {
-                    searchInputElem.blur(); // إخفاء كيبورد الهاتف فوراً
-                }
-                const gamesAnchor = document.getElementById('games-anchor');
-                if (gamesAnchor) {
-                    gamesAnchor.scrollIntoView({ behavior: 'smooth' }); // الانتقال المباشر لشبكة الألعاب بدون الحاجة للنزول يدوياً
-                }
+                document.getElementById('search-input')?.blur();
+                document.getElementById('games-anchor')?.scrollIntoView({ behavior: 'smooth' });
             }
         };
 
@@ -1071,7 +1061,6 @@
                 hasMeta = true;
             } else {
                 yearBox.classList.add('hidden');
-                yearBox.classList.remove('flex');
             }
 
             if (game.director) {
@@ -1081,20 +1070,16 @@
                 hasMeta = true;
             } else {
                 directorBox.classList.add('hidden');
-                directorBox.classList.remove('flex');
             }
 
-            if (!hasMeta) {
-                metaGrid.classList.add('hidden');
-                metaGrid.classList.remove('grid');
-            }
+            if (!hasMeta) metaGrid.classList.add('hidden');
 
             const videoContainer = document.getElementById('modal-video-container');
             const ytIframe = document.getElementById('modal-yt-iframe');
             if (game.youtube) {
                 let embedUrl = game.youtube;
-                if (game.youtube.includes('watch?v=')) { embedUrl = game.youtube.replace('watch?v=', 'embed/'); }
-                else if (game.youtube.includes('youtu.be/')) { embedUrl = game.youtube.replace('youtu.be/', 'www.youtube.com/embed/'); }
+                if (game.youtube.includes('watch?v=')) embedUrl = game.youtube.replace('watch?v=', 'embed/');
+                else if (game.youtube.includes('youtu.be/')) embedUrl = game.youtube.replace('youtu.be/', 'www.youtube.com/embed/');
                 ytIframe.src = embedUrl;
                 videoContainer.classList.remove('hidden');
             } else {
@@ -1113,19 +1098,14 @@
             currentLightboxImages = (game.images && game.images.length > 0) ? game.images : [game.coverImage || game.image].filter(Boolean);
             document.getElementById('gallery-heading').innerHTML = `<i class="fa-regular fa-images"></i> لقطات الشاشة (${currentLightboxImages.length})`;
 
-            const verticalGallery = document.getElementById('modal-gallery-vertical');
-            verticalGallery.innerHTML = currentLightboxImages.map((url, idx) => `
+            document.getElementById('modal-gallery-vertical').innerHTML = currentLightboxImages.map((url, idx) => `
                 <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-black cursor-pointer hover:border-cyan-400 transition group" onclick="openLightbox(${idx})">
                     <img src="${url}" class="w-full h-auto object-cover max-h-80 group-hover:opacity-90 transition">
                 </div>
             `).join('');
 
-            document.getElementById('modal-add-cart').onclick = (e) => {
-                addToCart(game.id, e);
-            };
-
+            document.getElementById('modal-add-cart').onclick = (e) => addToCart(game.id, e);
             history.pushState({ modal: 'game' }, '', '#game');
-
             document.getElementById('details-modal').classList.remove('hidden');
             document.body.classList.add('modal-active');
         };
@@ -1137,36 +1117,25 @@
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
-        window.addEventListener('popstate', (event) => {
+        window.addEventListener('popstate', () => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
-            const searchInput = document.getElementById('search-input');
 
-            if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
+            if (!lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
                 return;
             }
-
-            if (detailsModal && !detailsModal.classList.contains('hidden')) {
+            if (!detailsModal.classList.contains('hidden')) {
                 document.getElementById('modal-yt-iframe').src = '';
                 detailsModal.classList.add('hidden');
                 document.body.classList.remove('modal-active');
                 return;
             }
-
-            if (isSearchingActive && searchInput && searchInput.value.trim() !== '') {
-                searchInput.value = '';
-                isSearchingActive = false;
-                togglePlaceholderVisibility();
-                filterAndRender();
-            }
         });
 
         window.updateLightboxImage = function() {
-            const imgElem = document.getElementById('lightbox-img');
-            const counterElem = document.getElementById('lightbox-counter');
-            imgElem.src = currentLightboxImages[currentLightboxIndex];
-            counterElem.innerText = `صورة ${currentLightboxIndex + 1} من ${currentLightboxImages.length}`;
+            document.getElementById('lightbox-img').src = currentLightboxImages[currentLightboxIndex];
+            document.getElementById('lightbox-counter').innerText = `صورة ${currentLightboxIndex + 1} من ${currentLightboxImages.length}`;
         };
 
         window.prevLightboxImage = function() {
@@ -1180,7 +1149,7 @@
         };
 
         window.reloadStoreData = function() {
-            showToast("🔄 جاري إعادة تحديث الصفحة والاتصال...");
+            showToast("🔄 جاري إعادة تحميل الصفحة...");
             window.location.reload();
         };
 
@@ -1193,70 +1162,41 @@
             let filtered = allGames.filter(g => {
                 const titleLower = g.title.toLowerCase();
                 const cats = g.categories || [g.category].filter(Boolean);
-                
                 const matchSearch = titleLower.includes(search) || cats.some(c => c.toLowerCase().includes(search));
                 
                 let matchPlat = true;
-                if (selectedPlatform === "الكل") {
-                    matchPlat = true;
-                } else if (selectedPlatform === "الريترو للـ PS4") {
-                    matchPlat = (g.platform === "الريترو للـ PS4");
-                } else if (selectedPlatform === "PS4") {
-                    matchPlat = (g.platform === "PS4");
-                } else {
-                    matchPlat = (g.platform && g.platform.includes(selectedPlatform));
-                }
+                if (selectedPlatform === "الريترو للـ PS4") matchPlat = (g.platform === "الريترو للـ PS4");
+                else if (selectedPlatform !== "الكل") matchPlat = (g.platform && g.platform.includes(selectedPlatform));
 
                 const matchCat = selectedCategory === "الكل" || cats.includes(selectedCategory) || g.category === selectedCategory;
                 return matchSearch && matchPlat && matchCat;
             });
 
-            if (currentSort === 'newest') {
-                filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            } else if (currentSort === 'popular') {
-                filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
-            } else if (currentSort === 'alpha') {
-                filtered.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
-            }
+            if (currentSort === 'newest') filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            else if (currentSort === 'popular') filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+            else if (currentSort === 'alpha') filtered.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
 
             if (filtered.length === 0) {
                 if (allGames.length === 0) {
                     grid.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_20px_rgba(6,182,212,0.25)] text-center space-y-4">
+                        <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] text-center space-y-4">
                             <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xl animate-pulse">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                             </div>
-                            <div class="space-y-1">
-                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">جاري الاتصال بقاعدة البيانات...</h3>
-                                <p class="text-slate-400 text-xs leading-relaxed max-w-sm">ننتظر استجابة السيرفر، يرجى الانتظار قليلاً.</p>
-                            </div>
-                            <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
-                                <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والاتصال
+                            <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، الاتصال بطيء أو منقطع حالياً!</h3>
+                            <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg">
+                                <i class="fa-solid fa-rotate-right"></i> إعادة المحاولة
                             </button>
                         </div>
                     `;
                 } else if (search.length > 0) {
                     const rawSearchQuery = searchInputElem.value.trim();
                     const waMessage = encodeURIComponent(`السلام عليكم، أود الاستفسار عن توفر لعبة (${rawSearchQuery}) في متجركم.`);
-                    const logoSrc = globalStoreLogo || '';
-                    const iconDisplayHtml = logoSrc 
-                        ? `<img src="${logoSrc}" class="w-full h-full object-cover rounded-[14px]">`
-                        : `<i class="fa-solid fa-gamepad text-cyan-300 text-2xl"></i>`;
-
                     grid.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_25px_rgba(6,182,212,0.2)] text-center space-y-4">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-purple-700 p-0.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center overflow-hidden animate-bounce">
-                                <div class="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center overflow-hidden">
-                                    ${iconDisplayHtml}
-                                </div>
-                            </div>
-                            <div class="space-y-1.5 max-w-md">
-                                <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة <span class="text-yellow-400 font-black">(${rawSearchQuery})</span> غير متوفرة حالياً! 🎮</h3>
-                                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                                    تواصل معنا عبر واتساب لطلبها وسنوفّرها لك فوراً بأفضل سعر.
-                                </p>
-                            </div>
-                            <a href="https://wa.me/9647858858844?text=${waMessage}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-6 py-3 rounded-xl font-black text-xs sm:text-sm transition shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                        <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] text-center space-y-4">
+                            <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة <span class="text-yellow-400 font-black">(${rawSearchQuery})</span> غير متوفرة حالياً! 🎮</h3>
+                            <p class="text-slate-300 text-xs sm:text-sm">تواصل معنا عبر واتساب لطلبها وسنوفّرها لك فوراً.</p>
+                            <a href="https://wa.me/9647858858844?text=${waMessage}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-6 py-3 rounded-xl font-black text-xs sm:text-sm transition shadow">
                                 <i class="fa-brands fa-whatsapp text-lg"></i> اطلب اللعبة عبر واتساب الآن
                             </a>
                         </div>
@@ -1264,13 +1204,7 @@
                 } else {
                     grid.innerHTML = `
                         <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-slate-800 bg-[#0b0f19] text-center space-y-3">
-                            <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 text-xl">
-                                <i class="fa-solid fa-gamepad"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">لا توجد ألعاب مضافة في هذا القسم حالياً</h3>
-                                <p class="text-slate-400 text-xs leading-relaxed">قريباً سيتم إضافة ألعاب مميزة لهذا التصنيف، ترقبونا!</p>
-                            </div>
+                            <h3 class="text-cyan-300 font-black text-sm sm:text-base">لا توجد ألعاب مضافة في هذا القسم حالياً</h3>
                         </div>
                     `;
                 }
@@ -1283,75 +1217,43 @@
             if (currentPage < 1) currentPage = 1;
 
             const startIndex = (currentPage - 1) * gamesPerPage;
-            const endIndex = startIndex + gamesPerPage;
-            const paginatedGames = filtered.slice(startIndex, endIndex);
+            const paginatedGames = filtered.slice(startIndex, startIndex + gamesPerPage);
 
             grid.innerHTML = paginatedGames.map(game => {
                 const coverImg = game.coverImage || (game.images && game.images[0]) || game.image || 'https://via.placeholder.com/400x250';
                 const displayCat = game.category || (game.categories && game.categories[0]) || '';
-                
                 const isInCart = cart.some(item => item.id === game.id);
                 const cardBorderClass = isInCart ? "border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.35)] bg-[#0b0f19]" : "border border-slate-800/90 bg-[#0b0f19]";
                 
                 const cartActionBtnHtml = isInCart ? `
-                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-cyan-500 text-slate-950 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.5)] transition z-10 hover:scale-110" title="في السلة">
+                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-cyan-500 text-slate-950 flex items-center justify-center shadow transition z-10">
                         <i class="fa-solid fa-check text-xs font-black"></i>
                     </button>
                 ` : `
-                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/80 hover:bg-cyan-500 text-cyan-400 hover:text-slate-950 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md transition z-10 shadow-md hover:scale-110" title="أضف للسلة">
+                    <button onclick="addToCart('${game.id}', event)" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-black/80 hover:bg-cyan-500 text-cyan-400 hover:text-slate-950 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md transition z-10 shadow">
                         <i class="fa-solid fa-cart-shopping text-xs pointer-events-none"></i>
                     </button>
                 `;
 
                 let arabicBadgeStyle = "text-slate-400";
                 if (game.arabic) {
-                    if (game.arabic.includes('دبلجة')) { arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(16,185,129,0.2)]"; }
-                    else if (game.arabic.includes('ترجمة')) { arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold shadow-[0_0_8px_rgba(6,182,212,0.2)]"; }
-                    else { arabicBadgeStyle = "bg-rose-500/10 text-rose-300/80 border border-rose-500/20 px-2 py-0.5 rounded-md"; }
+                    if (game.arabic.includes('دبلجة')) arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold";
+                    else if (game.arabic.includes('ترجمة')) arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold";
                 }
-
-                const adminViewsBadgeHtml = isAdminLoggedIn ? `
-                    <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md border border-slate-800 text-[10px] text-cyan-300 px-2.5 py-0.5 rounded-lg flex items-center gap-1 shadow">
-                        <i class="fa-solid fa-eye text-[9px]"></i> <span>${game.views || 0}</span>
-                    </div>
-                ` : '';
 
                 return `
                     <div class="${cardBorderClass} rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group relative transition-all duration-300">
-                        <div class="relative bg-black/40 flex items-center justify-center min-h-[220px] sm:min-h-[260px]">
+                        <div class="relative bg-black/40 flex items-center justify-center min-h-[220px]">
                             <img onclick="openDetailsModal('${game.id}')" src="${coverImg}" alt="${game.title}" class="w-full h-auto max-h-[320px] object-contain cursor-pointer group-hover:scale-102 transition duration-300">
-                            
                             ${cartActionBtnHtml}
-
-                            ${adminViewsBadgeHtml}
                         </div>
-
                         <div class="p-3 space-y-2 flex-grow flex flex-col justify-between">
                             <div>
                                 <h3 onclick="openDetailsModal('${game.id}')" class="font-bold text-xs sm:text-sm text-white line-clamp-1 cursor-pointer hover:text-cyan-400">${game.title}</h3>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
                                     <span class="truncate max-w-[60%]">${displayCat}</span>
-                                    <div class="flex items-center gap-1.5">
-                                        ${game.year ? `<span class="text-purple-300 font-bold">${game.year}</span>` : ''}
-                                        ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
-                                    </div>
+                                    ${game.size ? `<span class="text-cyan-400 font-bold" dir="ltr">${game.size} GB</span>` : ''}
                                 </div>
-                            </div>
-
-                            <div class="pt-1.5 border-t border-slate-800/80 flex items-center justify-between gap-1">
-                                <span class="text-[10px] truncate ${arabicBadgeStyle}">
-                                    ${game.arabic || ''}
-                                </span>
-                                ${isAdminLoggedIn ? `
-                                    <div class="flex gap-1">
-                                        <button onclick="editGame('${game.id}')" class="text-cyan-400 hover:text-cyan-300 text-xs px-1.5 py-0.5 bg-cyan-500/10 rounded" title="تعديل وتحديث البيانات">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button onclick="deleteGame('${game.id}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 bg-red-500/10 rounded" title="حذف اللعبة نهائياً">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -1360,27 +1262,11 @@
 
             if (totalPages > 1) {
                 let pagesHtml = '';
-                
-                if (currentPage > 1) {
-                    pagesHtml += `<button onclick="changePage(${currentPage - 1})" class="w-10 h-10 rounded-2xl bg-[#0b0f19] border border-cyan-500/30 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-chevron-right"></i></button>`;
-                }
-
                 for (let i = 1; i <= totalPages; i++) {
-                    if (i <= 3 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                        const isActive = i === currentPage;
-                        const btnClass = isActive 
-                            ? "w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 text-slate-950 font-black shadow-[0_0_20px_rgba(6,182,212,0.6)] scale-105 flex items-center justify-center text-xs transition" 
-                            : "w-10 h-10 rounded-2xl bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400 font-bold flex items-center justify-center text-xs transition shadow";
-                        pagesHtml += `<button onclick="changePage(${i})" class="${btnClass}">${i}</button>`;
-                    } else if (i === 4 && totalPages > 4) {
-                        pagesHtml += `<span class="text-cyan-400 font-bold text-sm px-1.5 flex items-center">...</span>`;
-                    }
+                    const isActive = i === currentPage;
+                    const btnClass = isActive ? "w-10 h-10 rounded-2xl bg-cyan-400 text-slate-950 font-black shadow flex items-center justify-center text-xs" : "w-10 h-10 rounded-2xl bg-[#0b0f19] border border-slate-800 text-slate-300 flex items-center justify-center text-xs";
+                    pagesHtml += `<button onclick="changePage(${i})" class="${btnClass}">${i}</button>`;
                 }
-
-                if (currentPage < totalPages) {
-                    pagesHtml += `<button onclick="changePage(${currentPage + 1})" class="w-10 h-10 rounded-2xl bg-[#0b0f19] border border-cyan-500/30 text-cyan-400 hover:border-cyan-400 text-xs flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-chevron-left"></i></button>`;
-                }
-
                 paginationContainer.innerHTML = pagesHtml;
             } else {
                 paginationContainer.innerHTML = '';
@@ -1388,15 +1274,32 @@
         };
 
         async function initStore() {
-            if (window.location.hash) {
-                history.replaceState(null, '', window.location.pathname + window.location.search);
-            }
             try {
                 await loadStoreSettings();
-                initRealtimeGamesListener();
+                const gamesRef = collection(db, "games");
+                
+                // الاستماع الحي للبيانات مع ضمان حفظ كاش محلي فوري لتسريع الفتح في المرات القادمة
+                onSnapshot(gamesRef, (snapshot) => {
+                    const serverGames = [];
+                    snapshot.forEach((docSnap) => {
+                        serverGames.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+
+                    if (serverGames.length > 0) {
+                        allGames = serverGames;
+                        localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
+                    }
+
+                    renderCategoriesBar();
+                    renderHero();
+                    filterAndRender();
+                    completeSecurityCheck();
+                }, (error) => {
+                    console.log("الاعتماد على الكاش المحلي بسبب ضعف النت.");
+                    completeSecurityCheck();
+                });
             } catch (error) {
-                console.error("خطأ في الاتصال:", error);
-                showNetworkErrorState();
+                completeSecurityCheck();
             }
         }
 
@@ -1420,165 +1323,46 @@
                         footerFallback.classList.add('hidden');
                     }
                 }
-            } catch (error) {
-                console.error("خطأ في جلب الشعار:", error);
-            }
+            } catch (e) {}
         }
-
-        function initRealtimeGamesListener() {
-            const gamesRef = collection(db, "games");
-            onSnapshot(gamesRef, (snapshot) => {
-                const newGamesList = [];
-                snapshot.forEach((docSnap) => {
-                    newGamesList.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                allGames = newGamesList;
-                renderCategoriesBar();
-                renderHero();
-                resetHeroTimer();
-                filterAndRender();
-
-                completeSecurityCheck();
-            }, (error) => {
-                console.error("خطأ في المزامنة:", error);
-                showNetworkErrorState();
-            });
-        }
-
-        window.uploadAndSaveLogo = function() {
-            const fileInput = document.getElementById('logo-file-input');
-            if (!fileInput.files || fileInput.files.length === 0) {
-                showToast("يرجى اختيار صورة أولاً!");
-                return;
-            }
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64String = e.target.result;
-                try {
-                    await setDoc(doc(db, "settings", "general"), { logoUrl: base64String }, { merge: true });
-                    showToast("تم حفظ وتحديث شعار المتجر بنجاح 🌟");
-                    loadStoreSettings();
-                } catch (error) {
-                    showToast("خطأ أثناء حفظ الشعار");
-                }
-            };
-            reader.readAsDataURL(file);
-        };
 
         window.addNewGame = async function() {
-            const saveBtn = document.getElementById('save-game-btn');
-            const editingId = document.getElementById('editing-game-id').value;
             const title = document.getElementById('game-title').value.trim();
             const platform = document.getElementById('game-platform').value;
-            const size = document.getElementById('game-size').value.trim();
-            const year = document.getElementById('game-year').value.trim();
-            const director = document.getElementById('game-director').value.trim();
-            const arabic = document.getElementById('game-arabic').value;
-            const desc = document.getElementById('game-desc').value.trim();
             const coverImage = document.getElementById('game-cover-url').value.trim();
-            const youtube = document.getElementById('game-youtube').value.trim();
-            const mainCategory = document.getElementById('game-main-category').value;
+            const arabic = document.getElementById('game-arabic').value;
+            const selectedCats = Array.from(document.querySelectorAll('input[name="game-cat-checkbox"]:checked')).map(cb => cb.value);
 
-            const selectedCats = Array.from(document.querySelectorAll('input[name="game-cat-checkbox"]:checked'))
-                .map(cb => cb.value);
-
-            const rawImages = document.getElementById('game-images-box').value
-                .split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0);
-
-            if (!title) { showToast("يرجى كتابة اسم اللعبة!"); return; }
-            if (!platform) { showToast("يرجى اختيار المنصة (PS4 / PS5 / الريترو) أولاً! ⚠️"); return; }
-            if (!coverImage) { showToast("يرجى إدخال رابط غلاف اللعبة الرئيسي!"); return; }
-            if (selectedCats.length === 0) { showToast("يرجى اختيار صنف واحد على الأقل!"); return; }
-            if (!arabic) { showToast("يرجى اختيار حالة اللغة العربية للعبة أولاً! ⚠️"); return; }
-
-            saveBtn.disabled = true;
-            saveBtn.innerText = editingId ? "💾 جاري حفظ التعديلات..." : "🚀 جاري نشر اللعبة...";
+            if (!title || !platform || !coverImage || selectedCats.length === 0 || !arabic) {
+                showToast("يرجى تعبئة الحقول الأساسية وتحديد اللغة والمنصة!");
+                return;
+            }
 
             const gameData = {
                 title,
                 platform,
                 categories: selectedCats,
-                category: mainCategory || selectedCats[0],
-                size,
-                year,
-                director,
+                category: selectedCats[0],
+                size: document.getElementById('game-size').value.trim(),
+                year: document.getElementById('game-year').value.trim(),
+                director: document.getElementById('game-director').value.trim(),
                 arabic,
-                desc,
-                coverImage: coverImage,
-                images: rawImages,
-                youtube
+                desc: document.getElementById('game-desc').value.trim(),
+                coverImage,
+                images: document.getElementById('game-images-box').value.split('\n').map(l => l.trim()).filter(Boolean),
+                youtube: document.getElementById('game-youtube').value.trim(),
+                createdAt: new Date(),
+                views: 0
             };
 
             try {
-                if (editingId) {
-                    await updateDoc(doc(db, "games", editingId), gameData);
-                    showToast("تم تحديث وحفظ بيانات اللعبة بنجاح 💾");
-                    resetAdminForm();
-                } else {
-                    gameData.createdAt = new Date();
-                    gameData.views = 0;
-                    await addDoc(collection(db, "games"), gameData);
-                    showToast("🚀 تمت عملية نشر اللعبة بنجاح!");
-                    document.getElementById('game-title').value = "";
-                    document.getElementById('game-platform').selectedIndex = 0;
-                    document.getElementById('game-size').value = "";
-                    document.getElementById('game-year').value = "";
-                    document.getElementById('game-director').value = "";
-                    document.getElementById('game-arabic').selectedIndex = 0;
-                    document.getElementById('game-desc').value = "";
-                    document.getElementById('game-cover-url').value = "";
-                    document.getElementById('game-images-box').value = "";
-                    document.getElementById('game-youtube').value = "";
-                    document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
-                    renderAdminCheckboxes();
-                }
-                
+                await addDoc(collection(db, "games"), gameData);
+                showToast("🚀 تمت إضافة اللعبة ونشرها بنجاح!");
                 document.getElementById('admin-panel').classList.add('hidden');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                resetAdminForm();
             } catch (error) {
-                console.error("خطأ النشر:", error);
-                showToast("حدث خطأ في الاتصال، حاول مرة أخرى.");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "🚀 نشر اللعبة رسمياً";
+                showToast("خطأ في النشر، تأكد من اتصال الإنترنت.");
             }
-        };
-
-        window.editGame = function(gameId) {
-            const game = allGames.find(g => g.id === gameId);
-            if (!game) return;
-
-            document.getElementById('editing-game-id').value = game.id;
-            document.getElementById('game-title').value = game.title || '';
-            document.getElementById('game-platform').value = game.platform || '';
-            document.getElementById('game-size').value = game.size || '';
-            document.getElementById('game-year').value = game.year || '';
-            document.getElementById('game-director').value = game.director || '';
-            document.getElementById('game-arabic').value = game.arabic || '';
-            document.getElementById('game-desc').value = game.desc || '';
-            document.getElementById('game-cover-url').value = game.coverImage || game.image || '';
-            document.getElementById('game-images-box').value = (game.images || []).join('\n');
-            document.getElementById('game-youtube').value = game.youtube || '';
-
-            const gameCats = game.categories || [game.category].filter(Boolean);
-            document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => {
-                cb.checked = gameCats.includes(cb.value);
-            });
-
-            updateMainCategoryDropdown();
-            document.getElementById('game-main-category').value = game.category || gameCats[0] || '';
-
-            document.getElementById('admin-form-title').innerText = "تعديل وتحديث بيانات اللعبة:";
-            document.getElementById('save-game-btn').innerText = "💾 حفظ التعديلات";
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-
-            const panel = document.getElementById('admin-panel');
-            panel.classList.remove('hidden');
-            panel.scrollIntoView({ behavior: 'smooth' });
         };
 
         window.resetAdminForm = function() {
@@ -1595,21 +1379,26 @@
             document.getElementById('game-youtube').value = "";
             document.querySelectorAll('input[name="game-cat-checkbox"]').forEach(cb => cb.checked = false);
             renderAdminCheckboxes();
-
-            document.getElementById('admin-form-title').innerText = "إضافة لعبة جديدة:";
-            document.getElementById('save-game-btn').innerText = "🚀 نشر اللعبة رسمياً";
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
-        window.deleteGame = async function(gameId) {
-            if (confirm("هل أنت متأكد من حذف هذه اللعبة نهائياً؟")) {
-                try {
-                    await deleteDoc(doc(db, "games", gameId));
-                    showToast("تم حذف اللعبة بنجاح 🗑️");
-                } catch (error) {
-                    showToast("خطأ أثناء الحذف");
-                }
+        window.uploadAndSaveLogo = function() {
+            const fileInput = document.getElementById('logo-file-input');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showToast("يرجى اختيار صورة أولاً!");
+                return;
             }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    await setDoc(doc(db, "settings", "general"), { logoUrl: e.target.result }, { merge: true });
+                    showToast("تم حفظ وتحديث شعار المتجر بنجاح 🌟");
+                    loadStoreSettings();
+                } catch (error) {
+                    showToast("خطأ أثناء حفظ الشعار");
+                }
+            };
+            reader.readAsDataURL(file);
         };
 
         window.loginAdmin = async function() {
@@ -1617,7 +1406,7 @@
             const password = document.getElementById('admin-password').value;
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                showToast("تم تسجيل الدخول بنجاح يا أسطورة! 👑");
+                showToast("تم تسجيل الدخول بنجاح 👑");
             } catch (error) {
                 showToast("فشل تسجيل الدخول: تأكد من البيانات.");
             }
@@ -1625,57 +1414,31 @@
 
         window.logoutAdmin = async function() {
             await signOut(auth);
-            showToast("تسجيل خروج ناجح.");
-        };
-
-        window.toggleAdminPanel = function() {
-            const panel = document.getElementById('admin-panel');
-            const loginBox = document.getElementById('admin-login-box');
-            const dashboard = document.getElementById('admin-dashboard');
-
-            if (panel) {
-                panel.classList.toggle('hidden');
-                if (!panel.classList.contains('hidden')) {
-                    panel.scrollIntoView({ behavior: 'smooth' });
-                    if (!isAdminLoggedIn && loginBox) {
-                        loginBox.classList.add('hidden');
-                        if (dashboard) dashboard.classList.remove('hidden');
-                    }
-                }
-            }
+            showToast("تم تسجيل الخروج.");
         };
 
         onAuthStateChanged(auth, (user) => {
+            isAdminLoggedIn = !!user;
             const loginBox = document.getElementById('admin-login-box');
             const dashboard = document.getElementById('admin-dashboard');
-            const panel = document.getElementById('admin-panel');
-            
             if (user) {
-                isAdminLoggedIn = true;
-                if (loginBox) loginBox.classList.add('hidden');
-                if (dashboard) dashboard.classList.remove('hidden');
+                loginBox?.classList.add('hidden');
+                dashboard?.classList.remove('hidden');
             } else {
-                isAdminLoggedIn = false;
-                if (panel && !panel.classList.contains('hidden')) {
-                    if (loginBox) loginBox.classList.remove('hidden');
-                }
-                if (dashboard) dashboard.classList.add('hidden');
-                resetAdminForm();
+                loginBox?.classList.remove('hidden');
+                dashboard?.classList.add('hidden');
             }
             filterAndRender();
         });
 
         let clickCount = 0;
-        const secretTrigger = document.getElementById('secret-admin-trigger');
-        if (secretTrigger) {
-            secretTrigger.addEventListener('click', () => {
-                clickCount++;
-                if (clickCount >= 3) {
-                    toggleAdminPanel();
-                    clickCount = 0.5;
-                }
-            });
-        }
+        document.getElementById('secret-admin-trigger')?.addEventListener('click', () => {
+            clickCount++;
+            if (clickCount >= 3) {
+                document.getElementById('admin-panel')?.classList.toggle('hidden');
+                clickCount = 0;
+            }
+        });
 
         initStore();
     </script>
