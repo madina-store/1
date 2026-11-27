@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الفخمة -->
+    <!-- شاشة فحص أمان خفيفة وسريعة جداً -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -184,9 +184,9 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال بقاعدة البيانات...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فتح متجر المدينة...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-lock text-[10px]"></i> اتصال ذكي ومتأقلم مع سرعة الإنترنت
+            <i class="fa-solid fa-bolt text-[10px]"></i> تحميل فوري وسريع
         </p>
     </div>
 
@@ -527,7 +527,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي الذكي -->
+    <!-- سكربت فايربيس والمنطق البرمجي السريع والمحلي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -582,7 +582,8 @@
             "الألعاب الخفيفة والمنوعة 🎲"
         ];
 
-        let allGames = [];
+        // جلب الألعاب المخزنة محلياً (Cache) لعرضها بشكل فوري بدون أي انتظار للنت
+        let allGames = JSON.parse(localStorage.getItem('madina_cached_games') || '[]');
         let selectedPlatform = "الكل";
         let selectedCategory = "الكل";
         let currentSort = "newest";
@@ -601,12 +602,27 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
-        // تحديث ذكي لمهلة الاتصال: زيادة الوقت بمرونة ليتأقلم مع أصحاب النت الضعيف بدون قطع وهمي
+        // إذا كانت هناك بيانات مخزنة محلياً، اعرضها فوري وافتح الموقع بدون انتظار شاشة التحميل!
+        if (allGames.length > 0) {
+            isDataLoaded = true;
+            setTimeout(() => {
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) {
+                    spinner.style.opacity = '0';
+                    setTimeout(() => spinner.style.display = 'none', 300);
+                }
+            }, 100);
+            renderCategoriesBar();
+            renderHero();
+            filterAndRender();
+        }
+
+        // مهلة اتصال ذكية تتأقلم مع النت الضعيف (25 ثانية كاملة)
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
                 showNetworkErrorState();
             }
-        }, 18000); // 18 ثانية كاملة تمنح النت الضعيف وقتاً كافياً للتحميل بصمت وبدون لاغ
+        }, 25000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -639,12 +655,12 @@
         };
 
         function completeSecurityCheck() {
-            if (isDataLoaded) return;
+            if (isDataLoaded && allGames.length > 0) return;
             isDataLoaded = true;
             clearTimeout(connectionTimeout);
 
             const spinner = document.getElementById('loading-spinner');
-            if (!spinner || spinner.style.display === 'none') return;
+            if (!spinner) return;
 
             const ring = document.getElementById('security-ring');
             const iconBox = document.getElementById('security-icon-box');
@@ -655,9 +671,9 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
-                title.innerText = "تم الاتصال بنجاح ✓";
+                title.innerText = "اكتمل فحص الأمان بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة جاهز ومتأقلم مع شبكتك';
+                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة آمن ومحمي 100%';
             }
 
             setTimeout(() => {
@@ -669,13 +685,29 @@
         }
 
         function showNetworkErrorState() {
-            if (isDataLoaded) return;
+            if (isDataLoaded && allGames.length > 0) return;
             const spinner = document.getElementById('loading-spinner');
             if (spinner) {
                 spinner.style.opacity = '0';
                 setTimeout(() => spinner.style.display = 'none', 450);
             }
-            filterAndRender();
+            const grid = document.getElementById('games-grid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] shadow-[0_0_20px_rgba(6,182,212,0.25)] text-center space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xl animate-pulse">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، الإنترنت ضعيف أو بطيء جداً!</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed max-w-sm">لم يتمكن المتجر من جلب البيانات بسبب ضعف أو بطء الاتصال لديك. يرجى التحقق من الشبكة.</p>
+                        </div>
+                        <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والفحص
+                        </button>
+                    </div>
+                `;
+            }
         }
 
         function playSuccessSound() {
@@ -927,7 +959,7 @@
             filterAndRender();
         };
 
-        // تحديث ذكي جداً لزر البحث: استجابة فورية لكل حرف، وبمجرد الضغط على Enter أو بحث يخفي الكيبورد ويقود عين المستخدم مباشرة للنتائج
+        // بحث ذكي فوري وإغلاق الكيبورد والانتقال للنتائج
         window.handleSearchInput = function() {
             const searchInputElem = document.getElementById('search-input');
             const query = searchInputElem ? searchInputElem.value.trim() : '';
@@ -948,11 +980,11 @@
             if (event.key === 'Enter') {
                 const searchInputElem = document.getElementById('search-input');
                 if (searchInputElem) {
-                    searchInputElem.blur(); // إخفاء كيبورد الهاتف فوراً
+                    searchInputElem.blur();
                 }
                 const gamesAnchor = document.getElementById('games-anchor');
                 if (gamesAnchor) {
-                    gamesAnchor.scrollIntoView({ behavior: 'smooth' }); // الانتقال المباشر لشبكة الألعاب بدون الحاجة للنزول يدوياً
+                    gamesAnchor.scrollIntoView({ behavior: 'smooth' });
                 }
             }
         };
@@ -1180,7 +1212,7 @@
         };
 
         window.reloadStoreData = function() {
-            showToast("🔄 جاري إعادة تحديث الصفحة والاتصال...");
+            showToast("🔄 جاري إعادة تحميل الصفحة والفحص...");
             window.location.reload();
         };
 
@@ -1227,11 +1259,11 @@
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                             </div>
                             <div class="space-y-1">
-                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">جاري الاتصال بقاعدة البيانات...</h3>
-                                <p class="text-slate-400 text-xs leading-relaxed max-w-sm">ننتظر استجابة السيرفر، يرجى الانتظار قليلاً.</p>
+                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، الإنترنت ضعيف أو بطيء جداً!</h3>
+                                <p class="text-slate-400 text-xs leading-relaxed max-w-sm">لم يتمكن المتجر من جلب البيانات بسبب ضعف الاتصال لديك. يرجى التحقق من الشبكة.</p>
                             </div>
                             <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
-                                <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والاتصال
+                                <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والفحص
                             </button>
                         </div>
                     `;
@@ -1434,15 +1466,19 @@
                 });
 
                 allGames = newGamesList;
+                // حفظ البيانات محلياً لتكون جاهزة وفورية للفتحة القادمة
+                localStorage.setItem('madina_cached_games', JSON.stringify(allGames));
+
                 renderCategoriesBar();
                 renderHero();
-                resetHeroTimer();
                 filterAndRender();
 
                 completeSecurityCheck();
             }, (error) => {
                 console.error("خطأ في المزامنة:", error);
-                showNetworkErrorState();
+                if (allGames.length === 0) {
+                    showNetworkErrorState();
+                }
             });
         }
 
@@ -1672,7 +1708,7 @@
                 clickCount++;
                 if (clickCount >= 3) {
                     toggleAdminPanel();
-                    clickCount = 0.5;
+                    clickCount = 0;
                 }
             });
         }
