@@ -184,9 +184,9 @@
                 <i class="fa-solid fa-shield-halved animate-pulse"></i>
             </div>
         </div>
-        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري فحص الأمان والحماية...</h2>
+        <h2 id="security-title" class="text-base sm:text-lg font-black text-white tracking-wide">جاري الاتصال بقاعدة البيانات...</h2>
         <p id="security-subtitle" class="text-xs text-cyan-400/80 mt-1.5 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-lock text-[10px]"></i> اتصال آمن ومحمي - جلب الألعاب
+            <i class="fa-solid fa-lock text-[10px]"></i> اتصال ذكي ومتأقلم مع سرعة الإنترنت
         </p>
     </div>
 
@@ -222,7 +222,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="container mx-auto max-w-4xl px-4 py-5 flex-grow space-y-6">
 
-        <!-- شريط البحث الدائري -->
+        <!-- شريط البحث الذكي -->
         <div class="search-led-container shadow-lg">
             <div class="search-led-inner px-5 py-3 flex items-center gap-3 relative">
                 <i class="fa-solid fa-magnifying-glass text-slate-400 text-base"></i>
@@ -230,7 +230,7 @@
                     <span class="text-sm font-semibold text-slate-400 whitespace-nowrap">ابحث عن</span>
                     <span id="animated-search-label" class="text-sm font-bold text-cyan-400 whitespace-nowrap search-anim-pulse">ألعاب PS4 🎮</span>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearchInput()" onfocus="togglePlaceholderVisibility()" onblur="togglePlaceholderVisibility()" class="bg-transparent absolute inset-0 w-full h-full pr-12 pl-5 text-sm text-white focus:outline-none z-10">
+                <input type="text" id="search-input" oninput="handleSearchInput()" onkeydown="handleSearchKeydown(event)" onfocus="togglePlaceholderVisibility()" onblur="togglePlaceholderVisibility()" class="bg-transparent absolute inset-0 w-full h-full pr-12 pl-5 text-sm text-white focus:outline-none z-10">
             </div>
         </div>
 
@@ -527,7 +527,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي -->
+    <!-- سكربت فايربيس والمنطق البرمجي الذكي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -549,43 +549,35 @@
 
         const ALL_CATEGORIES = [
             "الكل",
-            // 1. الأكشن والتصويب
             "ألعاب الأكشن والتصويب ⚔️",
             "تصويب من منظور الشخص الأول 🎯",
             "تصويب من منظور الشخص الثالث 🔫",
             "القتال والمواجهة 🥊",
             "الضرب المتواصل 🗡️🔥",
             "التسلل والتخفي 🥷",
-            // 2. المغامرات والاستكشاف
             "ألعاب المغامرات والاستكشاف 🗺️",
             "الاستكشاف والعالم المفتوح 🌍",
             "المغامرات التفاعلية والسينمائية 🎬",
             "مغامرات التفاعل والنقر 🖱️",
-            // 3. تقمص الأدوار (RPG)
             "ألعاب تقمص الأدوار 🛡️",
             "أكشن تقمص أدوار ⚔️🛡️",
             "تقمص أدوار يابانية 🎌",
             "تقمص أدوار كلاسيكية 📜",
-            // 4. الرعب والبقاء
             "ألعاب الرعب 👻",
             "رعب البقاء 🧟‍♂️",
             "الرعب النفسي 🧠👁️",
             "البقاء على قيد الحياة 🏕️",
-            // 5. المنصات والميترويدفانيا
             "ألعاب المنصات والميترويدفانيا 🕹️",
             "منصات ثنائية الأبعاد 🏃‍♂️",
             "منصات ثلاثية الأبعاد 🌟",
             "ميترويدفانيا 🏰🗺️",
-            // 6. الرياضة والمحاكاة
             "ألعاب الرياضة ⚽",
             "سباقات السيارات 🏎️",
             "المحاكاة الواقعية ✈️",
-            // 7. الاستراتيجية والتكتيك
             "ألعاب الاستراتيجية والتكتيك ♟️",
             "استراتيجية الوقت الحقيقي ⏱️",
             "استراتيجية تبادل الأدوار 🔄",
             "تكتيك ومواجهات 🎯🛡️",
-            // 8. الألغاز والألعاب الخفيفة
             "حل الألغاز 🧩",
             "الألعاب الخفيفة والمنوعة 🎲"
         ];
@@ -609,11 +601,12 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
+        // تحديث ذكي لمهلة الاتصال: زيادة الوقت بمرونة ليتأقلم مع أصحاب النت الضعيف بدون قطع وهمي
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
                 showNetworkErrorState();
             }
-        }, 7000);
+        }, 18000); // 18 ثانية كاملة تمنح النت الضعيف وقتاً كافياً للتحميل بصمت وبدون لاغ
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -662,9 +655,9 @@
                 ring.classList.add('verified');
                 iconBox.className = "absolute inset-0 flex items-center justify-center text-emerald-400 text-3xl scale-110 transition-all duration-300";
                 iconBox.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
-                title.innerText = "تم الفحص والتحقق بنجاح ✓";
+                title.innerText = "تم الاتصال بنجاح ✓";
                 title.classList.replace('text-white', 'text-emerald-400');
-                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة آمن ومحمي';
+                subtitle.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i> متجر المدينة جاهز ومتأقلم مع شبكتك';
             }
 
             setTimeout(() => {
@@ -934,6 +927,7 @@
             filterAndRender();
         };
 
+        // تحديث ذكي جداً لزر البحث: استجابة فورية لكل حرف، وبمجرد الضغط على Enter أو بحث يخفي الكيبورد ويقود عين المستخدم مباشرة للنتائج
         window.handleSearchInput = function() {
             const searchInputElem = document.getElementById('search-input');
             const query = searchInputElem ? searchInputElem.value.trim() : '';
@@ -948,6 +942,19 @@
             currentPage = 1;
             togglePlaceholderVisibility();
             filterAndRender();
+        };
+
+        window.handleSearchKeydown = function(event) {
+            if (event.key === 'Enter') {
+                const searchInputElem = document.getElementById('search-input');
+                if (searchInputElem) {
+                    searchInputElem.blur(); // إخفاء كيبورد الهاتف فوراً
+                }
+                const gamesAnchor = document.getElementById('games-anchor');
+                if (gamesAnchor) {
+                    gamesAnchor.scrollIntoView({ behavior: 'smooth' }); // الانتقال المباشر لشبكة الألعاب بدون الحاجة للنزول يدوياً
+                }
+            }
         };
 
         window.changePage = function(page) {
@@ -1187,7 +1194,7 @@
                 const titleLower = g.title.toLowerCase();
                 const cats = g.categories || [g.category].filter(Boolean);
                 
-                const matchSearch = titleLower.startsWith(search) || cats.some(c => c.toLowerCase().startsWith(search));
+                const matchSearch = titleLower.includes(search) || cats.some(c => c.toLowerCase().includes(search));
                 
                 let matchPlat = true;
                 if (selectedPlatform === "الكل") {
@@ -1220,8 +1227,8 @@
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                             </div>
                             <div class="space-y-1">
-                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">عذراً، يبدو أن الاتصال بالإنترنت أو بالسيرفر ضعيف!</h3>
-                                <p class="text-slate-400 text-xs leading-relaxed max-w-sm">تحقق من شبكتك أو قم بإعادة تحديث الصفحة لجلب أحدث البيانات.</p>
+                                <h3 class="text-cyan-300 font-black text-sm sm:text-base">جاري الاتصال بقاعدة البيانات...</h3>
+                                <p class="text-slate-400 text-xs leading-relaxed max-w-sm">ننتظر استجابة السيرفر، يرجى الانتظار قليلاً.</p>
                             </div>
                             <button onclick="reloadStoreData()" class="cyan-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center gap-2">
                                 <i class="fa-solid fa-rotate-right"></i> إعادة تحميل الصفحة والاتصال
@@ -1665,7 +1672,7 @@
                 clickCount++;
                 if (clickCount >= 3) {
                     toggleAdminPanel();
-                    clickCount = 0;
+                    clickCount = 0.5;
                 }
             });
         }
