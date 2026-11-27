@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الذكية (مع مانع التجمد المضمون) -->
+    <!-- شاشة فحص الأمان الفخمة -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -242,7 +242,7 @@
         </div>
 
         <!-- البنر الرئيسي -->
-        <section id="hero-section" class="relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
+        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
@@ -534,7 +534,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي المطور (مع مانع التجمد الذكي) -->
+    <!-- سكربت فايربيس والمنطق البرمجي المطور -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -608,14 +608,7 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
-        // عرض فوري أولي من الذاكرة المحلية (الكاش) لمنع أي انتظار أو وميض
-        if (allGames.length > 0) {
-            renderCategoriesBar();
-            renderHero();
-            resetHeroTimer();
-            filterAndRender();
-        }
-
+        // دالة تنظيف النص لمطابقة الكلمات بغض النظر عن الفواصل أو الشوارح أو المسافات
         function cleanText(text) {
             if (!text) return '';
             return text.toString().toLowerCase().replace(/[\s\-_,\.\/#!$%\^&\*;:{}=\-_`~()]/g, "");
@@ -634,10 +627,11 @@
             showToast("🔴 انقطع الاتصال بالإنترنت!");
         });
 
-        // مهلة أمان مضمونة ونهائية (1.2 ثانية كحد أقصى) لتستحيل تجمد الشاشة نهائياً
-        const safetyTimer = setTimeout(() => {
-            completeSecurityCheck();
-        }, 1200);
+        const connectionTimeout = setTimeout(() => {
+            if (!isDataLoaded) {
+                completeSecurityCheck();
+            }
+        }, 3500);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -672,7 +666,7 @@
         function completeSecurityCheck() {
             if (isDataLoaded) return;
             isDataLoaded = true;
-            clearTimeout(safetyTimer);
+            clearTimeout(connectionTimeout);
 
             const spinner = document.getElementById('loading-spinner');
             if (!spinner || spinner.style.display === 'none') return;
@@ -694,9 +688,9 @@
             setTimeout(() => {
                 if (spinner) {
                     spinner.style.opacity = '0';
-                    setTimeout(() => spinner.style.display = 'none', 250);
+                    setTimeout(() => spinner.style.display = 'none', 300);
                 }
-            }, 200);
+            }, 250);
         }
 
         function playSuccessSound() {
@@ -1115,6 +1109,8 @@
             `).join('');
 
             document.getElementById('modal-add-cart').onclick = (e) => addToCart(game.id, e);
+            
+            // دفع حالة للتاريخ لضمان عمل زر الرجوع في الهاتف بشكل سليم تماماً
             history.pushState({ modal: 'game' }, '', '#game');
             document.getElementById('details-modal').classList.remove('hidden');
             document.body.classList.add('modal-active');
@@ -1273,6 +1269,7 @@
                 `;
             }).join('');
 
+            // استعادة نظام ترقيم الصفحات الأنيق والمرتب كما طلبته
             if (totalPages > 1) {
                 let pagesHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
