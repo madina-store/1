@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الفخمة (بدون إظهار كواليس السيرفر) -->
+    <!-- شاشة فحص الأمان الفخمة -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -241,8 +241,8 @@
             </div>
         </div>
 
-        <!-- البنر الرئيسي -->
-        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
+        <!-- البنر الرئيسي (يظهر فوراً بدون أي وميض أو تأخير) -->
+        <section id="hero-section" class="relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
@@ -608,7 +608,19 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
-        // مراقبة الاتصال الحية بالإنترنت
+        // عرض فوري أولي من الكاش لمنع أي تأخير أو وميض في البنر وشبكة الألعاب عند الفتح
+        if (allGames.length > 0) {
+            renderCategoriesBar();
+            renderHero();
+            resetHeroTimer();
+            filterAndRender();
+        }
+
+        function cleanText(text) {
+            if (!text) return '';
+            return text.toString().toLowerCase().replace(/[\s\-_,\.\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+        }
+
         window.addEventListener('online', () => {
             const banner = document.getElementById('offline-banner');
             if (banner) banner.classList.add('hidden');
@@ -622,12 +634,11 @@
             showToast("🔴 انقطع الاتصال بالإنترنت!");
         });
 
-        // مهلة اتصال ذكية وفائقة السرعة لتجنب الانتظار الطويل
         const connectionTimeout = setTimeout(() => {
             if (!isDataLoaded) {
-                completeSecurityCheck(); // فتح سريع حتى لو كان النت ضعيفاً بالاعتماد على الكاش المحلي
+                completeSecurityCheck();
             }
-        }, 3500); // 3.5 ثانية فقط لتجربة صاروخية
+        }, 3000);
 
         const searchItemsList = [
             "ألعاب PS4 🎮",
@@ -686,7 +697,7 @@
                     spinner.style.opacity = '0';
                     setTimeout(() => spinner.style.display = 'none', 300);
                 }
-            }, 250);
+            }, 200);
         }
 
         function playSuccessSound() {
@@ -1120,16 +1131,23 @@
         window.addEventListener('popstate', () => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
+            const searchInput = document.getElementById('search-input');
 
-            if (!lightboxModal.classList.contains('hidden')) {
+            if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
                 lightboxModal.classList.add('hidden');
                 return;
             }
-            if (!detailsModal.classList.contains('hidden')) {
+            if (detailsModal && !detailsModal.classList.contains('hidden')) {
                 document.getElementById('modal-yt-iframe').src = '';
                 detailsModal.classList.add('hidden');
                 document.body.classList.remove('modal-active');
                 return;
+            }
+            if (isSearchingActive && searchInput && searchInput.value.trim() !== '') {
+                searchInput.value = '';
+                isSearchingActive = false;
+                togglePlaceholderVisibility();
+                filterAndRender();
             }
         });
 
@@ -1155,14 +1173,17 @@
 
         window.filterAndRender = function() {
             const searchInputElem = document.getElementById('search-input');
-            const search = searchInputElem ? searchInputElem.value.trim().toLowerCase() : '';
+            const rawSearch = searchInputElem ? searchInputElem.value.trim() : '';
+            const cleanSearchQuery = cleanText(rawSearch);
             const grid = document.getElementById('games-grid');
             const paginationContainer = document.getElementById('pagination-container');
 
             let filtered = allGames.filter(g => {
-                const titleLower = g.title.toLowerCase();
+                const cleanTitle = cleanText(g.title);
                 const cats = g.categories || [g.category].filter(Boolean);
-                const matchSearch = titleLower.includes(search) || cats.some(c => c.toLowerCase().includes(search));
+                const cleanCats = cats.map(c => cleanText(c));
+                
+                const matchSearch = cleanTitle.includes(cleanSearchQuery) || cleanCats.some(c => c.includes(cleanSearchQuery));
                 
                 let matchPlat = true;
                 if (selectedPlatform === "الريترو للـ PS4") matchPlat = (g.platform === "الريترو للـ PS4");
@@ -1189,12 +1210,11 @@
                             </button>
                         </div>
                     `;
-                } else if (search.length > 0) {
-                    const rawSearchQuery = searchInputElem.value.trim();
-                    const waMessage = encodeURIComponent(`السلام عليكم، أود الاستفسار عن توفر لعبة (${rawSearchQuery}) في متجركم.`);
+                } else if (rawSearch.length > 0) {
+                    const waMessage = encodeURIComponent(`السلام عليكم، أود الاستفسار عن توفر لعبة (${rawSearch}) في متجركم.`);
                     grid.innerHTML = `
                         <div class="col-span-full flex flex-col items-center justify-center p-8 my-4 rounded-2xl border border-cyan-500/40 bg-[#0b0f19] text-center space-y-4">
-                            <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة <span class="text-yellow-400 font-black">(${rawSearchQuery})</span> غير متوفرة حالياً! 🎮</h3>
+                            <h3 class="text-cyan-300 font-black text-base sm:text-lg">عذراً، اللعبة <span class="text-yellow-400 font-black">(${rawSearch})</span> غير متوفرة حالياً! 🎮</h3>
                             <p class="text-slate-300 text-xs sm:text-sm">تواصل معنا عبر واتساب لطلبها وسنوفّرها لك فوراً.</p>
                             <a href="https://wa.me/9647858858844?text=${waMessage}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-6 py-3 rounded-xl font-black text-xs sm:text-sm transition shadow">
                                 <i class="fa-brands fa-whatsapp text-lg"></i> اطلب اللعبة عبر واتساب الآن
@@ -1235,12 +1255,6 @@
                     </button>
                 `;
 
-                let arabicBadgeStyle = "text-slate-400";
-                if (game.arabic) {
-                    if (game.arabic.includes('دبلجة')) arabicBadgeStyle = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold";
-                    else if (game.arabic.includes('ترجمة')) arabicBadgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold";
-                }
-
                 return `
                     <div class="${cardBorderClass} rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg group relative transition-all duration-300">
                         <div class="relative bg-black/40 flex items-center justify-center min-h-[220px]">
@@ -1278,7 +1292,6 @@
                 await loadStoreSettings();
                 const gamesRef = collection(db, "games");
                 
-                // الاستماع الحي للبيانات مع ضمان حفظ كاش محلي فوري لتسريع الفتح في المرات القادمة
                 onSnapshot(gamesRef, (snapshot) => {
                     const serverGames = [];
                     snapshot.forEach((docSnap) => {
@@ -1295,7 +1308,6 @@
                     filterAndRender();
                     completeSecurityCheck();
                 }, (error) => {
-                    console.log("الاعتماد على الكاش المحلي بسبب ضعف النت.");
                     completeSecurityCheck();
                 });
             } catch (error) {
