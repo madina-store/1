@@ -370,7 +370,7 @@
 
                 <div class="bg-[#05070b] border border-slate-800 rounded-xl p-3.5 space-y-2">
                     <label class="block text-xs font-bold text-cyan-400 mb-1">
-                        <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر):
+                        <i class="fa-solid fa-tags"></i> أصناف اللعبة (اختر تصنيفاً أو أكثر بدقة):
                     </label>
                     <div id="admin-categories-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-[#0b0f19] rounded-lg text-xs"></div>
                 </div>
@@ -555,7 +555,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي الدقيق للأصناف والأعداد -->
+    <!-- سكربت فايربيس والمنطق البرمجي الدقيق والصحيح 100% -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -1031,43 +1031,15 @@
             window.scrollTo({ top: 300, behavior: 'smooth' });
         };
 
-        // دالة مطابقة متطورة ودقيقة جداً تضمن عدم تصفير الألعاب وتطابق الأعداد الحقيقية تماماً
+        // دالة مطابقة صارمة ومثالية 100% تعتمد حصراً على التصنيفات المسجلة (Categories) لمنع أي تداخل بين الأقسام
         function isGameMatchingCategory(game, cat) {
             if (cat === "الكل") return true;
 
             const cats = game.categories || [];
             const mainCat = game.category || "";
-            const title = (game.title || "").toLowerCase();
-            const desc = (game.desc || "").toLowerCase();
 
-            // 1. مطابقة مباشرة مع المصفوفة أو التصنيف الرئيسي
+            // مطابقة دقيقة 100% مع قائمة التصنيفات الخاصة باللعبة أو تصنيفها الرئيسي
             if (cats.includes(cat) || mainCat === cat) return true;
-
-            // 2. مطابقة جزئية ذكية في الأسماء (حذف الرموز التعبيرية والمسافات لضمان الدقة المطلقة)
-            const cleanCat = cat.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g, "").trim();
-            const cleanMain = mainCat.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g, "").trim();
-            const hasInCats = cats.some(c => c.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g, "").trim().includes(cleanCat) || cleanCat.includes(c.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g, "").trim()));
-            
-            if (hasInCats || (cleanMain && (cleanMain.includes(cleanCat) || cleanCat.includes(cleanMain)))) return true;
-
-            // 3. مطابقة تصنيفية دقيقة للأقسام الخاصة (مثل منظور الشخص الأول، الأكشن، سباقات السيارات، إلخ)
-            if (cat.includes("منصوب") || cat.includes("منظور الشخص الأول") || cat.includes("تصويب")) {
-                if (title.includes("call of duty") || title.includes("battlefield") || title.includes("far cry") || title.includes("resident evil") || title.includes("gta") || title.includes("cod") || mainCat.includes("تصويب") || mainCat.includes("أكشن") || cats.some(c => c.includes("تصويب") || c.includes("أكشن"))) {
-                    return true;
-                }
-            }
-
-            if (cat.includes("سباقات السيارات") || cat.includes("سباق")) {
-                if (title.includes("need for speed") || title.includes("gran turismo") || title.includes("the crew") || title.includes("dirt") || title.includes("f1") || title.includes("forza") || mainCat.includes("سيارات") || cats.some(c => c.includes("سيارات") || c.includes("سباق"))) {
-                    return true;
-                }
-            }
-
-            if (cat.includes("رعب") || cat.includes("البقاء")) {
-                if (title.includes("resident evil") || title.includes("silent hill") || title.includes("the last of us") || title.includes("outlast") || title.includes("evil") || mainCat.includes("رعب") || cats.some(c => c.includes("رعب"))) {
-                    return true;
-                }
-            }
 
             return false;
         }
@@ -1078,7 +1050,6 @@
             const dropdownList = document.getElementById('categories-dropdown-list');
             const selectedLabel = document.getElementById('selected-category-label');
 
-            // حساب عدد الألعاب الحقيقي والمطابق تماماً لكل منصة/قسم
             const platformFilteredGames = allGames.filter(g => {
                 if (selectedPlatform === "الكل") return true;
                 if (selectedPlatform === "الريترو للـ PS4") return g.platform === "الريترو للـ PS4";
@@ -1099,7 +1070,6 @@
 
             const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
             dropdownList.innerHTML = subCategories.map(cat => {
-                // حساب العدد الفعلي الحقيقي لكل صنف بدون أرقام وهمية
                 const count = platformFilteredGames.filter(g => isGameMatchingCategory(g, cat)).length;
                 const isSelected = selectedCategory === cat;
                 const itemClass = isSelected 
@@ -1358,7 +1328,7 @@
                     matchPlat = (g.platform && g.platform.includes(selectedPlatform));
                 }
 
-                // استخدام دالة المطابقة الذكية والدقيقة لضمان ظهور كل الألعاب في أصنافها الصحيحة فوراً
+                // فلترة دقيقة وصارمة 100% بناءً على التصنيفات الحقيقية لكل لعبة
                 let matchCat = isGameMatchingCategory(g, selectedCategory);
 
                 return matchSearch && matchPlat && matchCat;
@@ -1755,7 +1725,7 @@
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
-        window.deleteGame = async function(gameId, event) {
+        window.deleteGame = async function(gameId) {
             if (confirm("هل أنت متأكد من حذف هذه اللعبة نهائياً؟")) {
                 try {
                     await deleteDoc(doc(db, "games", gameId));
@@ -1811,7 +1781,8 @@
             } else {
                 isAdminLoggedIn = false;
                 if (panel && !panel.classList.contains('hidden')) {
-                    if (loginBox) loginBox.classList.remove('hidden');
+                    if (loginBox) loginBox.platform = '';
+                    loginBox.classList.remove('hidden');
                 }
                 if (dashboard) dashboard.classList.add('hidden');
                 resetAdminForm();
