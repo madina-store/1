@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان القديمة كما هي تماماً وبدون أي تعديل على آليتها -->
+    <!-- شاشة فحص الأمان -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -241,7 +241,7 @@
             </div>
         </div>
 
-        <!-- البنر الرئيسي (يظهر فوراً من الذاكرة المحلية لضمان عدم تأخره نهائياً) -->
+        <!-- البنر الرئيسي -->
         <section id="hero-section" class="relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
@@ -295,7 +295,7 @@
         <div id="games-anchor"></div>
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
-            <!-- ترقيم الصفحات مرتب بالترتيب التصاعدي الصحيح (1, 2, 3...) من اليسار لليمين وبشكل منظم -->
+            <!-- ترقيم الصفحات مرتب من اليسار لليمين وبشكل منظم -->
             <div id="pagination-container" class="flex items-center justify-center gap-2 pt-5 overflow-x-auto no-scrollbar px-1" style="direction: ltr !important;"></div>
         </section>
 
@@ -535,7 +535,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي (تم إعادة فحص الأمان ليعمل مثل نسختك الأولى والقديمة 100%) -->
+    <!-- سكربت فايربيس والمنطق البرمجي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -613,7 +613,6 @@
             return text.toString().toLowerCase().replace(/[\s\-_,\.\/#!$%\^&\*;:{}=\-_`~()]/g, "");
         }
 
-        // عرض الشعار والبنر فوراً من الذاكرة المحلية لمنع أي تأخير في ظهورها
         function renderImmediateCache() {
             const cachedLogo = localStorage.getItem('madina_cached_logo');
             if (cachedLogo) {
@@ -679,7 +678,6 @@
             }
         };
 
-        // إخفاء شاشة الفحص تماماً فور استجابة البيانات كما كانت في النسخة القديمة تماماً
         function completeSecurityCheck() {
             const spinner = document.getElementById('loading-spinner');
             if (!spinner || spinner.style.display === 'none') return;
@@ -1281,7 +1279,7 @@
                 `;
             }).join('');
 
-            // ترقيم الصفحات مرتب ومضبوط بالترتيب التصاعدي الصحيح (1, 2, 3...) من اليسار لليمين وبشكل متناسق
+            // ترقيم الصفحات مرتب من اليسار لليمين وبشكل منظم
             if (totalPages > 1) {
                 let pagesHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
