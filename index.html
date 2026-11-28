@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان وفحص الاتصال (أمان) -->
+    <!-- شاشة فحص الأمان وفحص الاتصال -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -190,7 +190,7 @@
         </p>
     </div>
 
-    <!-- تنبيه انقطاع الإنترنت أو ضعفه (مع زر تحديث الصفحة) -->
+    <!-- تنبيه انقطاع الإنترنت أو ضعفه -->
     <div id="offline-banner" class="hidden bg-rose-600 text-white text-xs font-bold text-center py-2.5 px-4 sticky top-0 z-50 flex items-center justify-center gap-3 shadow-lg">
         <i class="fa-solid fa-triangle-exclamation animate-bounce text-sm"></i>
         <span>الإنترنت عندك ضعيف أو منقطع حالياً! يرجى التحقق من الشبكة.</span>
@@ -286,9 +286,30 @@
             </div>
         </section>
 
-        <!-- شريط الأقسام (مرتب ومنظم بشكل أفقي احترافي تماماً مثل أزرار المنصات) -->
-        <section>
-            <div id="categories-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2"></div>
+        <!-- زر الفئات المنسدل الفخم بجانب زر الكل -->
+        <section class="flex items-center gap-2.5 relative">
+            <button onclick="setCategory('الكل')" id="cat-all-btn" class="px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 shrink-0 shadow bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400">
+                <span>الكل</span>
+                <span id="all-count-badge" class="opacity-80">(0)</span>
+            </button>
+
+            <div class="relative flex-grow">
+                <button onclick="toggleCategoriesDropdown(event)" id="main-category-dropdown-btn" class="w-full bg-[#0b0f19] border border-cyan-500/50 hover:border-cyan-400 text-cyan-300 font-bold px-4 py-2.5 rounded-xl text-xs transition flex items-center justify-between shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                    <div class="flex items-center gap-2 truncate">
+                        <i class="fa-solid fa-gamepad text-cyan-400"></i>
+                        <span id="selected-category-label" class="truncate">📂 اختر صنف لعبتك المفضلة...</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-xs text-cyan-400 transition-transform duration-300" id="dropdown-arrow-icon"></i>
+                </button>
+
+                <!-- القائمة المنسدلة للأصناف -->
+                <div id="categories-dropdown-menu" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#090d16] border border-cyan-500/40 rounded-2xl shadow-2xl z-50 max-h-64 overflow-y-auto p-2 space-y-1">
+                    <div class="p-2 text-[11px] font-bold text-cyan-400 border-b border-slate-800 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ul"></i> اضغط لاختيار صنف اللعبة المطلوب:
+                    </div>
+                    <div id="categories-dropdown-list" class="space-y-1"></div>
+                </div>
+            </div>
         </section>
 
         <!-- شبكة الألعاب -->
@@ -608,7 +629,6 @@
         let isDataLoaded = false;
         let isSearchingActive = false;
 
-        // رصد حالة الاتصال الحية (Online / Offline)
         window.addEventListener('online', () => {
             const banner = document.getElementById('offline-banner');
             if (banner) banner.classList.add('hidden');
@@ -935,11 +955,41 @@
             filterAndRender();
         };
 
+        // التحكم بالقائمة المنسدلة للأصناف
+        window.toggleCategoriesDropdown = function(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('categories-dropdown-menu');
+            const arrow = document.getElementById('dropdown-arrow-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                menu.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        };
+
+        // إغلاق القائمة عند النقر خارجها
+        window.addEventListener('click', () => {
+            const menu = document.getElementById('categories-dropdown-menu');
+            const arrow = document.getElementById('dropdown-arrow-icon');
+            if (menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                if (arrow) arrow.classList.remove('rotate-180');
+            }
+        });
+
         window.setCategory = function(cat) {
             selectedCategory = cat;
             currentPage = 1;
             renderCategoriesBar();
             filterAndRender();
+            
+            // إغلاق القائمة بعد الاختيار
+            const menu = document.getElementById('categories-dropdown-menu');
+            const arrow = document.getElementById('dropdown-arrow-icon');
+            if (menu) menu.classList.add('hidden');
+            if (arrow) arrow.classList.remove('rotate-180');
         };
 
         window.handleSortChange = function() {
@@ -983,16 +1033,36 @@
             window.scrollTo({ top: 300, behavior: 'smooth' });
         };
 
-        // تصنيفات الألعاب الأفقية المرتبة تماماً مثل أزرار المنصات والترتيب
+        // دمج كل الأصناف داخل الزر المنسدل وزر الكل بجانبه
         function renderCategoriesBar() {
-            const bar = document.getElementById('categories-bar');
-            bar.innerHTML = ALL_CATEGORIES.map(cat => {
-                const count = cat === "الكل" ? allGames.length : allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
-                const activeClass = selectedCategory === cat ? "cyan-gradient-btn font-black shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "bg-[#0b0f19] border border-slate-800 text-slate-300 font-bold hover:border-slate-600";
+            const allBtn = document.getElementById('cat-all-btn');
+            const allCountBadge = document.getElementById('all-count-badge');
+            const dropdownList = document.getElementById('categories-dropdown-list');
+            const selectedLabel = document.getElementById('selected-category-label');
+
+            const totalCount = allGames.length;
+            allCountBadge.innerText = `(${totalCount})`;
+
+            if (selectedCategory === "الكل") {
+                allBtn.className = "px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 shrink-0 shadow cyan-gradient-btn";
+                selectedLabel.innerHTML = `📂 <span class="text-slate-400 font-semibold">اختر صنف لعبتك المفضلة...</span>`;
+            } else {
+                allBtn.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow bg-[#0b0f19] border border-slate-800 text-slate-300 hover:border-cyan-400";
+                selectedLabel.innerHTML = `✅ الصنف الحالي: <span class="text-cyan-300 font-black">${selectedCategory}</span>`;
+            }
+
+            const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
+            dropdownList.innerHTML = subCategories.map(cat => {
+                const count = allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
+                const isSelected = selectedCategory === cat;
+                const itemClass = isSelected 
+                    ? "bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-black" 
+                    : "bg-[#05070b] border border-slate-800/80 text-slate-300 hover:border-cyan-500/50 hover:bg-slate-900 font-bold";
+                
                 return `
-                    <button onclick="setCategory('${cat}')" class="${activeClass} whitespace-nowrap px-4 py-2.5 rounded-xl text-xs transition flex items-center gap-1.5 shrink-0 shadow">
-                        <span>${cat}</span>
-                        <span class="opacity-80">(${count})</span>
+                    <button onclick="setCategory('${cat}')" class="w-full text-right px-3 py-2 rounded-xl text-xs transition flex items-center justify-between ${itemClass}">
+                        <span class="truncate">${cat}</span>
+                        <span class="opacity-75 bg-black/40 px-2 py-0.5 rounded text-[10px]">(${count})</span>
                     </button>
                 `;
             }).join('');
@@ -1205,7 +1275,6 @@
             window.location.reload();
         };
 
-        // البحث الذكي والدقيق المطابق لاسم اللعبة تماماً عند البحث
         window.filterAndRender = function() {
             const searchInputElem = document.getElementById('search-input');
             const rawSearch = searchInputElem ? searchInputElem.value.trim().toLowerCase() : '';
@@ -1216,7 +1285,6 @@
                 const titleLower = g.title.toLowerCase();
                 const cats = g.categories || [g.category].filter(Boolean);
                 
-                // مطابقة دقيقة وديناميكية للاسم والشرطة والأقسام
                 const matchSearch = titleLower.includes(rawSearch) || cats.some(c => c.toLowerCase().includes(rawSearch));
                 
                 let matchPlat = true;
