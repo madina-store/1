@@ -555,7 +555,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي -->
+    <!-- سكربت فايربيس والمنطق البرمجي الذكي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -955,7 +955,7 @@
             filterAndRender();
         };
 
-        // التحكم بالقائمة المنسدلة للأصناف
+        // التحكم بالقائمة المنسدلة للأصناف مع الحفاظ على History State الصحيح لمنع الخروج من الموقع عند زر الرجوع
         window.toggleCategoriesDropdown = function(event) {
             event.stopPropagation();
             const menu = document.getElementById('categories-dropdown-menu');
@@ -963,13 +963,13 @@
             if (menu.classList.contains('hidden')) {
                 menu.classList.remove('hidden');
                 arrow.classList.add('rotate-180');
+                history.pushState({ dropdownOpen: true }, '', '#categories');
             } else {
                 menu.classList.add('hidden');
                 arrow.classList.remove('rotate-180');
             }
         };
 
-        // إغلاق القائمة عند النقر خارجها
         window.addEventListener('click', () => {
             const menu = document.getElementById('categories-dropdown-menu');
             const arrow = document.getElementById('dropdown-arrow-icon');
@@ -985,7 +985,6 @@
             renderCategoriesBar();
             filterAndRender();
             
-            // إغلاق القائمة بعد الاختيار
             const menu = document.getElementById('categories-dropdown-menu');
             const arrow = document.getElementById('dropdown-arrow-icon');
             if (menu) menu.classList.add('hidden');
@@ -1033,7 +1032,6 @@
             window.scrollTo({ top: 300, behavior: 'smooth' });
         };
 
-        // دمج كل الأصناف داخل الزر المنسدل وزر الكل بجانبه
         function renderCategoriesBar() {
             const allBtn = document.getElementById('cat-all-btn');
             const allCountBadge = document.getElementById('all-count-badge');
@@ -1053,7 +1051,7 @@
 
             const subCategories = ALL_CATEGORIES.filter(c => c !== "الكل");
             dropdownList.innerHTML = subCategories.map(cat => {
-                const count = allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat).length;
+                const count = allGames.filter(g => (g.categories && g.categories.includes(cat)) || g.category === cat || (g.category && g.category.includes(cat.split(' ')[0]))).length;
                 const isSelected = selectedCategory === cat;
                 const itemClass = isSelected 
                     ? "bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-black" 
@@ -1228,9 +1226,11 @@
             document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
+        // معالجة ذكية لزر الرجوع (Back Button) لمنع الخروج من الموقع وإغلاق النوافذ أو القوائم تدريجياً
         window.addEventListener('popstate', (event) => {
             const lightboxModal = document.getElementById('lightbox-modal');
             const detailsModal = document.getElementById('details-modal');
+            const categoriesMenu = document.getElementById('categories-dropdown-menu');
             const searchInput = document.getElementById('search-input');
 
             if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
@@ -1245,11 +1245,24 @@
                 return;
             }
 
+            if (categoriesMenu && !categoriesMenu.classList.contains('hidden')) {
+                categoriesMenu.classList.add('hidden');
+                const arrow = document.getElementById('dropdown-arrow-icon');
+                if (arrow) arrow.classList.remove('rotate-180');
+                return;
+            }
+
             if (isSearchingActive && searchInput && searchInput.value.trim() !== '') {
                 searchInput.value = '';
                 isSearchingActive = false;
                 togglePlaceholderVisibility();
                 filterAndRender();
+                return;
+            }
+
+            // إذا لم تكن هناك نافذة مفتوحة، إرجاع القسم للكل بدلاً من الخروج
+            if (selectedCategory !== "الكل") {
+                setCategory("الكل");
             }
         });
 
@@ -1275,6 +1288,7 @@
             window.location.reload();
         };
 
+        // دالة الفلترة والمطابقة الذكية للألعاب (مع ربط تلقائي للألعاب القديمة مع التسميات الجديدة)
         window.filterAndRender = function() {
             const searchInputElem = document.getElementById('search-input');
             const rawSearch = searchInputElem ? searchInputElem.value.trim().toLowerCase() : '';
@@ -1298,7 +1312,21 @@
                     matchPlat = (g.platform && g.platform.includes(selectedPlatform));
                 }
 
-                const matchCat = selectedCategory === "الكل" || cats.includes(selectedCategory) || g.category === selectedCategory;
+                // مطابقة ذكية تدعم التسميات القديمة والجديدة معاً تلقائياً
+                let matchCat = true;
+                if (selectedCategory !== "الكل") {
+                    const exactMatch = cats.includes(selectedCategory) || g.category === selectedCategory;
+                    const keywordMatch = cats.some(c => c.includes(selectedCategory) || selectedCategory.includes(c)) || (g.category && (g.category.includes(selectedCategory) || selectedCategory.includes(g.category)));
+                    
+                    // مطابقة خاصة لبعض التسميات الشهيرة مثل منظور الشخص الأول
+                    let specialMatch = false;
+                    if (selectedCategory.includes("منظور الشخص الأول") && (g.title.toLowerCase().includes("call of duty") || (g.desc && g.desc.includes("منظور")) || (g.category && g.category.includes("تصويب")))) {
+                        specialMatch = true;
+                    }
+
+                    matchCat = exactMatch || keywordMatch || specialMatch;
+                }
+
                 return matchSearch && matchPlat && matchCat;
             });
 
