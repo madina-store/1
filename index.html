@@ -176,7 +176,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- شاشة فحص الأمان الفخمة (بدون أي تعديل على السرعة أو الآلية القديمة) -->
+    <!-- شاشة فحص الأمان القديمة (كما هي بدون أي تعديل على السرعة أو الآلية) -->
     <div id="loading-spinner" class="spinner-overlay px-4 text-center">
         <div class="relative flex items-center justify-center mb-5">
             <div id="security-ring" class="shield-ring"></div>
@@ -241,8 +241,8 @@
             </div>
         </div>
 
-        <!-- البنر الرئيسي (يتحدث والشريط الأزرق يكتمل ويعود تلقائياً) -->
-        <section id="hero-section" class="hidden relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
+        <!-- البنر الرئيسي (يظهر فوراً من الذاكرة المحلية لكي لا يتأخر أبداً) -->
+        <section id="hero-section" class="relative rounded-3xl overflow-hidden border border-slate-900 bg-[#0b0f19] shadow-2xl group cursor-pointer" onclick="openHeroDetails()">
             <div class="relative h-[320px] sm:h-[380px] w-full">
                 <img id="hero-bg" src="" alt="" class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/60 to-transparent"></div>
@@ -295,8 +295,8 @@
         <div id="games-anchor"></div>
         <section class="space-y-4">
             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5"></div>
-            <!-- ترقيم الصفحات الأنيق والمرتب في المنتصف مثل السابق -->
-            <div id="pagination-container" class="flex items-center justify-center gap-2 pt-5 overflow-x-auto no-scrollbar px-1"></div>
+            <!-- ترقيم الصفحات مرتب بالترتيب الصحيح (1, 2, 3...) من اليسار لليمين أو بالمتوسط -->
+            <div id="pagination-container" class="flex items-center justify-center gap-2 pt-5 overflow-x-auto no-scrollbar px-1" style="direction: ltr !important;"></div>
         </section>
 
         <!-- لوحة التحكم للمدير -->
@@ -535,7 +535,7 @@
         </div>
     </div>
 
-    <!-- سكربت فايربيس والمنطق البرمجي -->
+    <!-- سكربت فايربيس والمنطق البرمجي المحدث -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -613,6 +613,29 @@
             if (!text) return '';
             return text.toString().toLowerCase().replace(/[\s\-_,\.\/#!$%\^&\*;:{}=\-_`~()]/g, "");
         }
+
+        // عرض الشعار والبنر فوراً عند بدء التشغيل من الذاكرة المحلية لمنع أي تأخير بالظهور
+        function renderImmediateCache() {
+            const cachedLogo = localStorage.getItem('madina_cached_logo');
+            if (cachedLogo) {
+                const img = document.getElementById('store-logo-img');
+                const fallback = document.getElementById('store-logo-fallback');
+                img.src = cachedLogo;
+                img.classList.remove('hidden');
+                fallback.classList.add('hidden');
+
+                const footerImg = document.getElementById('footer-logo-img');
+                const footerFallback = document.getElementById('footer-logo-fallback');
+                footerImg.src = cachedLogo;
+                footerImg.classList.remove('hidden');
+                footerFallback.classList.add('hidden');
+            }
+            if (allGames.length > 0) {
+                renderHero();
+                filterAndRender();
+            }
+        }
+        renderImmediateCache();
 
         window.addEventListener('online', () => {
             const banner = document.getElementById('offline-banner');
@@ -1268,7 +1291,7 @@
                 `;
             }).join('');
 
-            // ترقيم الصفحات الأنيق والمرتب ومتوسط الكلاسات كما طلبته تماماً
+            // ترقيم الصفحات مرتب ومضبوط بالترتيب التصاعدي الصحيح (1, 2, 3...)
             if (totalPages > 1) {
                 let pagesHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
@@ -1300,7 +1323,7 @@
 
                     renderCategoriesBar();
                     renderHero();
-                    resetHeroTimer(); // تشغيل مؤقت البنر تلقائياً ليتحدث باستمرار
+                    resetHeroTimer();
                     filterAndRender();
                     completeSecurityCheck();
                 }, (error) => {
@@ -1318,6 +1341,7 @@
                     const data = docSnap.data();
                     if (data.logoUrl) {
                         globalStoreLogo = data.logoUrl;
+                        localStorage.setItem('madina_cached_logo', data.logoUrl);
                         const img = document.getElementById('store-logo-img');
                         const fallback = document.getElementById('store-logo-fallback');
                         img.src = data.logoUrl;
